@@ -38,6 +38,10 @@ import CampaignIcon from '@mui/icons-material/Campaign'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined'
+import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined'
 import { tokens } from '../theme/tokens'
 import { useLanguage } from '../i18n'
 
@@ -100,6 +104,162 @@ export const LandingPage: React.FC = () => {
 
   // Announcements Marquee States
   const [isTickerPaused, setIsTickerPaused] = useState<boolean>(false)
+
+  // Schemes from official uploaded PDFs Filter State
+  const [schemeFilter, setSchemeFilter] = useState<string>('all')
+
+  const OFFICIAL_PDF_SCHEMES = [
+    {
+      code: 'CGTMSE_EPM_EXPORT_2026',
+      name: 'Special Credit Guarantee Scheme – Collateral Support for Export Credit (EPM - Niryat Protsahan)',
+      shortName: 'Export Credit Collateral Support (EPM)',
+      ministry: 'Dept of Commerce / CGTMSE & DGFT',
+      gazette: 'CGTMSE Circular No. 257 / 2025-26',
+      pdfFile: 'Circular 257 - CGS for Export credit merged.pdf',
+      level: 'central',
+      supportType: 'credit_guarantee',
+      maxBenefit: '₹10.00 Crore',
+      highlight: '85% Guarantee for Micro & Small (75% CGTMSE + 10% DGFT), 65% for Medium. Zero collateral required.',
+      categoryColor: '#059669',
+    },
+    {
+      code: 'PMEGP_MSME_SCHEME',
+      name: "Prime Minister's Employment Generation Programme (PMEGP)",
+      shortName: 'PMEGP Capital Subsidy',
+      ministry: 'Ministry of MSME / KVIC',
+      gazette: 'PMEGP Comprehensive Guidelines 2022-26',
+      pdfFile: 'pmegp scheme.pdf',
+      level: 'central',
+      supportType: 'capital_subsidy',
+      maxBenefit: '₹50.00 Lakh',
+      highlight: '15% to 35% margin money capital subsidy. Up to ₹17.5L in rural areas; 2nd loan up to ₹1 Cr.',
+      categoryColor: '#D97706',
+    },
+    {
+      code: 'GUJ_SER_TEXTILE_2025',
+      name: 'Assistance for Developing SER Textile and MSME Park 2025-26',
+      shortName: 'SER Textile & MSME Park Assistance',
+      ministry: 'Industries and Mines Department, Government of Gujarat',
+      gazette: 'GR No. IMD/MRT/e-file/9/2025/0597/G, Gandhinagar',
+      pdfFile: '1.msme.pdf',
+      level: 'state_gujarat',
+      supportType: 'infrastructure',
+      maxBenefit: '₹1.00 Crore',
+      highlight: '100% grant for common testing labs, R&D design facilities, zero-liquid effluent recycling in Surat hub.',
+      categoryColor: '#2563EB',
+    },
+    {
+      code: 'COIR_VIKAS_YOJANA_CVY',
+      name: 'Coir Vikas Yojana (CVY) – CITUS, MCY, EMP, DMP',
+      shortName: 'Coir Vikas Yojana (CVY)',
+      ministry: 'Ministry of MSME / Coir Board',
+      gazette: 'Order No. 5(9)/2017-Coir/77, CVY Guidelines',
+      pdfFile: 'cvy.schemes.pdf',
+      level: 'central',
+      supportType: 'capital_subsidy',
+      maxBenefit: '₹2.50 Crore',
+      highlight: '25% capital subsidy on BIS modern machinery (CITUS) via DBT/PFMS + overseas fair stall grants.',
+      categoryColor: '#7C3AED',
+    },
+    {
+      code: 'MSE_CDP_CLUSTER_DEV',
+      name: 'Micro and Small Enterprises Cluster Development Programme (MSE-CDP)',
+      shortName: 'MSE Cluster Development (MSE-CDP)',
+      ministry: 'Office of Development Commissioner (MSME)',
+      gazette: 'MSE-CDP Revised Scheme Guidelines 2022',
+      pdfFile: 'msme-cdp.pdf',
+      level: 'central',
+      supportType: 'infrastructure',
+      maxBenefit: '₹21.00 Crore Grant',
+      highlight: '70% GoI grant for Common Facility Centres (CFCs on projects up to ₹30 Cr) and new industrial estates.',
+      categoryColor: '#0891B2',
+    },
+    {
+      code: 'TREDS_CGTMSE_CIRCULAR_262',
+      name: 'Credit Guarantee Scheme for Factoring on TReDS (Circular 262)',
+      shortName: 'TReDS Invoice Discounting Guarantee',
+      ministry: 'Ministry of MSME & RBI / CGTMSE',
+      gazette: 'CGTMSE Circular No. 262 / 2025-26',
+      pdfFile: 'TReDS Cicular 262.pdf',
+      level: 'central',
+      supportType: 'credit_guarantee',
+      maxBenefit: '₹5.00 Crore',
+      highlight: '85% credit cover on factored receivables. Sub-24 hour liquidity on RXIL/M1xchange without collateral.',
+      categoryColor: '#059669',
+    },
+    {
+      code: 'MSME_IC_SCHEME_2021',
+      name: 'International Cooperation (IC) Scheme (MDA & CBFTE)',
+      shortName: 'International Cooperation Scheme',
+      ministry: 'Ministry of MSME, Government of India',
+      gazette: 'F.No.4/8/2021-IC, Ministry of MSME',
+      pdfFile: 'Final and approved IC Scheme Guidelines-2021.pdf',
+      level: 'central',
+      supportType: 'market_development',
+      maxBenefit: '100% Stall + Airfare',
+      highlight: '₹3.00L stall rent + ₹1.50L airfare + 75% testing & RCMC fee reimbursement under CBFTE.',
+      categoryColor: '#EA580C',
+    },
+    {
+      code: 'SFURTI_CLUSTER_SCHEME',
+      name: 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)',
+      shortName: 'SFURTI Traditional Clusters',
+      ministry: 'Ministry of MSME / KVIC / Coir Board',
+      gazette: 'SFURTI Comprehensive Scheme Guidelines 2021-26',
+      pdfFile: 'SFURTI_NEW_GUIDELINES.pdf',
+      level: 'central',
+      supportType: 'infrastructure',
+      maxBenefit: '₹5.00 Crore',
+      highlight: '90-95% GoI grant for CFCs, modern machinery, and artisan raw material banks.',
+      categoryColor: '#4F46E5',
+    },
+    {
+      code: 'MSME_ZED_CERTIFICATION',
+      name: 'MSME Sustainable (ZED) Certification Scheme (Phase-II)',
+      shortName: 'ZED Sustainable Certification',
+      ministry: 'Ministry of MSME / QCI',
+      gazette: 'MSME Sustainable (ZED) Guidelines 2022',
+      pdfFile: 'ZED_Guidance_Document_NIC_Division_24 & 27.pdf',
+      level: 'central',
+      supportType: 'quality_certification',
+      maxBenefit: 'Up to 80% Subsidy',
+      highlight: '₹5L consulting + ₹3L tech support + 80% certification reimbursement + bank interest concessions.',
+      categoryColor: '#16A34A',
+    },
+    {
+      code: 'NSSH_SPECIAL_CLCSS',
+      name: 'National SC-ST Hub (NSSH) – Special Capital Subsidy (SCLCSS)',
+      shortName: 'NSSH Special Capital Subsidy',
+      ministry: 'Ministry of MSME / NSIC',
+      gazette: 'National SC-ST Hub Guidelines 2021-26',
+      pdfFile: 'NSSH_Guidelines_Sub_scheme_0 & 1.pdf',
+      level: 'central',
+      supportType: 'capital_subsidy',
+      maxBenefit: '₹25.00 Lakh',
+      highlight: '25% upfront subsidy on term loans up to ₹1 Cr for SC/ST-owned enterprises + 100% tender fee waivers.',
+      categoryColor: '#BE185D',
+    },
+    {
+      code: 'PMS_MARKETING_SUPPORT',
+      name: 'Procurement and Marketing Support (PMS) Scheme',
+      shortName: 'Procurement & Marketing Support (PMS)',
+      ministry: 'Office of DC-MSME, Ministry of MSME',
+      gazette: 'OM F.No. 21(1)/2018-MA, PMS Guidelines',
+      pdfFile: 'OM & PMS Scheme Guidelines.pdf',
+      level: 'central',
+      supportType: 'market_development',
+      maxBenefit: '₹1.50 Lakh Stall + Barcode',
+      highlight: '100% stall rent reimbursement, ₹50,000 barcode support, and e-commerce packaging grants.',
+      categoryColor: '#CA8A04',
+    },
+  ]
+
+  const filteredSchemes = OFFICIAL_PDF_SCHEMES.filter((s) => {
+    if (schemeFilter === 'all') return true
+    if (schemeFilter === 'central') return s.level === 'central'
+    if (schemeFilter === 'gujarat') return s.level === 'state_gujarat'
+    return s.supportType === schemeFilter
+  })
 
   // 3 Seconds Automatic Slide Show Timer
   useEffect(() => {
@@ -602,6 +762,228 @@ export const LandingPage: React.FC = () => {
                 {t('signInAccountBtn')}
               </Button>
             </Stack>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* ─── 3.5 OFFICIAL SCHEMES CATALOG (EXTRACTED STRICTLY FROM UPLOADED PDFS) ─── */}
+      <Box id="official-schemes" sx={{ py: { xs: 8, md: 10 }, bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
+          <Box sx={{ textAlign: 'center', maxWidth: 860, mx: 'auto', mb: 5 }}>
+            <Chip
+              icon={<PictureAsPdfIcon sx={{ fontSize: '16px !important', color: '#DC2626 !important' }} />}
+              label={t('officialSchemesCatalog')}
+              sx={{
+                mb: 1.5,
+                bgcolor: '#FEF2F2',
+                color: '#991B1B',
+                fontWeight: 800,
+                fontSize: '0.8rem',
+                border: '1px solid #FECACA',
+                py: 2,
+                px: 1,
+              }}
+            />
+            <Typography
+              variant="h3"
+              component="h2"
+              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#0F2E59' }}
+            >
+              {t('officialSchemesCatalog')}
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#475569', fontSize: '1.05rem', lineHeight: 1.6 }}>
+              {t('officialSchemesCatalogSubtitle')}
+            </Typography>
+
+            {/* Filter Chips Bar */}
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="center"
+              flexWrap="wrap"
+              sx={{ mt: 3, gap: 1 }}
+            >
+              {[
+                { id: 'all', label: t('filterAll') },
+                { id: 'central', label: t('filterCentral') },
+                { id: 'gujarat', label: t('filterGujarat') },
+                { id: 'credit_guarantee', label: t('filterCreditGuarantee') },
+                { id: 'capital_subsidy', label: t('filterCapitalSubsidy') },
+                { id: 'infrastructure', label: t('filterInfrastructure') },
+              ].map((filter) => (
+                <Chip
+                  key={filter.id}
+                  label={filter.label}
+                  clickable
+                  onClick={() => setSchemeFilter(filter.id)}
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    bgcolor: schemeFilter === filter.id ? '#0F2E59' : '#F1F5F9',
+                    color: schemeFilter === filter.id ? '#FFFFFF' : '#334155',
+                    border: '1px solid',
+                    borderColor: schemeFilter === filter.id ? '#0F2E59' : '#CBD5E1',
+                    '&:hover': {
+                      bgcolor: schemeFilter === filter.id ? '#0A1E3A' : '#E2E8F0',
+                    },
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+
+          {/* Cards Grid */}
+          <Grid container spacing={3}>
+            {filteredSchemes.map((scheme) => (
+              <Grid item xs={12} sm={6} lg={4} key={scheme.code}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    bgcolor: '#FFFFFF',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      borderColor: '#0F2E59',
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 10px 24px rgba(15, 23, 42, 0.08)',
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 3, flexGrow: 1 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
+                      <Chip
+                        label={scheme.level === 'state_gujarat' ? 'Gujarat State' : 'Central Ministry'}
+                        size="small"
+                        sx={{
+                          bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#F0FDF4',
+                          color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#15803D',
+                          fontWeight: 700,
+                          fontSize: '0.72rem',
+                          border: '1px solid',
+                          borderColor: scheme.level === 'state_gujarat' ? '#BFDBFE' : '#BBF7D0',
+                        }}
+                      />
+                      <Chip
+                        label={scheme.supportType.replace('_', ' ').toUpperCase()}
+                        size="small"
+                        sx={{
+                          bgcolor: '#F8FAFC',
+                          color: '#475569',
+                          fontWeight: 700,
+                          fontSize: '0.68rem',
+                          border: '1px solid #E2E8F0',
+                        }}
+                      />
+                    </Stack>
+
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 800,
+                        color: '#0F2E59',
+                        fontSize: '1.05rem',
+                        lineHeight: 1.35,
+                        mb: 1,
+                        minHeight: 46,
+                      }}
+                    >
+                      {scheme.shortName}
+                    </Typography>
+
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: '#64748B',
+                        display: 'block',
+                        fontWeight: 600,
+                        mb: 1.5,
+                        fontSize: '0.76rem',
+                      }}
+                    >
+                      {scheme.ministry}
+                    </Typography>
+
+                    {/* Max Benefit Highlight Box */}
+                    <Box
+                      sx={{
+                        bgcolor: '#F8FAFC',
+                        p: 1.5,
+                        borderRadius: '8px',
+                        border: '1px solid #E2E8F0',
+                        mb: 2,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block', fontSize: '0.72rem' }}>
+                        {t('maxBenefitLabel')}
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 800, color: scheme.categoryColor, fontSize: '1.15rem' }}>
+                        {scheme.maxBenefit}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#334155', fontWeight: 500, display: 'block', mt: 0.5 }}>
+                        {scheme.highlight}
+                      </Typography>
+                    </Box>
+
+                    {/* Official Gazette / PDF reference */}
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
+                      <PictureAsPdfIcon sx={{ fontSize: 16, color: '#DC2626' }} />
+                      <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.74rem' }} noWrap>
+                        {scheme.gazette}
+                      </Typography>
+                    </Stack>
+                  </CardContent>
+
+                  <Box sx={{ p: 2, pt: 0 }}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important' }} />}
+                      onClick={() => navigate(`/scheme/${scheme.code}`)}
+                      sx={{
+                        bgcolor: '#0F2E59',
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        fontSize: '0.84rem',
+                        py: 0.9,
+                        borderRadius: '6px',
+                        textTransform: 'none',
+                        boxShadow: 'none',
+                        '&:hover': { bgcolor: '#0A1E3A' },
+                      }}
+                    >
+                      {t('viewDetailsBtn')}
+                    </Button>
+                  </Box>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ textAlign: 'center', mt: 5 }}>
+            <Button
+              variant="outlined"
+              size="large"
+              endIcon={<OpenInNewIcon />}
+              onClick={() => navigate('/dashboard')}
+              sx={{
+                borderColor: '#0F2E59',
+                color: '#0F2E59',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                px: 3.5,
+                py: 1.2,
+                borderRadius: '8px',
+                textTransform: 'none',
+                '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0A1E3A' },
+              }}
+            >
+              Explore All 11 Verified Schemes on Dashboard
+            </Button>
           </Box>
         </Container>
       </Box>

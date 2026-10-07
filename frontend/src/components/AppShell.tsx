@@ -397,21 +397,25 @@ export const AppShell: React.FC = () => {
               justifyContent: 'space-between',
             }}
           >
-            {/* Desktop Navigation Items */}
+            {/* Desktop Navigation Items - Spread across full width */}
             <Stack
               direction="row"
-              spacing={0.5}
               alignItems="center"
-              sx={{ display: { xs: 'none', md: 'flex' }, height: '100%' }}
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                width: '100%',
+                height: '100%',
+              }}
             >
               {/* 1. Home - Active Indicator in Maroon/Red */}
               <Box
                 onClick={() => navigate('/')}
                 sx={{
+                  flex: 1,
                   height: '100%',
                   display: 'flex',
                   alignItems: 'center',
-                  px: 2.2,
+                  justifyContent: 'center',
                   cursor: 'pointer',
                   position: 'relative',
                   fontWeight: 800,
@@ -419,6 +423,7 @@ export const AppShell: React.FC = () => {
                   color: isLandingPage ? '#8B0000' : '#1E293B',
                   letterSpacing: '0.01em',
                   transition: 'all 0.15s ease',
+                  borderRight: '1px solid #F1F5F9',
                   '&:after': isLandingPage
                     ? {
                         content: '""',
@@ -446,13 +451,18 @@ export const AppShell: React.FC = () => {
                 onClick={(e) => setMinistryAnchor(e.currentTarget)}
                 endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
                 sx={{
+                  flex: 1,
                   height: '100%',
-                  px: 2,
+                  px: 1.5,
                   color: '#1E293B',
                   fontWeight: 700,
                   fontSize: '0.94rem',
                   textTransform: 'none',
                   borderRadius: 0,
+                  borderRight: '1px solid #F1F5F9',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
                 }}
               >
@@ -502,13 +512,18 @@ export const AppShell: React.FC = () => {
                 onClick={(e) => setMediaAnchor(e.currentTarget)}
                 endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
                 sx={{
+                  flex: 1,
                   height: '100%',
-                  px: 2,
+                  px: 1.5,
                   color: '#1E293B',
                   fontWeight: 700,
                   fontSize: '0.94rem',
                   textTransform: 'none',
                   borderRadius: 0,
+                  borderRight: '1px solid #F1F5F9',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
                 }}
               >
@@ -569,13 +584,18 @@ export const AppShell: React.FC = () => {
                 onClick={(e) => setConnectAnchor(e.currentTarget)}
                 endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
                 sx={{
+                  flex: 1,
                   height: '100%',
-                  px: 2,
+                  px: 1.5,
                   color: '#1E293B',
                   fontWeight: 700,
                   fontSize: '0.94rem',
                   textTransform: 'none',
                   borderRadius: 0,
+                  borderRight: '1px solid #F1F5F9',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
                 }}
               >
@@ -624,6 +644,7 @@ export const AppShell: React.FC = () => {
               <Button
                 onClick={() => navigate('/dashboard')}
                 sx={{
+                  flex: 1.2,
                   height: '100%',
                   px: 2,
                   color: isDashboard ? '#0F2E59' : '#1E293B',
@@ -631,6 +652,10 @@ export const AppShell: React.FC = () => {
                   fontSize: '0.94rem',
                   textTransform: 'none',
                   borderRadius: 0,
+                  borderRight: '1px solid #F1F5F9',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   position: 'relative',
                   '&:after': isDashboard
                     ? {
@@ -653,6 +678,7 @@ export const AppShell: React.FC = () => {
               <Button
                 onClick={() => navigate('/monitor')}
                 sx={{
+                  flex: 1.1,
                   height: '100%',
                   px: 2,
                   color: isMonitor ? '#0F2E59' : '#1E293B',
@@ -660,6 +686,9 @@ export const AppShell: React.FC = () => {
                   fontSize: '0.94rem',
                   textTransform: 'none',
                   borderRadius: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   position: 'relative',
                   '&:after': isMonitor
                     ? {
@@ -678,40 +707,6 @@ export const AppShell: React.FC = () => {
                 {t('gazetteRadar')}
               </Button>
             </Stack>
-
-            {/* Quick Portal Action on Right of Navbar */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-              <Chip
-                label={t('verifiedSchemesBadge')}
-                size="small"
-                sx={{
-                  bgcolor: '#ECFDF5',
-                  color: '#065F46',
-                  fontWeight: 700,
-                  border: '1px solid #A7F3D0',
-                  fontSize: '0.76rem',
-                }}
-              />
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => navigate('/dashboard')}
-                endIcon={<OpenInNewIcon sx={{ fontSize: '13px !important' }} />}
-                sx={{
-                  borderColor: '#0F2E59',
-                  color: '#0F2E59',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  textTransform: 'none',
-                  px: 1.5,
-                  py: 0.4,
-                  borderRadius: '6px',
-                  '&:hover': { bgcolor: '#F1F5F9' },
-                }}
-              >
-                {t('browseCatalog')}
-              </Button>
-            </Box>
 
             {/* Mobile Branding Bar */}
             <Typography variant="subtitle2" sx={{ display: { xs: 'block', md: 'none' }, fontWeight: 800, color: '#0F2E59' }}>

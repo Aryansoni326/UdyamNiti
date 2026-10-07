@@ -267,29 +267,141 @@ export const translations = {
 
   // ─── LANDING PAGE - CORE VALUE PROPOSITION ──────────────────────────────────
   officialBadge: {
-    en: 'Official Central & Gujarat State Government MSME Intelligence',
-    hi: 'आधिकारिक केंद्र और गुजरात राज्य सरकार MSME बुद्धिमत्ता',
-    gu: 'અધિકૃત કેન્દ્ર અને ગુજરાત રાજ્ય સરકાર MSME ઇન્ટેલિજન્સ',
+    en: '100% Verified Schemes from Official Gazettes & Ministry Circulars',
+    hi: 'आधिकारिक राजपत्रों और मंत्रालय परिपत्रों से 100% सत्यापित योजनाएं',
+    gu: 'અધિકૃત ગેઝેટ અને મંત્રાલય પરિપત્રોમાંથી 100% ચકાસાયેલ યોજનાઓ',
+  },
+  heroBadge: {
+    en: '100% Verified Schemes from Official Gazettes & Ministry Circulars',
+    hi: 'आधिकारिक राजपत्रों और मंत्रालय परिपत्रों से 100% सत्यापित योजनाएं',
+    gu: 'અધિકૃત ગેઝેટ અને મંત્રાલય પરિપત્રોમાંથી 100% ચકાસાયેલ યોજનાઓ',
   },
   heroTitle1: {
-    en: 'The Government Schemes & Subsidies Platform for ',
-    hi: 'भारतीय MSMEs के लिए सरकारी योजनाएं और सब्सिडी प्लेटफॉर्म ',
-    gu: 'ભારતીય MSMEs માટે સરકારી યોજનાઓ અને સબસિડી પ્લેટફોર્મ ',
+    en: 'Empowering Indian Enterprises with Verified ',
+    hi: 'भारतीय उद्यमों को सशक्त बनाएं ',
+    gu: 'ભારતીય ઉદ્યોગોને સશક્ત બનાવો ',
+  },
+  heroTitlePrefix: {
+    en: 'Empowering Indian Enterprises with Verified ',
+    hi: 'भारतीय उद्यमों को सशक्त बनाएं ',
+    gu: 'ભારતીય ઉદ્યોગોને સશક્ત બનાવો ',
   },
   heroHighlight: {
-    en: 'Indian MSMEs',
-    hi: 'भारतीय MSMEs',
-    gu: 'ભારતીય MSMEs',
+    en: 'Government Schemes & Subsidies',
+    hi: 'आधिकारिक सरकारी योजनाओं और सब्सिडी के साथ',
+    gu: 'અધિકૃત સરકારી યોજનાઓ અને સબસિડી સાથે',
+  },
+  heroTitleHighlight: {
+    en: 'Government Schemes & Subsidies',
+    hi: 'आधिकारिक सरकारी योजनाओं और सब्सिडी के साथ',
+    gu: 'અધિકૃત સરકારી યોજનાઓ અને સબસિડી સાથે',
   },
   heroSubtitle: {
-    en: 'Discover 30+ Central and Gujarat Government schemes, unlock up to ₹10 Crore in collateral-free credit, and calculate eligible capital subsidies with 100% legal certainty.',
-    hi: '30+ केंद्र और गुजरात सरकार की योजनाएं खोजें, ₹10 करोड़ तक की बिना गारंटी ऋण प्राप्त करें, और 100% कानूनी निश्चितता के साथ पात्र पूंजी सब्सिडी की गणना करें।',
-    gu: '30+ કેન્દ્ર અને ગુજરાત સરકારની યોજનાઓ શોધો, ₹10 કરોડ સુધીની જામીન-મુક્ત ક્રેડિટ મેળવો, અને 100% કાનૂની નિશ્ચિતતા સાથે પાત્ર મૂડી સબસિડીની ગણતરી કરો.',
+    en: 'Access official Central & Gujarat Government schemes derived strictly from statutory PDFs and circulars. Unlock up to ₹10 Crore in collateral-free credit, 15%-35% capital subsidies, and cluster grants with verified legal compliance.',
+    hi: 'वैधानिक पीडीएफ और परिपत्रों से सीधे प्राप्त आधिकारिक केंद्र और गुजरात सरकार की योजनाएं प्राप्त करें। सत्यापित कानूनी अनुपालन के साथ ₹10 करोड़ तक का बिना गारंटी ऋण, 15%-35% पूंजी सब्सिडी और क्लस्टर अनुदान प्राप्त करें।',
+    gu: 'વૈધાનિક પીડીએફ અને પરિપત્રોમાંથી સીધી મેળવેલ અધિકૃત કેન્દ્ર અને ગુજરાત સરકારની યોજનાઓ મેળવો. ચકાસાયેલ કાનૂની પાલન સાથે ₹10 કરોડ સુધીની જામીન-મુક્ત ક્રેડિટ, 15%-35% મૂડી સબસિડી અને ક્લસ્ટર ગ્રાન્ટ મેળવો.',
+  },
+  registerEnterpriseBtn: {
+    en: 'Register Enterprise',
+    hi: 'उद्यम रजिस्टर करें',
+    gu: 'ઉદ્યમ રજીસ્ટર કરો',
   },
   signInToAccount: {
     en: 'Sign In to Account',
     hi: 'खाते में साइन इन करें',
     gu: 'એકાઉન્ટમાં સાઇન ઇન કરો',
+  },
+  signInAccountBtn: {
+    en: 'Sign In to Account',
+    hi: 'खाते में साइन इन करें',
+    gu: 'એકાઉન્ટમાં સાઇન ઇન કરો',
+  },
+
+  // ─── OFFICIAL SCHEMES FROM UPLOADED PDFS (CATALOG SECTION) ────────────────
+  officialSchemesCatalog: {
+    en: 'Official Schemes & Subsidies Catalog',
+    hi: 'आधिकारिक योजनाएं और सब्सिडी सूची',
+    gu: 'અધિકૃત યોજનાઓ અને સબસિડી સૂચિ',
+  },
+  officialSchemesCatalogSubtitle: {
+    en: 'Extracted directly from uploaded Gazette notifications, circulars, and Ministry scheme guidelines. No outside or unverified data.',
+    hi: 'अपलोड की गई राजपत्र अधिसूचनाओं, परिपत्रों और मंत्रालय दिशानिर्देशों से सीधे निकाली गई। कोई बाहरी या असत्यापित डेटा नहीं।',
+    gu: 'અપલોડ કરેલી ગેઝેટ સૂચનાઓ, પરિપત્રો અને મંત્રાલય માર્ગદર્શિકામાંથી સીધા કાઢવામાં આવેલ. કોઈ બહારનો કે બિન-ચકાસાયેલ ડેટા નથી.',
+  },
+  filterAll: {
+    en: 'All Official Schemes',
+    hi: 'सभी आधिकारिक योजनाएं',
+    gu: 'બધી અધિકૃત યોજનાઓ',
+  },
+  filterCentral: {
+    en: 'Central Govt',
+    hi: 'केंद्र सरकार',
+    gu: 'કેન્દ્ર સરકાર',
+  },
+  filterGujarat: {
+    en: 'Gujarat State',
+    hi: 'गुजरात राज्य',
+    gu: 'ગુજરાત રાજ્ય',
+  },
+  filterCreditGuarantee: {
+    en: 'Credit Guarantee',
+    hi: 'क्रेडिट गारंटी',
+    gu: 'ક્રેડિટ ગેરંટી',
+  },
+  filterCapitalSubsidy: {
+    en: 'Capital Subsidy',
+    hi: 'पूंजी सब्सिडी',
+    gu: 'મૂડી સબસિડી',
+  },
+  filterInfrastructure: {
+    en: 'Infrastructure & Clusters',
+    hi: 'बुनियादी ढांचा और क्लस्टर',
+    gu: 'ઇન્ફ્રાસ્ટ્રક્ચર અને ક્લસ્ટર્સ',
+  },
+  viewDetailsBtn: {
+    en: 'View Scheme Guidelines & Eligibility',
+    hi: 'योजना दिशानिर्देश और पात्रता देखें',
+    gu: 'યોજના માર્ગદર્શિકા અને પાત્રતા જુઓ',
+  },
+  maxBenefitLabel: {
+    en: 'Max Financial Support',
+    hi: 'अधिकतम वित्तीय सहायता',
+    gu: 'મહત્તમ નાણાકીય સહાય',
+  },
+  officialDocRef: {
+    en: 'Statutory Source Document',
+    hi: 'वैधानिक स्रोत दस्तावेज',
+    gu: 'વૈધાનિક સ્ત્રોત દસ્તાવેજ',
+  },
+  announcementsNotice1: {
+    en: '⚠️ Beware of Fake Sites. For MSME Udyam Registration, visit only official portal udyamregistration.gov.in',
+    hi: '⚠️ नकली साइटों से सावधान रहें। MSME उद्यम पंजीकरण के लिए, केवल आधिकारिक पोर्टल udyamregistration.gov.in पर जाएं',
+    gu: '⚠️ બનાવટી સાઇટ્સથી સાવધ રહો. MSME ઉદ્યમ નોંધણી માટે, ફક્ત અધિકૃત પોર્ટલ udyamregistration.gov.in પર જાઓ',
+  },
+  announcementsNotice2: {
+    en: '📄 New Operational Guidelines issued for SFURTI and PM-EGP Capital Subsidy Schemes 2025-26',
+    hi: '📄 SFURTI और PM-EGP पूंजी सब्सिडी योजनाओं 2025-26 के लिए नए परिचालन दिशानिर्देश जारी',
+    gu: '📄 SFURTI અને PM-EGP મૂડી સબસિડી યોજનાઓ 2025-26 માટે નવી ઓપરેશનલ માર્ગદર્શિકાઓ જારી',
+  },
+  announcementsNotice3: {
+    en: '🏛️ TReDS Circular 262 - Enhanced invoice discounting limits for Micro and Small Enterprises',
+    hi: '🏛️ TReDS परिपत्र 262 - सूक्ष्म और लघु उद्यमों के लिए बढ़ी हुई चालान डिस्काउंटिंग सीमा',
+    gu: '🏛️ TReDS પરિપત્ર 262 - સૂક્ષ્મ અને લઘુ ઉદ્યોગો માટે વધારેલી ઇન્વોઇસ ડિસ્કાઉન્ટિંગ મર્યાદા',
+  },
+  announcementsNotice4: {
+    en: '💼 Gujarat State Industries Policy 2025-26 - Capital Investment Subsidy and Interest Subvention windows active',
+    hi: '💼 गुजरात राज्य उद्योग नीति 2025-26 - पूंजी निवेश सब्सिडी और ब्याज अनुदान विंडो सक्रिय',
+    gu: '💼 ગુજરાત રાજ્ય ઉદ્યોગ નીતિ 2025-26 - મૂડી રોકાણ સબસિડી અને વ્યાજ સબવેન્શન વિન્ડો સક્રિય',
+  },
+  announcementsNotice5: {
+    en: '⭐ ZED Certification Scheme Phase-II operational with up to 80% subsidy for MSME manufacturers',
+    hi: '⭐ ZED प्रमाणन योजना चरण-II MSME निर्माताओं के लिए 80% तक सब्सिडी के साथ संचालित',
+    gu: '⭐ ZED પ્રમાણન યોજના ફેઝ-II MSME ઉત્પાદકો માટે 80% સુધી સબસિડી સાથે ઓપરેશનલ',
+  },
+  announcementsNotice6: {
+    en: '🎯 International Cooperation (IC) Scheme Guidelines 2025 updated for MSME global trade delegations',
+    hi: '🎯 MSME वैश्विक व्यापार प्रतिनिधिमंडलों के लिए अंतर्राष्ट्रीय सहयोग (IC) योजना दिशानिर्देश 2025 अपडेट',
+    gu: '🎯 MSME વૈશ્વિક વેપાર પ્રતિનિધિમંડળો માટે આંતરરાષ્ટ્રીય સહકાર (IC) યોજના માર્ગદર્શિકાઓ 2025 અપડેટ',
   },
 
   // ─── SERVICES ───────────────────────────────────────────────────────────────

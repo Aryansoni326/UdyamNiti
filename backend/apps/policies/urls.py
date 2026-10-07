@@ -45,6 +45,44 @@ SCHEME_DOCUMENTS_MAP = {
         {'id': 'ca_fixed_assets', 'name': 'CA Certificate of Fixed Assets (Annexure 1 & 2)', 'desc': 'Breakup of CIF/FOB, customs, freight, and erection costs certified by Chartered Accountant (Clause 5)', 'category': 'Financial', 'mandatory': True},
         {'id': 'non_alienation', 'name': '7-Year Non-Alienation & Operation Undertaking', 'desc': 'Legal undertaking pledging not to sell, transfer, or dispose of subsidized machinery for 7 years (Clause 8.c)', 'category': 'Legal', 'mandatory': True},
     ],
+    'PMEGP_MSME_SCHEME': [
+        {'id': 'pmegp_app', 'name': 'PMEGP Online Application & Project Report', 'desc': 'Detailed Project Report (DPR) with capital expenditure and working capital estimates (Clause 4)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'aadhaar_pan', 'name': 'Aadhaar Card, PAN & Caste/Special Category Certificate', 'desc': 'Identity and eligibility authentication for 25%-35% margin money subsidy slab (Clause 4.1)', 'category': 'Identity', 'mandatory': True},
+        {'id': 'edu_cert', 'name': '8th Standard Pass Certificate / Marksheet', 'desc': 'Mandatory qualification proof for manufacturing projects over ₹10L or service projects over ₹5L (Clause 4.2)', 'category': 'Educational', 'mandatory': True},
+        {'id': 'edp_cert', 'name': 'Entrepreneurship Development Programme (EDP) Certificate', 'desc': 'Proof of completing mandatory 10-day EDP training prior to final subsidy adjustment (Clause 5)', 'category': 'Training', 'mandatory': True},
+        {'id': 'bank_sanction', 'name': 'Bank Term Loan Sanction & Disbursement Advice', 'desc': 'Sanction letter from financing bank with 90-95% loan component (Clause 6)', 'category': 'Banking', 'mandatory': True},
+    ],
+    'MSME_ZED_CERTIFICATION': [
+        {'id': 'udyam_cert', 'name': 'Valid Udyam Registration Certificate', 'desc': 'NIC manufacturing activity codes authenticated on Udyam portal (Clause 4)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'zed_pledge', 'name': 'Digital ZED Pledge & Self-Assessment Report', 'desc': 'Completed online self-assessment for Bronze, Silver, or Gold level (Clause 5)', 'category': 'Technical', 'mandatory': True},
+        {'id': 'pollution_noc', 'name': 'State Pollution Control Board Consent / Exemption', 'desc': 'CTE/CTO or white-category exemption proof for zero effect verification (Clause 5.2)', 'category': 'Compliance', 'mandatory': True},
+        {'id': 'fee_receipt', 'name': 'Accredited Assessment Agency Payment Receipt', 'desc': 'Proof of payment for desktop assessment or onsite audit for DBT reimbursement (Clause 6)', 'category': 'Financial', 'mandatory': True},
+    ],
+    'SFURTI_CLUSTER_SCHEME': [
+        {'id': 'spv_reg', 'name': 'Cluster SPV Registration & MoA/AoA', 'desc': 'Registration under Sec 8 Company or Societies Act representing minimum 250 artisans (Clause 5.1)', 'category': 'Legal', 'mandatory': True},
+        {'id': 'dpr_ta', 'name': 'Detailed Project Report (DPR) Vetted by Technical Agency', 'desc': 'Vetted business plan, machine layout, civil estimates, and revenue projections (Clause 5.3)', 'category': 'Technical', 'mandatory': True},
+        {'id': 'land_lease', 'name': 'Land Possession Deed / 15-Year Lease Agreement', 'desc': 'Encumbrance-free title or registered minimum 15-year lease for Common Facility Centre (Clause 5.4)', 'category': 'Legal', 'mandatory': True},
+    ],
+    'TREDS_CGTMSE_CIRCULAR_262': [
+        {'id': 'treds_profile', 'name': 'Registered Profile on TReDS Platform (RXIL/M1x/Invoicemart)', 'desc': 'Active supplier registration with verified Udyam number (Clause 3)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'digital_invoice', 'name': 'Corporate Buyer Accepted Digital Invoice & Goods Receipt', 'desc': 'Factored invoice verified with acceptance certificate from buyer (Clause 4)', 'category': 'Commercial', 'mandatory': True},
+        {'id': 'cgtmse_agreement', 'name': 'Member Financier Guarantee Undertaking', 'desc': 'Bank/NBFC factor agreement registering under CGTMSE Circular 262 (Clause 6)', 'category': 'Banking', 'mandatory': True},
+    ],
+    'MSE_CDP_CLUSTER_DEV': [
+        {'id': 'spv_mou', 'name': 'SPV Formation & Member Resolution (Min 20 MSEs)', 'desc': 'Formal SPV with minimum 20 MSE members and 10% equity commitment (Clause 4.1)', 'category': 'Legal', 'mandatory': True},
+        {'id': 'state_dpr', 'name': 'Detailed Project Report Approved by State Govt & SIDBI', 'desc': 'DPR with comprehensive technical, financial, and environmental appraisal (Clause 5)', 'category': 'Technical', 'mandatory': True},
+        {'id': 'land_clearance', 'name': 'Industrial Estate Land Title & GIDC/State Allotment', 'desc': 'Clean title deed or state allotment letter for CFC/Industrial Estate (Clause 4.4)', 'category': 'Infrastructure', 'mandatory': True},
+    ],
+    'PMS_MARKETING_SUPPORT': [
+        {'id': 'pms_application', 'name': 'Online Application on PMS Portal (my.msme.gov.in)', 'desc': 'Submitted at least 30 days prior to domestic exhibition or trade fair (Clause 3)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'udyam_cert', 'name': 'MSME Udyam Registration Certificate', 'desc': 'Proof of micro/small manufacturing or service unit (Clause 3.1)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'stall_bill', 'name': 'Exhibition Organizer Stall Rent Invoice & Payment Proof', 'desc': 'Receipt for stall rent, layout plan, and photo proof for 100% reimbursement up to ₹1.5L (Clause 4)', 'category': 'Financial', 'mandatory': True},
+    ],
+    'NSSH_SPECIAL_CLCSS': [
+        {'id': 'scst_caste_cert', 'name': 'SC/ST Caste Certificate & 51%+ Shareholding Proof', 'desc': 'Government-issued community certificate and CA shareholding audit (Clause 4.1)', 'category': 'Identity', 'mandatory': True},
+        {'id': 'udyam_scst', 'name': 'Udyam Certificate Authenticated under SC/ST Category', 'desc': 'Active Udyam registration mapped to SC/ST Hub database (Clause 4.2)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'bank_machinery_loan', 'name': 'Term Loan Sanction Letter for New Machinery', 'desc': 'Sanction letter from scheduled bank for purchase of BIS/modern machinery (Clause 5)', 'category': 'Financial', 'mandatory': True},
+    ],
 }
 
 DEFAULT_DOCUMENTS = [
@@ -62,6 +100,13 @@ BEST_DEALS = {
         'score': 98,
         'deadline_text': 'Rolling Annual Window (Valid till 31 March 2027)',
     },
+    'PMEGP_MSME_SCHEME': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 15% - 35% Margin Money Capital Subsidy up to ₹50 Lakh',
+        'highlight': 'Direct subsidy into bank account. Up to ₹17.5L subsidy for rural/women/special category; 2nd loan up to ₹1 Cr.',
+        'score': 96,
+        'deadline_text': 'Open Year-Round on KVIC Portal',
+    },
     'COIR_VIKAS_YOJANA_CVY': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: 25% Capital Subsidy on Machinery up to ₹2.50 Cr',
@@ -76,12 +121,54 @@ BEST_DEALS = {
         'score': 93,
         'deadline_text': 'Valid till 31 March 2027 (2-Year Utilization Cap)',
     },
+    'MSE_CDP_CLUSTER_DEV': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: Up to ₹21.00 Cr GoI Grant for Common Facility Centers',
+        'highlight': '70% Central grant on ₹30 Crore CFC projects and 60-70% for establishing new industrial estates.',
+        'score': 93,
+        'deadline_text': 'Quarterly Steering Committee Review',
+    },
+    'TREDS_CGTMSE_CIRCULAR_262': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 85% Factoring Guarantee on TReDS Invoices up to ₹5 Cr',
+        'highlight': 'Instant working capital within 24 hours without collateral. Eliminates 45-day delayed payment risks.',
+        'score': 92,
+        'deadline_text': 'Daily Real-Time Invoice Factoring',
+    },
     'MSME_IC_SCHEME_2021': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: 100% Stall Space & Economy Airfare for Global Expos',
         'highlight': 'Up to ₹3.00 Lakh space rent + ₹1.50 Lakh airfare reimbursement + 75% testing & RCMC fee coverage.',
         'score': 91,
         'deadline_text': 'Submit min 60 days before foreign trade event',
+    },
+    'SFURTI_CLUSTER_SCHEME': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 90% - 95% Grant up to ₹5.00 Cr for Traditional Clusters',
+        'highlight': 'High grant funding for CFCs, modern machinery, and packaging units for artisan groups.',
+        'score': 90,
+        'deadline_text': 'Open for Vetted DPR Proposals',
+    },
+    'MSME_ZED_CERTIFICATION': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: Up to 80% Subsidy on ZED Certification + ₹5L Consulting',
+        'highlight': 'Zero Defect Zero Effect certification, interest subvention from banks, and ₹3L technology grant.',
+        'score': 89,
+        'deadline_text': 'Continuous Digital Enrollment on ZED Portal',
+    },
+    'NSSH_SPECIAL_CLCSS': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 25% Capital Subsidy up to ₹25 Lakh for SC/ST MSEs',
+        'highlight': 'Upfront subsidy on plant and machinery term loans plus 100% fee waiver on testing and tenders.',
+        'score': 88,
+        'deadline_text': 'Rolling Annual Window (Valid till 31 March 2027)',
+    },
+    'PMS_MARKETING_SUPPORT': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 100% Domestic Expo Stall Reimbursement up to ₹1.5L',
+        'highlight': 'Free stalls at national exhibitions, ₹50,000 barcode support, and e-commerce packaging grants.',
+        'score': 87,
+        'deadline_text': 'Apply min 30 days prior to exhibition',
     },
 }
 
@@ -91,8 +178,13 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Scheme.objects.filter(status='active')
 
     def _ensure_pdf_schemes_seeded(self):
-        """Auto-seed uploaded PDF schemes on first lookup if not already in DB."""
-        if not Scheme.objects.filter(scheme_code='CGTMSE_EPM_EXPORT_2026').exists():
+        """Auto-seed uploaded PDF schemes on first lookup if not all 11 schemes are in DB."""
+        if Scheme.objects.count() < 11 or not Scheme.objects.filter(scheme_code='CGTMSE_EPM_EXPORT_2026').exists():
+            try:
+                from django.core.management import call_command
+                call_command('seed_uploaded_pdf_schemes')
+            except Exception:
+                pass
             try:
                 from django.core.management import call_command
                 call_command('seed_uploaded_pdf_schemes')
@@ -132,8 +224,20 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
         if category and category != 'all':
             qs = qs.filter(target_msme_categories__contains=[category])
 
-        # Prioritize the 4 official uploaded PDF schemes
-        priority_codes = ['CGTMSE_EPM_EXPORT_2026', 'COIR_VIKAS_YOJANA_CVY', 'GUJ_SER_TEXTILE_2025', 'MSME_IC_SCHEME_2021']
+        # Prioritize the official uploaded PDF schemes
+        priority_codes = [
+            'CGTMSE_EPM_EXPORT_2026',
+            'PMEGP_MSME_SCHEME',
+            'GUJ_SER_TEXTILE_2025',
+            'COIR_VIKAS_YOJANA_CVY',
+            'MSE_CDP_CLUSTER_DEV',
+            'TREDS_CGTMSE_CIRCULAR_262',
+            'MSME_IC_SCHEME_2021',
+            'SFURTI_CLUSTER_SCHEME',
+            'MSME_ZED_CERTIFICATION',
+            'NSSH_SPECIAL_CLCSS',
+            'PMS_MARKETING_SUPPORT',
+        ]
         
         schemes_list = list(qs)
         schemes_list.sort(key=lambda s: (0 if s.scheme_code in priority_codes else 1, s.name))

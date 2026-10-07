@@ -23,11 +23,17 @@ from apps.policies.models import Scheme, SchemeRule, SchemeBenefit
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SCHEME_PDF_DIR = os.path.join(
+APPS_SCHEME_PDF_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    'data',
+    'schemes_pdfs'
+)
+DATA_SCHEME_PDF_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))),
     'data',
     'scheme_pdfs'
 )
+DEFAULT_SCHEME_PDF_DIR = APPS_SCHEME_PDF_DIR if os.path.exists(APPS_SCHEME_PDF_DIR) else DATA_SCHEME_PDF_DIR
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
