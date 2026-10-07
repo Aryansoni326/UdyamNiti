@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Box,
@@ -14,15 +14,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   Paper,
+  IconButton,
   Divider,
-  alpha,
 } from '@mui/material'
 import PolicyIcon from '@mui/icons-material/Policy'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import StarIcon from '@mui/icons-material/Star'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -33,149 +30,535 @@ import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import PauseIcon from '@mui/icons-material/Pause'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { tokens } from '../theme/tokens'
+import { useLanguage } from '../i18n'
 
-const KEY_SCHEMES = [
-  {
-    code: 'CGTMSE_EPM_EXPORT_2026',
-    title: 'Special Credit Guarantee Scheme for Export Credit',
-    ministry: 'DGFT & Ministry of Commerce / CGTMSE',
-    benefit: 'Up to ₹10 Crore (85% Guarantee Cover)',
-    highlight: 'Zero hard collateral or third-party guarantee required. Pre & post-shipment export credit for manufacturing MSMEs.',
-    deadline: 'Valid till 31 March 2027',
-    tag: 'CREDIT GUARANTEE',
-    level: 'Central Government',
-    docs: '6 Mandatory Documents',
-  },
-  {
-    code: 'COIR_VIKAS_YOJANA_CVY',
-    title: 'Coir Vikas Yojana – CITUS Technology Upgradation',
-    ministry: 'Ministry of MSME / Coir Board Kochi',
-    benefit: '25% Capital Subsidy up to ₹2.50 Cr',
-    highlight: 'Direct Benefit Transfer (DBT) via PFMS for modern BIS-compliant plant & machinery modernization.',
-    deadline: 'Rolling Annual Window',
-    tag: 'CAPITAL SUBSIDY',
-    level: 'Central Government',
-    docs: '8 Mandatory Documents',
-  },
-  {
-    code: 'GUJ_SER_TEXTILE_2025',
-    title: 'Surat Economic Region (SER) Textile & MSME Park Assistance',
-    ministry: 'Industries and Mines Department, Govt of Gujarat',
-    benefit: '₹1.00 Crore Infrastructure Grant',
-    highlight: 'Dedicated textile testing labs, R&D design facilities, warehousing, and solar power linkages in Gujarat.',
-    deadline: 'Two-Year Window (May 2027)',
-    tag: 'GUJARAT STATE',
-    level: 'Gujarat State',
-    docs: '6 Mandatory Documents',
-  },
-  {
-    code: 'MSME_IC_SCHEME_2021',
-    title: 'International Cooperation (IC) Scheme – MDA & Capacity Building',
-    ministry: 'Ministry of Micro, Small & Medium Enterprises',
-    benefit: '100% Space Rent (₹3L) & Airfare (₹1.5L)',
-    highlight: 'Subsidies for international trade exhibitions, CBFTE export testing, and RCMC fee reimbursements.',
-    deadline: 'Apply 60 days before event',
-    tag: 'GLOBAL EXPORTS',
-    level: 'Central Government',
-    docs: '7 Mandatory Documents',
-  },
-]
+interface BannerSlide {
+  id: number
+  tag: string
+  title: string
+  subtitle: string
+  highlightText: string
+  ctaText: string
+  ctaPath: string
+  imageUrl: string
+  gradientBg: string
+}
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { lang, t } = useLanguage()
 
-  // Handle smooth scroll when navigating to anchors
+  // Dynamic localized slides
+  const SLIDES: BannerSlide[] = [
+    {
+      id: 1,
+      tag: t('slide1Tag'),
+      title: t('slide1Title'),
+      highlightText: t('slide1Highlight'),
+      subtitle: t('slide1Subtitle'),
+      ctaText: t('slide1Cta'),
+      ctaPath: '/dashboard',
+      imageUrl: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=1200&q=80',
+      gradientBg: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 40%, #FEF3C7 100%)',
+    },
+    {
+      id: 2,
+      tag: t('slide2Tag'),
+      title: t('slide2Title'),
+      highlightText: t('slide2Highlight'),
+      subtitle: t('slide2Subtitle'),
+      ctaText: t('slide2Cta'),
+      ctaPath: '/dashboard',
+      imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
+      gradientBg: 'linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 40%, #EDE9FE 100%)',
+    },
+  ]
+
+  // Localized announcements ticker notices
+  const ANNOUNCEMENTS = [
+    t('announcementsNotice1'),
+    t('announcementsNotice2'),
+    t('announcementsNotice3'),
+    t('announcementsNotice4'),
+    t('announcementsNotice5'),
+    t('announcementsNotice6'),
+  ]
+
+  // Slideshow States (3-second auto rotation)
+  const [currentSlide, setCurrentSlide] = useState<number>(0)
+  const [isSlidePaused, setIsSlidePaused] = useState<boolean>(false)
+
+  // Announcements Marquee States
+  const [isTickerPaused, setIsTickerPaused] = useState<boolean>(false)
+
+  // 3 Seconds Automatic Slide Show Timer
   useEffect(() => {
-    if (location.hash) {
-      const targetId = location.hash.replace('#', '')
-      const el = document.getElementById(targetId)
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100)
-      }
-    }
-  }, [location.hash])
+    if (isSlidePaused) return
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SLIDES.length)
+    }, 3000)
+
+    return () => clearInterval(timer)
+  }, [isSlidePaused, SLIDES.length])
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % SLIDES.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + SLIDES.length) % SLIDES.length)
+  }
+
+  const activeBanner = SLIDES[currentSlide]
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#0A0F1E', color: '#F1F5F9' }}>
-      {/* ─── HERO SECTION ─── */}
+    <Box sx={{ minHeight: '100vh', bgcolor: '#F8FAFC', color: '#0F172A' }}>
+      {/* ─── 1. PHOTOS WITH 3 SECONDS AUTOMATIC SLIDE SHOW ─── */}
       <Box
         sx={{
-          pt: { xs: 8, md: 12 },
-          pb: { xs: 8, md: 12 },
-          background: 'radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22) 0%, rgba(10, 15, 30, 0) 70%)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          width: '100%',
+          bgcolor: '#FFFFFF',
+          borderBottom: '1px solid #E2E8F0',
+          position: 'relative',
+          overflow: 'hidden',
+          userSelect: 'none',
         }}
+        onMouseEnter={() => setIsSlidePaused(true)}
+        onMouseLeave={() => setIsSlidePaused(false)}
       >
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', maxWidth: 880, mx: 'auto' }}>
-            {/* Top pill badge */}
-            <Chip
-              icon={<VerifiedUserIcon sx={{ fontSize: '15px !important', color: '#34D399 !important' }} />}
-              label="Official Central & Gujarat State Government MSME Intelligence"
+        <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2, md: 3 }, py: { xs: 2, md: 2.5 } }}>
+          <Box
+            sx={{
+              position: 'relative',
+              borderRadius: { xs: '12px', md: '16px' },
+              overflow: 'hidden',
+              minHeight: { xs: 340, sm: 380, md: 440 },
+              background: activeBanner.gradientBg,
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 4px 20px rgba(15, 23, 42, 0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              transition: 'background 0.5s ease',
+            }}
+          >
+            <Grid container alignItems="center" sx={{ height: '100%' }}>
+              {/* Left Column: Text & Content */}
+              <Grid item xs={12} md={7} sx={{ p: { xs: 3, sm: 4, md: 6 } }}>
+                <Chip
+                  label={activeBanner.tag}
+                  size="small"
+                  sx={{
+                    bgcolor: '#0F2E59',
+                    color: '#FFFFFF',
+                    fontWeight: 800,
+                    fontSize: '0.75rem',
+                    mb: 2,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}
+                />
+
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontFamily: tokens.font.heading,
+                    fontWeight: 800,
+                    fontSize: { xs: '1.6rem', sm: '2.1rem', md: '2.6rem' },
+                    lineHeight: 1.15,
+                    color: '#0F2E59',
+                    mb: 1.5,
+                  }}
+                >
+                  {activeBanner.title}
+                </Typography>
+
+                {/* Highlighted Banner Text */}
+                <Box
+                  sx={{
+                    display: 'inline-block',
+                    bgcolor: '#8B0000',
+                    color: '#FFFFFF',
+                    px: 1.8,
+                    py: 0.8,
+                    borderRadius: '6px',
+                    fontWeight: 800,
+                    fontSize: { xs: '0.95rem', md: '1.15rem' },
+                    mb: 2,
+                    boxShadow: '0 2px 8px rgba(139, 0, 0, 0.25)',
+                  }}
+                >
+                  {activeBanner.highlightText}
+                </Box>
+
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: '#334155',
+                    fontSize: { xs: '0.9rem', md: '1rem' },
+                    lineHeight: 1.6,
+                    maxWidth: 620,
+                    mb: 3,
+                    fontWeight: 500,
+                  }}
+                >
+                  {activeBanner.subtitle}
+                </Typography>
+
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate(activeBanner.ctaPath)}
+                    sx={{
+                      bgcolor: '#0F2E59',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      fontSize: '0.95rem',
+                      px: 3,
+                      py: 1.2,
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
+                    }}
+                  >
+                    {activeBanner.ctaText}
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={() => navigate('/register')}
+                    sx={{
+                      borderColor: '#0F2E59',
+                      color: '#0F2E59',
+                      fontWeight: 700,
+                      fontSize: '0.95rem',
+                      px: 2.5,
+                      py: 1.2,
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      bgcolor: 'rgba(255, 255, 255, 0.6)',
+                      '&:hover': { bgcolor: '#FFFFFF' },
+                    }}
+                  >
+                    {t('registerEnterprise')}
+                  </Button>
+                </Stack>
+              </Grid>
+
+              {/* Right Column: Visual Photo Representation */}
+              <Grid
+                item
+                xs={12}
+                md={5}
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  p: 4,
+                  height: '100%',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: '100%',
+                    maxWidth: 420,
+                    height: 320,
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 12px 30px rgba(15, 23, 42, 0.15)',
+                    border: '4px solid #FFFFFF',
+                    position: 'relative',
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={activeBanner.imageUrl}
+                    alt={activeBanner.title}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.4s ease',
+                      '&:hover': { transform: 'scale(1.03)' },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      bgcolor: 'rgba(15, 46, 89, 0.85)',
+                      backdropFilter: 'blur(4px)',
+                      color: '#FFFFFF',
+                      p: 1.5,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ fontWeight: 700, letterSpacing: '0.02em', display: 'block' }}>
+                      {t('officialInitiative')}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+
+            {/* Left & Right Navigation Arrows */}
+            <IconButton
+              onClick={prevSlide}
+              aria-label="Previous Slide"
               sx={{
-                mb: 3,
-                bgcolor: 'rgba(16, 185, 129, 0.12)',
-                color: '#34D399',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                fontWeight: 600,
+                position: 'absolute',
+                left: { xs: 8, md: 16 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                bgcolor: 'rgba(255, 255, 255, 0.9)',
+                color: '#0F2E59',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                '&:hover': { bgcolor: '#FFFFFF', transform: 'translateY(-50%) scale(1.08)' },
+              }}
+            >
+              <NavigateBeforeIcon sx={{ fontSize: 28 }} />
+            </IconButton>
+
+            <IconButton
+              onClick={nextSlide}
+              aria-label="Next Slide"
+              sx={{
+                position: 'absolute',
+                right: { xs: 8, md: 16 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                bgcolor: 'rgba(255, 255, 255, 0.9)',
+                color: '#0F2E59',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                '&:hover': { bgcolor: '#FFFFFF', transform: 'translateY(-50%) scale(1.08)' },
+              }}
+            >
+              <NavigateNextIcon sx={{ fontSize: 28 }} />
+            </IconButton>
+
+            {/* Bottom Pagination Dots & Pause/Play Control (As in msme.gov.in) */}
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 14,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.2,
+                bgcolor: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(6px)',
+                px: 2,
+                py: 0.6,
+                borderRadius: '9999px',
+                border: '1px solid #CBD5E1',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              }}
+            >
+              {SLIDES.map((slide, idx) => (
+                <Box
+                  key={slide.id}
+                  onClick={() => setCurrentSlide(idx)}
+                  sx={{
+                    width: currentSlide === idx ? 22 : 9,
+                    height: 9,
+                    borderRadius: '9999px',
+                    bgcolor: currentSlide === idx ? '#8B0000' : '#CBD5E1',
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease',
+                  }}
+                />
+              ))}
+
+              <Divider orientation="vertical" flexItem sx={{ mx: 0.5, borderColor: '#CBD5E1', height: 16 }} />
+
+              {/* Pause / Play Toggle Button (⏸ / ▶) */}
+              <IconButton
+                size="small"
+                onClick={() => setIsSlidePaused(!isSlidePaused)}
+                aria-label={isSlidePaused ? 'Play slide show' : 'Pause slide show'}
+                sx={{ p: 0.2, color: '#0F2E59' }}
+              >
+                {isSlidePaused ? <PlayArrowIcon sx={{ fontSize: 16 }} /> : <PauseIcon sx={{ fontSize: 16 }} />}
+              </IconButton>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* ─── 2. ANNOUNCEMENTS NEWSLINE WITH AUTOMATIC MOVING (TICKER) ─── */}
+      <Box
+        sx={{
+          bgcolor: '#F1F5F9',
+          borderBottom: '2px solid #E2E8F0',
+          py: 0.8,
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        onMouseEnter={() => setIsTickerPaused(true)}
+        onMouseLeave={() => setIsTickerPaused(false)}
+      >
+        <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2, md: 3 } }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            {/* Announcements Badge (Deep Maroon / Crimson) */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.8,
+                bgcolor: '#8B0000',
+                color: '#FFFFFF',
+                px: 1.8,
+                py: 0.5,
+                borderRadius: '4px',
+                flexShrink: 0,
+                boxShadow: '0 1px 4px rgba(139, 0, 0, 0.2)',
+              }}
+            >
+              <CampaignIcon sx={{ fontSize: 18 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, fontSize: '0.84rem', letterSpacing: '0.02em' }}>
+                {t('announcements')}
+              </Typography>
+            </Box>
+
+            {/* Continuous Moving Marquee Animation */}
+            <Box
+              sx={{
+                flex: 1,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                position: 'relative',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'inline-block',
+                  whiteSpace: 'nowrap',
+                  animation: 'marqueeScroll 40s linear infinite',
+                  animationPlayState: isTickerPaused ? 'paused' : 'running',
+                  '@keyframes marqueeScroll': {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-50%)' },
+                  },
+                }}
+              >
+                {/* Duplicate the array twice so the loop is seamless */}
+                {[...ANNOUNCEMENTS, ...ANNOUNCEMENTS].map((item, idx) => (
+                  <Typography
+                    key={idx}
+                    component="span"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: '#1E293B',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      mr: 6,
+                      cursor: 'pointer',
+                      '&:hover': { color: '#0F2E59', textDecoration: 'underline' },
+                    }}
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    {item}
+                  </Typography>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Marquee Ticker Pause / Play Controller */}
+            <IconButton
+              size="small"
+              onClick={() => setIsTickerPaused(!isTickerPaused)}
+              aria-label={isTickerPaused ? 'Resume ticker' : 'Pause ticker'}
+              sx={{
+                bgcolor: '#FFFFFF',
+                border: '1px solid #CBD5E1',
+                p: 0.5,
+                flexShrink: 0,
+                color: '#0F2E59',
+                '&:hover': { bgcolor: '#F8FAFC' },
+              }}
+            >
+              {isTickerPaused ? <PlayArrowIcon sx={{ fontSize: 16 }} /> : <PauseIcon sx={{ fontSize: 16 }} />}
+            </IconButton>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ─── 3. CORE VALUE PROPOSITION (LIGHT THEME) ─── */}
+      <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', maxWidth: 860, mx: 'auto' }}>
+            <Chip
+              icon={<VerifiedUserIcon sx={{ fontSize: '15px !important', color: '#059669 !important' }} />}
+              label={t('heroBadge')}
+              sx={{
+                mb: 2.5,
+                bgcolor: '#ECFDF5',
+                color: '#065F46',
+                border: '1px solid #A7F3D0',
+                fontWeight: 700,
                 fontSize: '0.82rem',
                 py: 2,
                 px: 1,
               }}
             />
 
-            {/* Main Headline */}
             <Typography
               variant="h2"
               component="h1"
               sx={{
                 fontWeight: 800,
-                fontSize: { xs: '2.2rem', sm: '3rem', md: '3.6rem' },
-                lineHeight: { xs: 1.2, md: 1.15 },
-                letterSpacing: '-0.03em',
-                color: '#FFFFFF',
-                mb: 2.5,
+                fontSize: { xs: '2.1rem', sm: '2.8rem', md: '3.4rem' },
+                lineHeight: 1.15,
+                letterSpacing: '-0.025em',
+                color: '#0F2E59',
+                mb: 2,
               }}
             >
-              The Government Schemes & Subsidies Platform for{' '}
+              {t('heroTitlePrefix')}{' '}
               <Box
                 component="span"
                 sx={{
-                  background: 'linear-gradient(135deg, #818CF8 0%, #38BDF8 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#E65100',
+                  borderBottom: '3px solid #E65100',
                 }}
               >
-                Indian MSMEs
+                {t('heroTitleHighlight')}
               </Box>
             </Typography>
 
-            {/* Sub-headline */}
             <Typography
               variant="body1"
               sx={{
-                color: '#94A3B8',
-                fontSize: { xs: '1rem', md: '1.2rem' },
-                lineHeight: 1.6,
-                maxWidth: 760,
+                color: '#475569',
+                fontSize: { xs: '1rem', md: '1.18rem' },
+                lineHeight: 1.65,
+                maxWidth: 740,
                 mx: 'auto',
-                mb: 4.5,
+                mb: 4,
               }}
             >
-              Discover 30+ Central and Gujarat Government schemes, unlock up to ₹10 Crore in collateral-free credit,
-              and calculate eligible capital subsidies with 100% legal certainty.
+              {t('heroSubtitle')}
             </Typography>
 
-            {/* Main Call to Action Buttons */}
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              justifyContent="center"
-              alignItems="center"
-              sx={{ mb: 6 }}
-            >
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" alignItems="center">
               <Button
                 variant="contained"
                 size="large"
@@ -183,21 +566,19 @@ export const LandingPage: React.FC = () => {
                 endIcon={<ArrowForwardIcon />}
                 onClick={() => navigate('/register')}
                 sx={{
-                  background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                  bgcolor: '#0F2E59',
                   color: '#FFFFFF',
                   fontWeight: 700,
                   fontSize: '1rem',
                   px: 4,
-                  py: 1.5,
-                  borderRadius: '10px',
+                  py: 1.4,
+                  borderRadius: '8px',
                   textTransform: 'none',
-                  boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                  },
+                  boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                  '&:hover': { bgcolor: '#0A1E3A' },
                 }}
               >
-                Register Enterprise
+                {t('registerEnterpriseBtn')}
               </Button>
 
               <Button
@@ -206,139 +587,109 @@ export const LandingPage: React.FC = () => {
                 startIcon={<LoginIcon />}
                 onClick={() => navigate('/login')}
                 sx={{
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#FFFFFF',
-                  fontWeight: 600,
+                  borderColor: '#CBD5E1',
+                  color: '#0F2E59',
+                  fontWeight: 700,
                   fontSize: '1rem',
                   px: 3.5,
-                  py: 1.5,
-                  borderRadius: '10px',
+                  py: 1.4,
+                  borderRadius: '8px',
                   textTransform: 'none',
-                  bgcolor: 'rgba(255, 255, 255, 0.04)',
-                  '&:hover': {
-                    borderColor: '#818CF8',
-                    bgcolor: 'rgba(255, 255, 255, 0.08)',
-                  },
+                  bgcolor: '#FFFFFF',
+                  '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
                 }}
               >
-                Sign In to Account
+                {t('signInAccountBtn')}
               </Button>
             </Stack>
-
-            {/* Quick 4-column metric highlights */}
-            <Grid container spacing={2}>
-              {[
-                { value: '₹10 Crore', label: 'Max Collateral-Free Credit' },
-                { value: '15% – 25%', label: 'Capital & Machinery Subsidies' },
-                { value: '30+ Schemes', label: 'Central & Gujarat Mapped' },
-                { value: '100% Verified', label: 'Official Gazette Citations' },
-              ].map((m, i) => (
-                <Grid item xs={6} sm={3} key={i}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      bgcolor: 'rgba(26, 34, 53, 0.6)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                    }}
-                  >
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#FFFFFF', fontSize: '1.25rem' }}>
-                      {m.value}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.78rem' }}>
-                      {m.label}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
           </Box>
         </Container>
       </Box>
 
-      {/* ─── SECTION 1: SERVICES WE PROVIDE ─── */}
-      <Box id="services" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'rgba(10, 15, 30, 0.5)' }}>
+      {/* ─── 4. SERVICES WE PROVIDE TO USERS (CLEAN LIGHT CARDS) ─── */}
+      <Box id="services" sx={{ py: { xs: 8, md: 10 }, bgcolor: '#F8FAFC' }}>
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', maxWidth: 700, mx: 'auto', mb: 6 }}>
             <Chip
-              label="OUR SERVICES"
+              label={t('services')}
               size="small"
               sx={{
                 mb: 1.5,
-                bgcolor: 'rgba(99, 102, 241, 0.15)',
-                color: '#818CF8',
+                bgcolor: '#EFF6FF',
+                color: '#1D4ED8',
                 fontWeight: 700,
                 fontSize: '0.75rem',
-                letterSpacing: '0.05em',
+                border: '1px solid #BFDBFE',
               }}
             />
             <Typography
               variant="h3"
               component="h2"
-              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#FFFFFF' }}
+              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#0F2E59' }}
             >
-              Services We Provide to Users
+              {t('servicesTitle')}
             </Typography>
-            <Typography variant="body1" sx={{ color: '#94A3B8', fontSize: '1.05rem' }}>
-              Everything your enterprise needs to identify, verify, and secure government financial assistance.
+            <Typography variant="body1" sx={{ color: '#475569', fontSize: '1.05rem' }}>
+              {t('servicesSubtitle')}
             </Typography>
           </Box>
 
           <Grid container spacing={3}>
             {[
               {
-                icon: <AutoAwesomeIcon sx={{ fontSize: 30, color: '#818CF8' }} />,
-                title: '1. AI Scheme Discovery & Matching',
-                desc: 'Instantly matches your enterprise Udyam details, plant & machinery investment, turnover, and sector against all active Central and Gujarat State schemes.',
+                icon: <AutoAwesomeIcon sx={{ fontSize: 30, color: '#1E40AF' }} />,
+                title: t('service1Title'),
+                desc: t('service1Desc'),
               },
               {
-                icon: <AccountTreeOutlinedIcon sx={{ fontSize: 30, color: '#34D399' }} />,
-                title: '2. Multi-Scheme Stacking Optimization',
-                desc: 'Combines credit guarantees with state capital subsidies safely and legally without triggering mutual exclusion disqualifications.',
+                icon: <AccountTreeOutlinedIcon sx={{ fontSize: 30, color: '#059669' }} />,
+                title: t('service2Title'),
+                desc: t('service2Desc'),
               },
               {
-                icon: <FactCheckOutlinedIcon sx={{ fontSize: 30, color: '#38BDF8' }} />,
-                title: '3. Statutory Document Audit Checklist',
-                desc: 'Generates an itemized checklist of mandatory documents (DPR, CE Valuation, Bank Sanction) extracted verbatim from government gazette releases.',
+                icon: <FactCheckOutlinedIcon sx={{ fontSize: 30, color: '#0284C7' }} />,
+                title: t('service3Title'),
+                desc: t('service3Desc'),
               },
               {
-                icon: <NotificationsActiveOutlinedIcon sx={{ fontSize: 30, color: '#FBBF24' }} />,
-                title: '4. Live Policy & Gazette Radar',
-                desc: 'Monitors ongoing gazette notifications and circulars, notifying your business when deadlines extend or budget limits expand.',
+                icon: <NotificationsActiveOutlinedIcon sx={{ fontSize: 30, color: '#D97706' }} />,
+                title: t('service4Title'),
+                desc: t('service4Desc'),
               },
               {
-                icon: <GavelOutlinedIcon sx={{ fontSize: 30, color: '#C084FC' }} />,
-                title: '5. Clause-Level Legal Citations',
-                desc: 'Provides exact operational guideline paragraph and circular citations for every scheme so banks and DIC officers approve without delays.',
+                icon: <GavelOutlinedIcon sx={{ fontSize: 30, color: '#7C3AED' }} />,
+                title: t('service5Title'),
+                desc: t('service5Desc'),
               },
               {
-                icon: <SpeedIcon sx={{ fontSize: 30, color: '#F472B6' }} />,
-                title: '6. End-to-End Application Guidance',
-                desc: 'A structured roadmap guiding your team from pre-qualification to portal submission and DBT subsidy disbursement.',
+                icon: <SpeedIcon sx={{ fontSize: 30, color: '#DB2777' }} />,
+                title: t('service6Title'),
+                desc: t('service6Desc'),
               },
             ].map((service, i) => (
               <Grid item xs={12} md={4} key={i}>
                 <Card
                   sx={{
                     height: '100%',
-                    bgcolor: '#1A2235',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    bgcolor: '#FFFFFF',
+                    border: '1px solid #E2E8F0',
                     borderRadius: '12px',
                     p: 1.5,
+                    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)',
                     transition: 'all 0.2s ease',
                     '&:hover': {
-                      borderColor: '#6366F1',
+                      borderColor: '#0F2E59',
                       transform: 'translateY(-3px)',
+                      boxShadow: '0 6px 18px rgba(15, 23, 42, 0.08)',
                     },
                   }}
                 >
                   <CardContent sx={{ p: 2 }}>
                     <Box sx={{ mb: 2 }}>{service.icon}</Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '1.1rem', mb: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '1.1rem', mb: 1 }}>
                       {service.title}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                    <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6 }}>
                       {service.desc}
                     </Typography>
                   </CardContent>
@@ -349,78 +700,79 @@ export const LandingPage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* ─── SECTION 2: BENEFITS WE PROVIDE ─── */}
+      {/* ─── 5. BENEFITS PROVIDED TO MSMES ─── */}
       <Box
         id="benefits"
         sx={{
-          py: { xs: 8, md: 12 },
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          py: { xs: 8, md: 10 },
+          bgcolor: '#FFFFFF',
+          borderTop: '1px solid #E2E8F0',
+          borderBottom: '1px solid #E2E8F0',
         }}
       >
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', maxWidth: 700, mx: 'auto', mb: 6 }}>
             <Chip
-              label="BENEFITS"
+              label={t('benefits')}
               size="small"
               sx={{
                 mb: 1.5,
-                bgcolor: 'rgba(16, 185, 129, 0.15)',
-                color: '#34D399',
+                bgcolor: '#ECFDF5',
+                color: '#065F46',
                 fontWeight: 700,
                 fontSize: '0.75rem',
-                letterSpacing: '0.05em',
+                border: '1px solid #A7F3D0',
               }}
             />
             <Typography
               variant="h3"
               component="h2"
-              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#FFFFFF' }}
+              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#0F2E59' }}
             >
-              Benefits Provided to MSME Users
+              {t('benefitsTitle')}
             </Typography>
-            <Typography variant="body1" sx={{ color: '#94A3B8', fontSize: '1.05rem' }}>
-              Why MSME founders, CFOs, and business owners choose UdyamNiti over manual research.
+            <Typography variant="body1" sx={{ color: '#475569', fontSize: '1.05rem' }}>
+              {t('benefitsSubtitle')}
             </Typography>
           </Box>
 
           <Grid container spacing={3}>
             {[
               {
-                stat: '₹15L – ₹10Cr',
-                title: 'Non-Dilutive Capital Access',
-                desc: 'Claim capital subsidies, interest subvention, and collateral guarantees without losing company equity or pledging personal family property.',
-                color: '#34D399',
+                stat: '₹15L - ₹10Cr',
+                title: t('benefit1Title'),
+                desc: t('benefit1Desc'),
+                color: '#059669',
               },
               {
                 stat: '90% Time Saved',
-                title: 'Minutes, Not Weeks',
-                desc: 'Replace weeks of reading complex 80-page government PDF guidelines with an automated 2-minute scheme eligibility scan.',
-                color: '#38BDF8',
+                title: t('benefit2Title'),
+                desc: t('benefit2Desc'),
+                color: '#0284C7',
               },
               {
                 stat: 'Zero Rejections',
-                title: 'First-Time Application Approval',
-                desc: 'Pre-validated document checklists prevent missing paperwork mistakes that cause 68% of MSME government claims to stall.',
-                color: '#818CF8',
+                title: t('benefit3Title'),
+                desc: t('benefit3Desc'),
+                color: '#1E40AF',
               },
               {
                 stat: '35%+ Combined Yield',
-                title: 'Multi-Scheme Advantage',
-                desc: 'Learn how to legally combine Gujarat State assistance with Central schemes to maximize total capital recovery for your factory.',
-                color: '#FBBF24',
+                title: t('benefit4Title'),
+                desc: t('benefit4Desc'),
+                color: '#D97706',
               },
               {
                 stat: '100% Legal Proof',
-                title: 'Zero AI Hallucinations',
-                desc: 'Every single subsidy number, percentage, and condition is mathematically verified against the official gazette notifications.',
-                color: '#F472B6',
+                title: t('benefit5Title'),
+                desc: t('benefit5Desc'),
+                color: '#DB2777',
               },
               {
                 stat: 'Year-Round Alerts',
-                title: 'Never Miss a Deadline',
-                desc: 'Automated monitoring keeps your business notified of annual fiscal year cutoffs and special cluster incentive windows.',
-                color: '#C084FC',
+                title: t('benefit6Title'),
+                desc: t('benefit6Desc'),
+                color: '#7C3AED',
               },
             ].map((benefit, i) => (
               <Grid item xs={12} sm={6} md={4} key={i}>
@@ -429,23 +781,24 @@ export const LandingPage: React.FC = () => {
                   sx={{
                     p: 3,
                     height: '100%',
-                    bgcolor: '#1A2235',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    bgcolor: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
                     borderRadius: '12px',
                     transition: 'all 0.2s ease',
                     '&:hover': {
                       borderColor: benefit.color,
                       transform: 'translateY(-3px)',
+                      boxShadow: '0 6px 18px rgba(15, 23, 42, 0.06)',
                     },
                   }}
                 >
                   <Typography variant="h4" sx={{ fontWeight: 900, color: benefit.color, fontSize: '1.6rem', mb: 1 }}>
                     {benefit.stat}
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '1.05rem', mb: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '1.05rem', mb: 1 }}>
                     {benefit.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.86rem', lineHeight: 1.6 }}>
+                  <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.86rem', lineHeight: 1.6 }}>
                     {benefit.desc}
                   </Typography>
                 </Paper>
@@ -455,243 +808,54 @@ export const LandingPage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* ─── SECTION 3: HOW IT WORKS ─── */}
-      <Box id="how-it-works" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'rgba(10, 15, 30, 0.4)' }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', maxWidth: 700, mx: 'auto', mb: 6 }}>
-            <Chip
-              label="THE WORKFLOW"
-              size="small"
-              sx={{
-                mb: 1.5,
-                bgcolor: 'rgba(99, 102, 241, 0.15)',
-                color: '#818CF8',
-                fontWeight: 700,
-                fontSize: '0.75rem',
-              }}
-            />
-            <Typography
-              variant="h3"
-              component="h2"
-              sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.4rem' }, mb: 1.5, color: '#FFFFFF' }}
-            >
-              How It Works
-            </Typography>
-            <Typography variant="body1" sx={{ color: '#94A3B8', fontSize: '1.05rem' }}>
-              From registration on this landing page straight to your active scheme intelligence dashboard.
-            </Typography>
-          </Box>
-
-          <Grid container spacing={3.5}>
-            {[
-              {
-                step: '01',
-                title: 'Register or Sign In',
-                desc: 'Click Register or Sign In on the top right. Enter your enterprise profile (or demo credentials) in under 30 seconds.',
-              },
-              {
-                step: '02',
-                title: 'Instant Redirect to Dashboard',
-                desc: 'Once authenticated, you are instantly redirected to your enterprise Schemes Dashboard where all 30+ schemes are ready for you.',
-              },
-              {
-                step: '03',
-                title: 'Claim & File Subsidies',
-                desc: 'View your pre-calculated eligibility, download document checklists, and generate verified reports for your bank and DIC officer.',
-              },
-            ].map((st, i) => (
-              <Grid item xs={12} md={4} key={i}>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 3.5,
-                    height: '100%',
-                    bgcolor: '#1A2235',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                  }}
-                >
-                  <Typography
-                    variant="h3"
-                    sx={{ fontWeight: 900, color: 'rgba(99, 102, 241, 0.3)', fontFamily: tokens.font.mono, mb: 1 }}
-                  >
-                    {st.step}
-                  </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '1.15rem', mb: 1.5 }}>
-                    {st.title}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                    {st.desc}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* ─── SECTION 4: KEY SCHEMES ─── */}
-      <Box id="schemes" sx={{ py: { xs: 8, md: 12 }, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-        <Container maxWidth="lg">
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
-            alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-            sx={{ mb: 4 }}
-          >
-            <Box>
-              <Chip
-                label="CATALOG PREVIEW"
-                size="small"
-                sx={{
-                  mb: 1.5,
-                  bgcolor: 'rgba(99, 102, 241, 0.15)',
-                  color: '#818CF8',
-                  fontWeight: 700,
-                  fontSize: '0.75rem',
-                }}
-              />
-              <Typography
-                variant="h3"
-                component="h2"
-                sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.2rem' }, color: '#FFFFFF' }}
-              >
-                Key Supported Schemes
-              </Typography>
-            </Box>
-
-            <Button
-              onClick={() => navigate('/register')}
-              endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
-              sx={{
-                color: '#818CF8',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                textTransform: 'none',
-                p: 0,
-                '&:hover': { color: '#FFFFFF' },
-              }}
-            >
-              Register to View All Schemes →
-            </Button>
-          </Stack>
-
-          <Grid container spacing={3}>
-            {KEY_SCHEMES.map((scheme) => (
-              <Grid item xs={12} sm={6} key={scheme.code}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    bgcolor: '#1A2235',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                    p: 2.5,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Box>
-                    <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
-                      <Chip
-                        label={scheme.tag}
-                        size="small"
-                        sx={{ bgcolor: '#F59E0B', color: '#0F172A', fontWeight: 800, fontSize: '0.65rem', height: 20 }}
-                      />
-                      <Chip
-                        label={scheme.level}
-                        size="small"
-                        sx={{ bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#CBD5E1', fontSize: '0.68rem', height: 20 }}
-                      />
-                    </Stack>
-
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '1.05rem', mb: 0.5 }}>
-                      {scheme.title}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1.5 }}>
-                      {scheme.ministry}
-                    </Typography>
-
-                    <Box sx={{ p: 1.5, borderRadius: '8px', bgcolor: 'rgba(10, 15, 30, 0.6)', mb: 2 }}>
-                      <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', fontSize: '0.72rem' }}>
-                        Maximum Benefit:
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#34D399', fontWeight: 800, fontSize: '0.92rem' }}>
-                        {scheme.benefit}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#E2E8F0', display: 'block', mt: 0.5, fontSize: '0.76rem' }}>
-                        {scheme.highlight}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Button
-                    size="small"
-                    onClick={() => navigate('/register')}
-                    endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
-                    sx={{
-                      color: '#818CF8',
-                      fontSize: '0.82rem',
-                      fontWeight: 700,
-                      textTransform: 'none',
-                      justifyContent: 'flex-start',
-                      p: 0,
-                      '&:hover': { color: '#FFFFFF' },
-                    }}
-                  >
-                    Register to Unlock Scheme Details →
-                  </Button>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* ─── SECTION 5: FAQ ─── */}
-      <Box id="faq" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'rgba(10, 15, 30, 0.6)', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      {/* ─── 6. FREQUENTLY ASKED QUESTIONS (FAQ) ─── */}
+      <Box id="faq" sx={{ py: { xs: 8, md: 10 }, bgcolor: '#F8FAFC' }}>
         <Container maxWidth="md">
           <Box sx={{ textAlign: 'center', mb: 5 }}>
-            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: '2rem', mb: 1.5, color: '#FFFFFF' }}>
-              Frequently Asked Questions
+            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: '2rem', mb: 1.5, color: '#0F2E59' }}>
+              {t('faq')}
             </Typography>
-            <Typography variant="body2" sx={{ color: '#94A3B8' }}>
-              Answers to questions about accessing the platform and scheme qualification.
+            <Typography variant="body2" sx={{ color: '#64748B' }}>
+              {t('faqSubtitle')}
             </Typography>
           </Box>
 
           <Stack spacing={2}>
             {[
               {
-                q: 'How do I access the Dashboard?',
-                a: 'Click "Register" or "Sign In" at the top of this landing page. After filling in your enterprise details and clicking submit, you are instantly redirected to the Home / Dashboard.',
+                q: t('faq1Q'),
+                a: t('faq1A'),
               },
               {
-                q: 'Can my business combine Gujarat State schemes with Central Government schemes?',
-                a: 'Yes! Our multi-scheme stacking engine analyzes whether pairing Central schemes (such as CGTMSE credit guarantee) with Gujarat state subsidies is legally permissible without mutual exclusion penalties.',
+                q: t('faq2Q'),
+                a: t('faq2A'),
               },
               {
-                q: 'Do I need an active Udyam registration to get started?',
-                a: 'No. You can register using your approximate plant & machinery investment, turnover, and sector. Our system will evaluate what you qualify for and guide you on obtaining your official certificate.',
+                q: t('faq3Q'),
+                a: t('faq3A'),
+              },
+              {
+                q: t('faq4Q'),
+                a: t('faq4A'),
               },
             ].map((faq, i) => (
               <Accordion
                 key={i}
                 elevation={0}
                 sx={{
-                  bgcolor: '#1A2235',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  bgcolor: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
                   borderRadius: '10px !important',
                   '&:before': { display: 'none' },
                 }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#94A3B8' }} />}>
-                  <Typography sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.96rem' }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#0F2E59' }} />}>
+                  <Typography sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '0.96rem' }}>
                     {faq.q}
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ pt: 0, pb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                  <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6 }}>
                     {faq.a}
                   </Typography>
                 </AccordionDetails>
@@ -701,8 +865,8 @@ export const LandingPage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* ─── FINAL CTA SECTION ─── */}
-      <Box sx={{ py: 10, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      {/* ─── 7. FINAL ENTERPRISE CTA BANNER ─── */}
+      <Box sx={{ py: 9, bgcolor: '#FFFFFF', borderTop: '1px solid #E2E8F0' }}>
         <Container maxWidth="md">
           <Paper
             elevation={0}
@@ -710,15 +874,15 @@ export const LandingPage: React.FC = () => {
               p: { xs: 4, md: 6 },
               textAlign: 'center',
               borderRadius: '16px',
-              bgcolor: '#1A2235',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
+              bgcolor: '#F8FAFC',
+              border: '2px solid #E2E8F0',
             }}
           >
-            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.2rem' }, mb: 2, color: '#FFFFFF' }}>
-              Ready to Claim Your Eligible Subsidies?
+            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: { xs: '1.8rem', md: '2.2rem' }, mb: 2, color: '#0F2E59' }}>
+              {t('ctaTitle')}
             </Typography>
-            <Typography variant="body1" sx={{ color: '#94A3B8', mb: 4, maxWidth: 560, mx: 'auto' }}>
-              Register your enterprise in 30 seconds and enter the Schemes Dashboard directly.
+            <Typography variant="body1" sx={{ color: '#475569', mb: 4, maxWidth: 560, mx: 'auto' }}>
+              {t('ctaSubtitle')}
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
               <Button
@@ -727,7 +891,7 @@ export const LandingPage: React.FC = () => {
                 startIcon={<PersonAddAltIcon />}
                 onClick={() => navigate('/register')}
                 sx={{
-                  bgcolor: '#4F46E5',
+                  bgcolor: '#0F2E59',
                   color: '#FFFFFF',
                   fontWeight: 700,
                   fontSize: '0.98rem',
@@ -735,10 +899,10 @@ export const LandingPage: React.FC = () => {
                   py: 1.4,
                   borderRadius: '8px',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#4338CA' },
+                  '&:hover': { bgcolor: '#0A1E3A' },
                 }}
               >
-                Register & Go to Dashboard
+                {t('registerAndGo')}
               </Button>
               <Button
                 variant="outlined"
@@ -746,21 +910,152 @@ export const LandingPage: React.FC = () => {
                 startIcon={<LoginIcon />}
                 onClick={() => navigate('/login')}
                 sx={{
-                  borderColor: 'rgba(255, 255, 255, 0.25)',
-                  color: '#FFFFFF',
-                  fontWeight: 600,
+                  borderColor: '#CBD5E1',
+                  color: '#0F2E59',
+                  fontWeight: 700,
                   fontSize: '0.95rem',
                   px: 3,
                   py: 1.4,
                   borderRadius: '8px',
                   textTransform: 'none',
-                  '&:hover': { borderColor: '#818CF8' },
+                  bgcolor: '#FFFFFF',
+                  '&:hover': { bgcolor: '#F8FAFC' },
                 }}
               >
-                Sign In to Account
+                {t('signInAccountBtn')}
               </Button>
             </Stack>
           </Paper>
+        </Container>
+      </Box>
+
+      {/* ─── 8. OFFICIAL PORTAL FOOTER (LIGHT THEME) ─── */}
+      <Box
+        component="footer"
+        sx={{
+          bgcolor: '#0F2E59',
+          color: '#FFFFFF',
+          pt: { xs: 7, md: 8 },
+          pb: { xs: 5, md: 6 },
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid container spacing={4} sx={{ mb: 6 }}>
+            <Grid item xs={12} md={5}>
+              <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '8px',
+                    bgcolor: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <PolicyIcon sx={{ color: '#0F2E59', fontSize: 22 }} />
+                </Box>
+                <Typography variant="h5" sx={{ fontWeight: 800, color: '#FFFFFF' }}>
+                  Udyam<Box component="span" sx={{ color: '#FF9933' }}>Niti</Box>
+                </Typography>
+              </Stack>
+              <Typography variant="body2" sx={{ color: '#CBD5E1', lineHeight: 1.7, maxWidth: 420, mb: 3 }}>
+                {t('footerDesc')}
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                {t('officialGateway')}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6} md={2}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
+                {t('footerMinistry')}
+              </Typography>
+              <Stack spacing={1}>
+                {[
+                  { key: 'aboutUs', label: t('aboutUs') },
+                  { key: 'ourPerformance', label: t('ourPerformance') },
+                  { key: 'citizenCharter', label: t('citizenCharter') },
+                  { key: 'annualReports', label: t('annualReports') },
+                ].map((item) => (
+                  <Typography
+                    key={item.key}
+                    variant="body2"
+                    sx={{ color: '#94A3B8', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    {item.label}
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+
+            <Grid item xs={6} md={2}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
+                {t('footerOfferings')}
+              </Typography>
+              <Stack spacing={1}>
+                {[
+                  { key: 'creditGuarantees', label: t('creditGuarantees') },
+                  { key: 'capitalSubsidies', label: t('capitalSubsidies') },
+                  { key: 'clusterDevelopment', label: t('clusterDevelopment') },
+                  { key: 'zedCertification', label: t('zedCertification') },
+                ].map((item) => (
+                  <Typography
+                    key={item.key}
+                    variant="body2"
+                    sx={{ color: '#94A3B8', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    {item.label}
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
+                {t('footerHelpline')}
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#CBD5E1', mb: 1 }}>
+                Toll-Free: <strong>1800 11 7800</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#CBD5E1', mb: 2 }}>
+                Email: support@udyamniti.gov.in
+              </Typography>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => navigate('/dashboard')}
+                sx={{
+                  borderColor: '#94A3B8',
+                  color: '#FFFFFF',
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  '&:hover': { borderColor: '#FFFFFF', bgcolor: 'rgba(255,255,255,0.08)' },
+                }}
+              >
+                {t('accessSchemesPortal')}
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.15)', mb: 3 }} />
+
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+          >
+            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+              © {new Date().getFullYear()} {t('footerCopyright')}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+              {t('footerCompliance')}
+            </Typography>
+          </Stack>
         </Container>
       </Box>
     </Box>

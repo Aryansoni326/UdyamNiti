@@ -16,9 +16,9 @@ import { apiClient } from '../api/client'
 const STEPS = ['Business Identity', 'Classification', 'Financials & Ownership']
 
 const MSME_CATEGORIES = [
-  { value: 'micro', label: 'Micro — Investment ≤ ₹1Cr, Turnover ≤ ₹5Cr' },
-  { value: 'small', label: 'Small — Investment ≤ ₹10Cr, Turnover ≤ ₹50Cr' },
-  { value: 'medium', label: 'Medium — Investment ≤ ₹50Cr, Turnover ≤ ₹250Cr' },
+  { value: 'micro', label: 'Micro - Investment ≤ ₹1Cr, Turnover ≤ ₹5Cr' },
+  { value: 'small', label: 'Small - Investment ≤ ₹10Cr, Turnover ≤ ₹50Cr' },
+  { value: 'medium', label: 'Medium - Investment ≤ ₹50Cr, Turnover ≤ ₹250Cr' },
 ]
 
 const ENTITY_TYPES = [
@@ -131,7 +131,7 @@ export default function ProfileSetup() {
               Set Up Your Business Profile
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Your profile drives the eligibility analysis. Start with self-declared facts — documents are optional.
+              Your profile drives the eligibility analysis. Start with self-declared facts - documents are optional.
             </Typography>
           </Box>
 
@@ -299,7 +299,7 @@ export default function ProfileSetup() {
                 <Grid item xs={12}>
                   <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', my: 1 }} />
                   <Typography variant="overline" sx={{ color: 'text.muted', letterSpacing: 1.5 }}>
-                    OWNERSHIP — Unlocks additional subsidy benefits
+                    OWNERSHIP - Unlocks additional subsidy benefits
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>

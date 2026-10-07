@@ -316,7 +316,7 @@ export default function GoalEntry() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <LightbulbIcon sx={{ color: '#F59E0B', fontSize: 18 }} />
               <Typography variant="overline" sx={{ color: 'text.muted', letterSpacing: 1.5 }}>
-                EXAMPLE GOALS — CLICK TO USE
+                EXAMPLE GOALS - CLICK TO USE
               </Typography>
             </Box>
             <Stack spacing={1.5}>

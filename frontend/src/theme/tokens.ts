@@ -87,16 +87,16 @@ export const tokens = {
       900: '#881337',
     },
     slate: {
-      50:  '#f8fafc',
-      100: '#f1f5f9',
-      200: '#e2e8f0',
-      300: '#cbd5e1',
-      400: '#94A3B8',  // UNKNOWN / text-secondary
-      500: '#64748B',  // text-muted
-      600: '#475569',
-      700: '#334155',
-      800: '#1e293b',
-      900: '#0f172a',
+      50:  '#0F172A',  // Primary heading dark text
+      100: '#1E293B',  // Strong title dark text
+      200: '#334155',  // Body dark text
+      300: '#475569',  // Secondary body text
+      400: '#64748B',  // Muted caption text
+      500: '#94A3B8',  // Subtle icons / border
+      600: '#CBD5E1',  // Border default
+      700: '#E2E8F0',  // Border subtle / divider
+      800: '#F1F5F9',  // Elevated light background
+      900: '#FFFFFF',  // Card pure white surface
     },
     // Specialty
     pink: {
@@ -108,75 +108,75 @@ export const tokens = {
       500: '#a855f7',  // sequential relationship
     },
 
-    // ─── Semantic Surface Colors ─────────────────────────────────────────
+    // ─── Semantic Surface Colors (Light Theme Government Portal) ─────────
     surface: {
-      base:      '#0A0F1E',  // page background
-      raised:    '#0D1526',  // slightly elevated
-      elevated:  '#1E293B',  // elevated surface
-      card:      '#1A2235',  // card/paper
-      cardHover: '#1E2A42',  // card hover
-      overlay:   'rgba(10, 15, 30, 0.85)',  // nav / modal backdrop
+      base:      '#F8FAFC',  // clean light slate page background
+      raised:    '#FFFFFF',  // pure white elevated card
+      elevated:  '#FFFFFF',  // pure white elevated surface
+      card:      '#FFFFFF',  // card/paper background
+      cardHover: '#F1F5F9',  // card hover state
+      overlay:   'rgba(255, 255, 255, 0.96)',  // nav / modal backdrop
     },
     // ─── Evidence Category Badges ────────────────────────────────────────
     evidence: {
       self_declared: {
-        color: '#94A3B8',
-        bg: 'rgba(148, 163, 184, 0.12)',
-        border: 'rgba(148, 163, 184, 0.3)',
+        color: '#475569',
+        bg: 'rgba(71, 85, 105, 0.08)',
+        border: 'rgba(71, 85, 105, 0.25)',
       },
       document_supported: {
-        color: '#38BDF8',
-        bg: 'rgba(56, 189, 248, 0.12)',
-        border: 'rgba(56, 189, 248, 0.3)',
+        color: '#0284C7',
+        bg: 'rgba(2, 132, 199, 0.08)',
+        border: 'rgba(2, 132, 199, 0.25)',
       },
       official_source: {
-        color: '#10B981',
-        bg: 'rgba(16, 185, 129, 0.12)',
-        border: 'rgba(16, 185, 129, 0.3)',
+        color: '#059669',
+        bg: 'rgba(5, 150, 105, 0.08)',
+        border: 'rgba(5, 150, 105, 0.25)',
       },
       rule_matched: {
-        color: '#A855F7',
-        bg: 'rgba(168, 85, 247, 0.12)',
-        border: 'rgba(168, 85, 247, 0.3)',
+        color: '#7C3AED',
+        bg: 'rgba(124, 58, 237, 0.08)',
+        border: 'rgba(124, 58, 237, 0.25)',
       },
       ai_explanation: {
-        color: '#6C63FF',
-        bg: 'rgba(108, 99, 255, 0.12)',
-        border: 'rgba(108, 99, 255, 0.3)',
+        color: '#4F46E5',
+        bg: 'rgba(79, 70, 229, 0.08)',
+        border: 'rgba(79, 70, 229, 0.25)',
       },
     },
     // ─── Deterministic Match Status ──────────────────────────────────────
     status: {
       match: {
-        color: '#10B981',
-        bg: 'rgba(16, 185, 129, 0.12)',
-        border: 'rgba(16, 185, 129, 0.3)',
+        color: '#059669',
+        bg: 'rgba(5, 150, 105, 0.08)',
+        border: 'rgba(5, 150, 105, 0.25)',
       },
       potential: {
-        color: '#F59E0B',
-        bg: 'rgba(245, 158, 11, 0.12)',
-        border: 'rgba(245, 158, 11, 0.3)',
+        color: '#D97706',
+        bg: 'rgba(217, 119, 6, 0.08)',
+        border: 'rgba(217, 119, 6, 0.25)',
       },
       unknown: {
-        color: '#94A3B8',
-        bg: 'rgba(148, 163, 184, 0.12)',
-        border: 'rgba(148, 163, 184, 0.3)',
+        color: '#64748B',
+        bg: 'rgba(100, 116, 139, 0.08)',
+        border: 'rgba(100, 116, 139, 0.25)',
       },
       notMatch: {
-        color: '#EF4444',
-        bg: 'rgba(239, 68, 68, 0.12)',
-        border: 'rgba(239, 68, 68, 0.3)',
+        color: '#DC2626',
+        bg: 'rgba(220, 38, 38, 0.08)',
+        border: 'rgba(220, 38, 38, 0.25)',
       },
       verification: {
-        color: '#3B82F6',
-        bg: 'rgba(59, 130, 246, 0.12)',
-        border: 'rgba(59, 130, 246, 0.3)',
+        color: '#2563EB',
+        bg: 'rgba(37, 99, 235, 0.08)',
+        border: 'rgba(37, 99, 235, 0.25)',
       },
     },
     border: {
-      subtle:  'rgba(255, 255, 255, 0.06)',
-      default: 'rgba(255, 255, 255, 0.10)',
-      strong:  'rgba(255, 255, 255, 0.20)',
+      subtle:  '#E2E8F0',
+      default: '#CBD5E1',
+      strong:  '#94A3B8',
     },
     glass: {
       default: 'rgba(255, 255, 255, 0.04)',
@@ -245,13 +245,13 @@ export const tokens = {
     full: '9999px',
   },
 
-  // ─── Shadows ───────────────────────────────────────────────────────────────
+  // ─── Shadows (Light Mode Elevation) ───────────────────────────────────────
   shadow: {
-    sm:   '0 2px 8px rgba(0, 0, 0, 0.3)',
-    md:   '0 4px 16px rgba(0, 0, 0, 0.35)',
-    lg:   '0 8px 32px rgba(0, 0, 0, 0.4)',
-    glow: '0 0 40px rgba(108, 99, 255, 0.2)',
-    glowStrong: '0 0 60px rgba(108, 99, 255, 0.4)',
+    sm:   '0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04)',
+    md:   '0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04)',
+    lg:   '0 10px 25px -5px rgba(15, 23, 42, 0.10), 0 8px 10px -6px rgba(15, 23, 42, 0.05)',
+    glow: '0 0 24px rgba(15, 46, 89, 0.10)',
+    glowStrong: '0 0 36px rgba(15, 46, 89, 0.16)',
   },
 
   // ─── Z-index ───────────────────────────────────────────────────────────────
@@ -275,60 +275,60 @@ export const tokens = {
   // ─── Eligibility Status Palette ────────────────────────────────────────────
   status: {
     MATCH: {
-      color: '#10B981',
-      bg:    'rgba(16, 185, 129, 0.12)',
-      border:'rgba(16, 185, 129, 0.25)',
-      glow:  'rgba(16, 185, 129, 0.15)',
+      color: '#059669',
+      bg:    'rgba(5, 150, 105, 0.08)',
+      border:'rgba(5, 150, 105, 0.25)',
+      glow:  'rgba(5, 150, 105, 0.10)',
     },
     POTENTIAL_MATCH: {
-      color: '#F59E0B',
-      bg:    'rgba(245, 158, 11, 0.12)',
-      border:'rgba(245, 158, 11, 0.25)',
-      glow:  'rgba(245, 158, 11, 0.15)',
+      color: '#D97706',
+      bg:    'rgba(217, 119, 6, 0.08)',
+      border:'rgba(217, 119, 6, 0.25)',
+      glow:  'rgba(217, 119, 6, 0.10)',
     },
     UNKNOWN: {
-      color: '#94A3B8',
-      bg:    'rgba(148, 163, 184, 0.10)',
-      border:'rgba(148, 163, 184, 0.20)',
-      glow:  'rgba(148, 163, 184, 0.08)',
+      color: '#64748B',
+      bg:    'rgba(100, 116, 139, 0.08)',
+      border:'rgba(100, 116, 139, 0.20)',
+      glow:  'rgba(100, 116, 139, 0.06)',
     },
     DOES_NOT_MATCH: {
-      color: '#EF4444',
-      bg:    'rgba(239, 68, 68, 0.10)',
-      border:'rgba(239, 68, 68, 0.22)',
-      glow:  'rgba(239, 68, 68, 0.12)',
+      color: '#DC2626',
+      bg:    'rgba(220, 38, 38, 0.08)',
+      border:'rgba(220, 38, 38, 0.22)',
+      glow:  'rgba(220, 38, 38, 0.08)',
     },
     REQUIRES_OFFICIAL_VERIFICATION: {
-      color: '#3B82F6',
-      bg:    'rgba(59, 130, 246, 0.10)',
-      border:'rgba(59, 130, 246, 0.22)',
-      glow:  'rgba(59, 130, 246, 0.12)',
+      color: '#2563EB',
+      bg:    'rgba(37, 99, 235, 0.08)',
+      border:'rgba(37, 99, 235, 0.22)',
+      glow:  'rgba(37, 99, 235, 0.08)',
     },
   },
 
   // ─── Scheme Level Palette ──────────────────────────────────────────────────
   schemeLevel: {
-    central:      { color: '#3B82F6', bg: 'rgba(59, 130, 246, 0.12)', label: '🇮🇳 Central' },
-    state:        { color: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)', label: '🏛️ State' },
-    state_gujarat:{ color: '#EC4899', bg: 'rgba(236, 72, 153, 0.12)', label: '🏴 Gujarat' },
+    central:      { color: '#1E40AF', bg: 'rgba(30, 64, 175, 0.08)', label: '🇮🇳 Central' },
+    state:        { color: '#7C3AED', bg: 'rgba(124, 58, 237, 0.08)', label: '🏛️ State' },
+    state_gujarat:{ color: '#DB2777', bg: 'rgba(219, 39, 119, 0.08)', label: '🏴 Gujarat' },
   },
 
   // ─── Evidence Source Palette ───────────────────────────────────────────────
   evidence: {
-    self_declared:   { color: '#94A3B8', label: 'Self-declared' },
-    document_verified:{ color: '#10B981', label: 'Document-supported' },
-    official_source: { color: '#6C63FF', label: 'Official source' },
-    rule_matched:    { color: '#F59E0B', label: 'Rule matched' },
-    ai_explanation:  { color: '#3B82F6', label: 'AI explanation' },
+    self_declared:   { color: '#64748B', label: 'Self-declared' },
+    document_verified:{ color: '#059669', label: 'Document-supported' },
+    official_source: { color: '#0F2E59', label: 'Official source' },
+    rule_matched:    { color: '#D97706', label: 'Rule matched' },
+    ai_explanation:  { color: '#2563EB', label: 'AI explanation' },
   },
 
   // ─── Gradients ─────────────────────────────────────────────────────────────
   gradient: {
-    brand:   'linear-gradient(135deg, #6C63FF 0%, #3B82F6 50%, #10B981 100%)',
-    hero:    'linear-gradient(135deg, #6C63FF 0%, #4F46E5 100%)',
-    gold:    'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)',
-    surface: 'linear-gradient(135deg, #1A2235 0%, #0D1526 100%)',
-    glow:    'radial-gradient(ellipse at 50% 0%, rgba(108, 99, 255, 0.15) 0%, transparent 70%)',
+    brand:   'linear-gradient(135deg, #0F2E59 0%, #1E40AF 50%, #059669 100%)',
+    hero:    'linear-gradient(135deg, #0F2E59 0%, #1E3A8A 100%)',
+    gold:    'linear-gradient(135deg, #D97706 0%, #DC2626 100%)',
+    surface: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
+    glow:    'radial-gradient(ellipse at 50% 0%, rgba(15, 46, 89, 0.03) 0%, transparent 70%)',
   },
 } as const
 

@@ -136,10 +136,10 @@ class SchemeRule(models.Model):
         ('range', 'Within Range'),
     ]
     IMPORTANCE_CHOICES = [
-        ('mandatory', 'Mandatory — disqualifies if fails'),
-        ('preferred', 'Preferred — reduces score if fails'),
-        ('bonus', 'Bonus — improves score if passes'),
-        ('info', 'Informational — no scoring impact'),
+        ('mandatory', 'Mandatory - disqualifies if fails'),
+        ('preferred', 'Preferred - reduces score if fails'),
+        ('bonus', 'Bonus - improves score if passes'),
+        ('info', 'Informational - no scoring impact'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

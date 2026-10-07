@@ -742,7 +742,7 @@ export const SchemesDashboard: React.FC = () => {
                       <Typography variant="caption" sx={{ color: tokens.color.slate[400], display: 'block', fontSize: '0.7rem' }}>
                         Key Benefit / Assistance Scale:
                       </Typography>
-                      <Typography variant="body2" sx={{ color: tokens.color.emerald[300], fontWeight: 700, fontSize: '0.85rem' }}>
+                      <Typography variant="body2" sx={{ color: '#047857', fontWeight: 800, fontSize: '0.88rem' }}>
                         {scheme.max_benefit_lakhs
                           ? `Up to ₹${scheme.max_benefit_lakhs >= 100 ? `${(scheme.max_benefit_lakhs / 100).toFixed(1)} Cr` : `${scheme.max_benefit_lakhs} Lakhs`}`
                           : '100% Grant Funding'}
@@ -798,12 +798,12 @@ export const SchemesDashboard: React.FC = () => {
                       onClick={() => navigate(`/scheme/${scheme.id || scheme.scheme_code}`)}
                       endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
                       sx={{
-                        color: tokens.color.violet[300],
-                        fontSize: '0.8rem',
+                        color: '#0F2E59',
+                        fontSize: '0.84rem',
                         fontWeight: 700,
                         textTransform: 'none',
                         p: 0,
-                        '&:hover': { color: '#FFFFFF', bgcolor: 'transparent' },
+                        '&:hover': { color: '#1E40AF', bgcolor: 'transparent' },
                       }}
                     >
                       View Details & Checklist

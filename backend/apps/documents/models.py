@@ -29,11 +29,11 @@ class BusinessDocument(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('unverified', 'Unverified — Pending Review'),
+        ('unverified', 'Unverified - Pending Review'),
         ('processing', 'Processing OCR & Fact Extraction'),
-        ('verified', 'Verified — Authenticated by Document Service'),
-        ('rejected', 'Rejected — Discrepancy Found'),
-        ('expired', 'Expired — Document Past Validity Date'),
+        ('verified', 'Verified - Authenticated by Document Service'),
+        ('rejected', 'Rejected - Discrepancy Found'),
+        ('expired', 'Expired - Document Past Validity Date'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -115,9 +115,9 @@ class DocumentFactProposal(models.Model):
     """
     PROPOSAL_STATUS_CHOICES = [
         ('pending_review', 'Pending User Review'),
-        ('accepted', 'Accepted by User — Applied to Profile'),
-        ('rejected', 'Rejected by User — Retained Self-Declared Value'),
-        ('conflict_reported', 'Conflict Reported — Discrepancy Noted'),
+        ('accepted', 'Accepted by User - Applied to Profile'),
+        ('rejected', 'Rejected by User - Retained Self-Declared Value'),
+        ('conflict_reported', 'Conflict Reported - Discrepancy Noted'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

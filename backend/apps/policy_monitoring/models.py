@@ -22,8 +22,8 @@ class ChangeType(models.TextChoices):
 
 
 class MaterialityClassification(models.TextChoices):
-    MATERIAL = 'material', 'Material — Directly Impacts Eligibility / Benefit Quantum'
-    INFORMATIONAL = 'informational', 'Informational — Non-Scoring Procedural Clarification'
+    MATERIAL = 'material', 'Material - Directly Impacts Eligibility / Benefit Quantum'
+    INFORMATIONAL = 'informational', 'Informational - Non-Scoring Procedural Clarification'
 
 
 class ReviewStatus(models.TextChoices):

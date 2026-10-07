@@ -37,3 +37,6 @@ Thumbs.db
 *.pem
 *.key
 secrets/
+
+# Tooling
+powershell.cmd

@@ -122,9 +122,9 @@ class GoalAgent:
             'support_categories': list(set(categories)) or ['capital_subsidy', 'credit_guarantee'],
             'industry_hints': ['manufacturing', 'engineering'],
             'missing_high_impact_info': [
-                'Annual turnover (last financial year) — determines MSME category and scheme limits',
-                'SC/ST or women ownership — qualifies for additional benefits',
-                'Existing bank loan details — needed for credit guarantee schemes',
+                'Annual turnover (last financial year) - determines MSME category and scheme limits',
+                'SC/ST or women ownership - qualifies for additional benefits',
+                'Existing bank loan details - needed for credit guarantee schemes',
             ],
             'rag_queries': [
                 f"MSME capital subsidy machinery purchase scheme',",
@@ -191,7 +191,7 @@ class StrategyAgent:
             f"This should be your first application target.\n\n"
             f"Complementary schemes like {', '.join(names[1:3]) if len(names) > 1 else 'CGTMSE'} can "
             f"be pursued in parallel to stack benefits and reduce financial risk. "
-            f"Note that credit guarantee schemes require a formal loan application first — "
+            f"Note that credit guarantee schemes require a formal loan application first - "
             f"coordinate with your bank early.\n\n"
             f"**Immediate next step**: Register on the Udyam portal if not already done, "
             f"then visit the official scheme portal to initiate your application."

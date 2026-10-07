@@ -9,12 +9,12 @@ from apps.policies.models import Scheme
 
 
 class RelationshipType(models.TextChoices):
-    COMPATIBLE = 'COMPATIBLE', 'Compatible — can be applied together'
-    INCOMPATIBLE = 'INCOMPATIBLE', 'Incompatible — mutually exclusive'
-    PREREQUISITE = 'PREREQUISITE', 'Prerequisite — Scheme A must be obtained before Scheme B'
-    SEQUENTIAL = 'SEQUENTIAL', 'Sequential — Apply in specified sequence'
-    OVERLAPPING = 'OVERLAPPING', 'Overlapping — Subsidies fund the same expenditure/cost head'
-    UNKNOWN = 'UNKNOWN', 'Unknown — Insufficient official statutory evidence'
+    COMPATIBLE = 'COMPATIBLE', 'Compatible - can be applied together'
+    INCOMPATIBLE = 'INCOMPATIBLE', 'Incompatible - mutually exclusive'
+    PREREQUISITE = 'PREREQUISITE', 'Prerequisite - Scheme A must be obtained before Scheme B'
+    SEQUENTIAL = 'SEQUENTIAL', 'Sequential - Apply in specified sequence'
+    OVERLAPPING = 'OVERLAPPING', 'Overlapping - Subsidies fund the same expenditure/cost head'
+    UNKNOWN = 'UNKNOWN', 'Unknown - Insufficient official statutory evidence'
 
 
 class RelationshipDirection(models.TextChoices):

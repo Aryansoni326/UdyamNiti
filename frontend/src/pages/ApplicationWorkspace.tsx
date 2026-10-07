@@ -185,7 +185,7 @@ export default function ApplicationWorkspacePage() {
                 {workspace.scheme_name}
               </Typography>
               <Typography variant="body1" sx={{ color: tokens.colors.textSecondary, mb: 3 }}>
-                Application Preparation Workspace — Consolidates facts, verified documents, and statutory prerequisites before filing on the official government portal.
+                Application Preparation Workspace - Consolidates facts, verified documents, and statutory prerequisites before filing on the official government portal.
               </Typography>
             </Box>
           </Grid>
@@ -410,7 +410,7 @@ export default function ApplicationWorkspacePage() {
                           </Typography>
                         ) : (
                           <Typography variant="caption" sx={{ color: '#F59E0B' }}>
-                            Missing — Document not yet uploaded for this profile
+                            Missing - Document not yet uploaded for this profile
                           </Typography>
                         )
                       }

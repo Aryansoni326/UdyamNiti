@@ -270,12 +270,12 @@ class RuleEngine:
     def _pass_explanation(self, rule: SchemeRule, actual_value: Any) -> str:
         label = rule.display_label or rule.rule_name
         if rule.operator == 'bool_true':
-            return f"✓ {label} — confirmed"
+            return f"✓ {label} - confirmed"
         elif rule.operator in ('gte', 'gt', 'lte', 'lt'):
             return f"✓ {label}: {actual_value} meets requirement {rule.operator} {rule.expected_value}"
         elif rule.operator == 'in':
             return f"✓ {label}: '{actual_value}' is eligible"
-        return f"✓ {label} — requirement met"
+        return f"✓ {label} - requirement met"
 
     def _build_summary(self, status, failures, missing, scheme_name):
         if status == 'MATCH':

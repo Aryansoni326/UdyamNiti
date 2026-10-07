@@ -893,7 +893,7 @@ export const StrategyDashboard: React.FC = () => {
                         <BlockIcon sx={{ color: tokens.color.red[400], fontSize: 18, mt: 0.2 }} />
                         <Box>
                           <Typography variant="subtitle2" sx={{ fontWeight: 700, color: tokens.color.slate[200] }}>
-                            PM Vishwakarma Scheme — <strong>Ineligible</strong>
+                            PM Vishwakarma Scheme - <strong>Ineligible</strong>
                           </Typography>
                           <Typography variant="caption" sx={{ color: tokens.color.slate[400] }}>
                             Reason: Exclusively earmarked for 18 traditional artisan trades (carpenters, blacksmiths). Advanced CNC engineering manufacturing does not satisfy occupation criteria.
@@ -907,7 +907,7 @@ export const StrategyDashboard: React.FC = () => {
                         <WarningAmberIcon sx={{ color: tokens.color.amber[400], fontSize: 18, mt: 0.2 }} />
                         <Box>
                           <Typography variant="subtitle2" sx={{ fontWeight: 700, color: tokens.color.slate[200] }}>
-                            PMEGP Capital Subsidy — <strong>Over Limit for New Machinery Unit</strong>
+                            PMEGP Capital Subsidy - <strong>Over Limit for New Machinery Unit</strong>
                           </Typography>
                           <Typography variant="caption" sx={{ color: tokens.color.slate[400] }}>
                             Reason: PMEGP caps manufacturing project cost at ₹50 Lakhs with maximum subsidy of ₹17.5L, but conflicts with state capital subsidy on duplicate asset billing.

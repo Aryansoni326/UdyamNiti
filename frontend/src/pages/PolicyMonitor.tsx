@@ -40,17 +40,17 @@ export default function PolicyMonitor() {
   }, [])
 
   return (
-    <Box sx={{ bgcolor: '#0A0F1E', minHeight: '100vh', py: 6 }}>
+    <Box sx={{ bgcolor: '#F8FAFC', minHeight: '100vh', py: 6, color: '#0F172A' }}>
       <Container maxWidth="lg">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
           <Box sx={{ mb: 6 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              <NotificationsActiveIcon sx={{ color: '#6C63FF', fontSize: 32 }} />
-              <Typography variant="h3" sx={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800 }}>
+              <NotificationsActiveIcon sx={{ color: '#0F2E59', fontSize: 32 }} />
+              <Typography variant="h3" sx={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, color: '#0F2E59' }}>
                 Policy Monitor
               </Typography>
             </Box>
-            <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 600 }}>
+            <Typography variant="body1" sx={{ color: '#475569', maxWidth: 600 }}>
               Track government scheme changes. When policies change, UdyamNiti re-evaluates your business
               profile and surfaces new opportunities or alerts.
             </Typography>
@@ -60,39 +60,39 @@ export default function PolicyMonitor() {
           {changes.length > 0 && (
             <Box sx={{
               p: 3, mb: 4, borderRadius: 3,
-              background: 'linear-gradient(135deg, rgba(108, 99, 255, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%)',
-              border: '1px solid rgba(108, 99, 255, 0.3)',
+              background: 'linear-gradient(135deg, #EFF6FF 0%, #ECFDF5 100%)',
+              border: '1px solid #BFDBFE',
               display: 'flex', alignItems: 'center', gap: 3,
             }}>
               <Box sx={{
                 width: 48, height: 48, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #6C63FF, #10B981)',
+                background: 'linear-gradient(135deg, #0F2E59, #059669)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
                 <Typography sx={{ fontSize: '1.4rem' }}>🔔</Typography>
               </Box>
               <Box flex={1}>
-                <Typography variant="h6" sx={{ fontFamily: 'Outfit, sans-serif', mb: 0.5 }}>
+                <Typography variant="h6" sx={{ fontFamily: 'Outfit, sans-serif', mb: 0.5, color: '#0F2E59', fontWeight: 800 }}>
                   {changes.length} Policy Change{changes.length !== 1 ? 's' : ''} Detected
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: '#475569' }}>
                   Recent changes to Central and Gujarat MSME schemes may affect your eligibility.
-                  ABC Engineering has been re-evaluated — 2 new opportunities detected.
+                  ABC Engineering has been re-evaluated - 2 new opportunities detected.
                 </Typography>
               </Box>
-              <Button variant="contained" size="small" sx={{ flexShrink: 0 }} id="re-evaluate-btn">
+              <Button variant="contained" size="small" sx={{ flexShrink: 0, bgcolor: '#0F2E59', '&:hover': { bgcolor: '#0A1E3A' } }} id="re-evaluate-btn">
                 Re-evaluate Profile
               </Button>
             </Box>
           )}
 
-          {loading && <CircularProgress />}
+          {loading && <CircularProgress sx={{ color: '#0F2E59' }} />}
           {error && <Alert severity="error">{error}</Alert>}
 
           <Stack spacing={2.5}>
             {changes.map((change, i) => {
               const cfg = CHANGE_TYPE_CONFIG[change.change_type] || {
-                color: '#94A3B8',
+                color: '#64748B',
                 icon: <NotificationsActiveIcon />,
                 label: change.change_type,
               }
@@ -105,10 +105,11 @@ export default function PolicyMonitor() {
                 >
                   <Paper sx={{
                     p: 3, borderRadius: 3,
-                    background: 'rgba(26, 34, 53, 0.8)',
-                    border: `1px solid ${cfg.color}25`,
-                    borderLeft: `3px solid ${cfg.color}`,
-                    '&:hover': { borderColor: `${cfg.color}45` },
+                    background: '#FFFFFF',
+                    border: '1px solid #CBD5E1',
+                    borderLeft: `4px solid ${cfg.color}`,
+                    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+                    '&:hover': { borderColor: cfg.color, boxShadow: '0 4px 14px rgba(15, 23, 42, 0.08)' },
                   }}>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                       <Box sx={{

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   Box,
-  AppBar,
   Toolbar,
   Typography,
   Button,
@@ -13,7 +12,6 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
-  alpha,
   Container,
   Avatar,
   Menu,
@@ -21,6 +19,14 @@ import {
   Divider,
   ListItemIcon,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
+  Card,
+  CardContent,
+  Paper,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
@@ -28,12 +34,24 @@ import PolicyIcon from '@mui/icons-material/Policy'
 import LogoutIcon from '@mui/icons-material/Logout'
 import GridViewIcon from '@mui/icons-material/GridView'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined'
+import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined'
+import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined'
+import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined'
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import DownloadIcon from '@mui/icons-material/Download'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import LanguageIcon from '@mui/icons-material/Language'
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
+import { useLanguage, Language, LANGUAGE_LABELS } from '../i18n'
 
 export const AppShell: React.FC = () => {
   const navigate = useNavigate()
@@ -41,7 +59,21 @@ export const AppShell: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null)
-  const [activeNav, setActiveNav] = useState<string>('services')
+
+  // Language state & translation hook
+  const { lang, setLang, t } = useLanguage()
+  const [langMenuAnchor, setLangMenuAnchor] = useState<null | HTMLElement>(null)
+
+  // Dropdown Menu Anchors
+  const [ministryAnchor, setMinistryAnchor] = useState<null | HTMLElement>(null)
+  const [mediaAnchor, setMediaAnchor] = useState<null | HTMLElement>(null)
+  const [connectAnchor, setConnectAnchor] = useState<null | HTMLElement>(null)
+
+  // Interactive Content Modals
+  const [modalOpen, setModalOpen] = useState<string | null>(null)
+
+  // Accessibility Font Zoom simulation
+  const [fontSizeMultiplier, setFontSizeMultiplier] = useState<number>(1)
 
   useEffect(() => {
     const stored = localStorage.getItem('udyamniti_user')
@@ -56,31 +88,6 @@ export const AppShell: React.FC = () => {
     }
   }, [location.pathname])
 
-  // Track active section on scroll for landing page
-  useEffect(() => {
-    if (location.pathname !== '/') return
-
-    const handleScroll = () => {
-      const sections = ['services', 'benefits', 'faq']
-      const scrollPos = window.scrollY + 200
-
-      for (const sec of sections) {
-        const el = document.getElementById(sec)
-        if (el) {
-          const top = el.offsetTop
-          const height = el.offsetHeight
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveNav(sec)
-            break
-          }
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [location.pathname])
-
   const handleLogout = () => {
     localStorage.removeItem('udyamniti_user')
     setCurrentUser(null)
@@ -90,316 +97,162 @@ export const AppShell: React.FC = () => {
   }
 
   const isLandingPage = location.pathname === '/'
+  const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/schemes')
+  const isMonitor = location.pathname.startsWith('/monitor')
 
-  const scrollToSection = (sectionId: string) => {
+  const openModal = (id: string) => {
+    setMinistryAnchor(null)
+    setMediaAnchor(null)
+    setConnectAnchor(null)
     setMobileOpen(false)
-    setActiveNav(sectionId)
-    if (location.pathname !== '/') {
-      navigate(`/#${sectionId}`)
-      setTimeout(() => {
-        const el = document.getElementById(sectionId)
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-      }, 150)
-    } else {
-      const el = document.getElementById(sectionId)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
+    setModalOpen(id)
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#0A0F1E' }}>
-      {/* ─── WORLD-CLASS SAAS FLOATING GLASS NAVBAR ─── */}
-      <AppBar
-        position="sticky"
-        elevation={0}
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#F8FAFC' }}>
+      {/* ─── 1. TOP HEADER BAR: UDYAMNITI LOGO (LEFT) & REGISTER / SIGN IN (RIGHT) ─── */}
+      <Box
         sx={{
-          bgcolor: 'rgba(10, 15, 30, 0.78)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          bgcolor: '#FFFFFF',
+          borderBottom: '1px solid #E2E8F0',
+          py: 1.5,
+          px: { xs: 2, md: 4 },
+          zIndex: 1300,
         }}
       >
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-          <Toolbar
-            disableGutters
-            sx={{
-              height: 64,
-              minHeight: '64px !important',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
+        <Container maxWidth="xl" disableGutters>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {/* ─── BRAND LOGO & SAAS BADGE ─── */}
-            <Box
+            {/* Top Left: UdyamNiti Logo */}
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1.5}
+              sx={{ cursor: 'pointer', userSelect: 'none' }}
               onClick={() => navigate('/')}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                cursor: 'pointer',
-                userSelect: 'none',
-              }}
             >
               <Box
                 sx={{
-                  width: 34,
-                  height: 34,
+                  width: 40,
+                  height: 40,
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #3B82F6 100%)',
+                  bgcolor: '#0F2E59',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 2px 10px rgba(99, 102, 241, 0.35)',
-                  transition: 'transform 0.2s',
-                  '&:hover': { transform: 'scale(1.04)' },
+                  boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
                 }}
               >
-                <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 20 }} />
+                <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 24 }} />
               </Box>
-
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Box>
                 <Typography
                   variant="h6"
-                  component="span"
                   sx={{
                     fontFamily: tokens.font.heading,
                     fontWeight: 800,
-                    fontSize: '1.25rem',
-                    letterSpacing: '-0.025em',
-                    color: '#FFFFFF',
-                    lineHeight: 1,
+                    color: '#0F2E59',
+                    fontSize: { xs: '1.2rem', sm: '1.35rem' },
+                    lineHeight: 1.1,
+                    letterSpacing: '-0.02em',
                   }}
                 >
-                  Udyam<Box component="span" sx={{ color: '#818CF8' }}>Niti</Box>
+                  Udyam<Box component="span" sx={{ color: '#E65100' }}>Niti</Box>
                 </Typography>
-
-                <Chip
-                  label="GovTech AI"
-                  size="small"
-                  sx={{
-                    height: 19,
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.04em',
-                    fontFamily: tokens.font.mono,
-                    bgcolor: 'rgba(99, 102, 241, 0.12)',
-                    color: '#A5B4FC',
-                    border: '1px solid rgba(99, 102, 241, 0.28)',
-                    display: { xs: 'none', sm: 'inline-flex' },
-                  }}
-                />
-              </Stack>
-            </Box>
-
-            {/* ─── CENTERED SAAS PILL NAVIGATION (SERVICES, BENEFITS, FAQS ONLY) ─── */}
-            {isLandingPage ? (
-              <Box
-                sx={{
-                  display: { xs: 'none', md: 'flex' },
-                  alignItems: 'center',
-                  bgcolor: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '9999px',
-                  p: '3px 6px',
-                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.04)',
-                }}
-              >
-                <Box
-                  component="button"
-                  onClick={() => scrollToSection('services')}
-                  sx={{
-                    background: activeNav === 'services' ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                    border: 'none',
-                    borderRadius: '9999px',
-                    px: 2,
-                    py: 0.7,
-                    color: activeNav === 'services' ? '#FFFFFF' : '#94A3B8',
-                    fontWeight: activeNav === 'services' ? 600 : 500,
-                    fontSize: '0.84rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.6,
-                    '&:hover': {
-                      color: '#FFFFFF',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                    },
-                  }}
-                >
-                  Services
-                </Box>
-
-                <Box
-                  component="button"
-                  onClick={() => scrollToSection('benefits')}
-                  sx={{
-                    background: activeNav === 'benefits' ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                    border: 'none',
-                    borderRadius: '9999px',
-                    px: 2,
-                    py: 0.7,
-                    color: activeNav === 'benefits' ? '#FFFFFF' : '#94A3B8',
-                    fontWeight: activeNav === 'benefits' ? 600 : 500,
-                    fontSize: '0.84rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.6,
-                    '&:hover': {
-                      color: '#FFFFFF',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                    },
-                  }}
-                >
-                  Benefits
-                </Box>
-
-                <Box
-                  component="button"
-                  onClick={() => scrollToSection('faq')}
-                  sx={{
-                    background: activeNav === 'faq' ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                    border: 'none',
-                    borderRadius: '9999px',
-                    px: 2,
-                    py: 0.7,
-                    color: activeNav === 'faq' ? '#FFFFFF' : '#94A3B8',
-                    fontWeight: activeNav === 'faq' ? 600 : 500,
-                    fontSize: '0.84rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.6,
-                    '&:hover': {
-                      color: '#FFFFFF',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                    },
-                  }}
-                >
-                  FAQs
-                </Box>
-              </Box>
-            ) : (
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                sx={{
-                  display: { xs: 'none', md: 'flex' },
-                  bgcolor: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '9999px',
-                  p: '3px 6px',
-                }}
-              >
-                <Button
-                  size="small"
-                  onClick={() => navigate('/')}
-                  sx={{
-                    color: '#94A3B8',
-                    fontSize: '0.82rem',
-                    textTransform: 'none',
-                    fontWeight: 500,
-                    borderRadius: '9999px',
-                    px: 1.8,
-                    py: 0.5,
-                    '&:hover': { color: '#FFFFFF', bgcolor: 'rgba(255, 255, 255, 0.08)' },
-                  }}
-                >
-                  Landing
-                </Button>
-                <Button
-                  size="small"
-                  onClick={() => navigate('/dashboard')}
-                  sx={{
-                    color: location.pathname === '/dashboard' ? '#FFFFFF' : '#94A3B8',
-                    bgcolor: location.pathname === '/dashboard' ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-                    fontSize: '0.82rem',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    borderRadius: '9999px',
-                    px: 1.8,
-                    py: 0.5,
-                    '&:hover': { color: '#FFFFFF', bgcolor: 'rgba(255, 255, 255, 0.08)' },
-                  }}
-                >
-                  Schemes Dashboard
-                </Button>
-                <Button
-                  size="small"
-                  onClick={() => navigate('/monitor')}
-                  sx={{
-                    color: location.pathname === '/monitor' ? '#FFFFFF' : '#94A3B8',
-                    bgcolor: location.pathname === '/monitor' ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-                    fontSize: '0.82rem',
-                    textTransform: 'none',
-                    fontWeight: 500,
-                    borderRadius: '9999px',
-                    px: 1.8,
-                    py: 0.5,
-                    '&:hover': { color: '#FFFFFF', bgcolor: 'rgba(255, 255, 255, 0.08)' },
-                  }}
-                >
-                  Gazette Radar
-                </Button>
-              </Stack>
-            )}
-
-            {/* ─── RIGHT SECTION: STATUS PILL + AUTH BUTTONS ─── */}
-            <Stack direction="row" spacing={1.8} alignItems="center">
-              {/* SaaS Live Trust Indicator */}
-              <Box
-                sx={{
-                  display: { xs: 'none', lg: 'flex' },
-                  alignItems: 'center',
-                  gap: 0.9,
-                  px: 1.4,
-                  py: 0.5,
-                  borderRadius: '9999px',
-                  bgcolor: 'rgba(16, 185, 129, 0.08)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                }}
-              >
-                <FiberManualRecordIcon
-                  sx={{
-                    color: '#10B981',
-                    fontSize: 10,
-                    filter: 'drop-shadow(0 0 5px #10B981)',
-                  }}
-                />
                 <Typography
                   variant="caption"
                   sx={{
-                    color: '#6EE7B7',
-                    fontWeight: 600,
+                    color: '#64748B',
                     fontSize: '0.72rem',
+                    fontWeight: 600,
                     letterSpacing: '0.02em',
+                    display: 'block',
                   }}
                 >
-                  Gazette Live
+                  {t('tagline')}
                 </Typography>
               </Box>
+            </Stack>
 
-              {/* Hairline vertical divider */}
-              <Box
+            {/* Top Right: Language Option Beside Register & Sign In Buttons */}
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              {/* ─── LANGUAGE SELECTOR BUTTON (English / Hindi / Gujarati) ─── */}
+              <Button
+                id="language-selector-button"
+                onClick={(e) => setLangMenuAnchor(e.currentTarget)}
+                variant="outlined"
+                size="small"
+                startIcon={<LanguageIcon sx={{ fontSize: 18, color: '#0F2E59' }} />}
+                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16, color: '#64748B' }} />}
                 sx={{
-                  display: { xs: 'none', lg: 'block' },
-                  width: '1px',
-                  height: 18,
-                  bgcolor: 'rgba(255, 255, 255, 0.12)',
+                  color: '#0F2E59',
+                  borderColor: '#CBD5E1',
+                  bgcolor: '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  textTransform: 'none',
+                  px: 1.5,
+                  py: 0.6,
+                  borderRadius: '8px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                  transition: 'all 0.15s ease',
+                  '&:hover': {
+                    borderColor: '#0F2E59',
+                    bgcolor: '#F8FAFC',
+                  },
                 }}
-              />
+              >
+                {LANGUAGE_LABELS[lang]}
+              </Button>
+              <Menu
+                id="language-menu"
+                anchorEl={langMenuAnchor}
+                open={Boolean(langMenuAnchor)}
+                onClose={() => setLangMenuAnchor(null)}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 160,
+                    borderRadius: '8px',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.12)',
+                    p: 0.5,
+                  },
+                }}
+              >
+                {(['en', 'hi', 'gu'] as Language[]).map((l) => (
+                  <MenuItem
+                    key={l}
+                    selected={lang === l}
+                    onClick={() => {
+                      setLang(l)
+                      setLangMenuAnchor(null)
+                    }}
+                    sx={{
+                      py: 1,
+                      px: 2,
+                      borderRadius: '6px',
+                      fontWeight: lang === l ? 700 : 500,
+                      color: lang === l ? '#0F2E59' : '#334155',
+                      bgcolor: lang === l ? '#F1F5F9' : 'transparent',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      '&:hover': {
+                        bgcolor: '#F8FAFC',
+                      },
+                    }}
+                  >
+                    <span>{LANGUAGE_LABELS[l]}</span>
+                    {lang === l && <CheckCircleIcon sx={{ fontSize: 16, color: '#0F2E59', ml: 1.5 }} />}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               {currentUser ? (
-                /* Authenticated State */
                 <Stack direction="row" spacing={1.5} alignItems="center">
                   <Button
                     onClick={() => navigate('/dashboard')}
@@ -407,21 +260,18 @@ export const AppShell: React.FC = () => {
                     size="small"
                     startIcon={<GridViewIcon sx={{ fontSize: 16 }} />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                      color: '#FFFFFF',
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
+                      bgcolor: '#0F2E59',
+                      fontSize: '0.84rem',
+                      fontWeight: 700,
                       borderRadius: '8px',
                       textTransform: 'none',
                       px: 2,
-                      py: 0.65,
-                      boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
-                      '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)' },
+                      py: 0.8,
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
-                    Dashboard
+                    {t('dashboard')}
                   </Button>
-
                   <Box
                     onClick={(e) => setUserMenuAnchor(e.currentTarget)}
                     sx={{
@@ -431,414 +281,954 @@ export const AppShell: React.FC = () => {
                       cursor: 'pointer',
                       p: '3px 10px 3px 4px',
                       borderRadius: '9999px',
-                      bgcolor: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      transition: 'all 0.2s',
-                      '&:hover': {
-                        borderColor: 'rgba(255, 255, 255, 0.25)',
-                        bgcolor: 'rgba(255, 255, 255, 0.08)',
-                      },
+                      border: '1px solid #CBD5E1',
+                      bgcolor: '#F8FAFC',
                     }}
                   >
-                    <Avatar
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        bgcolor: '#6366F1',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                      }}
-                    >
+                    <Avatar sx={{ width: 30, height: 30, bgcolor: '#0F2E59', fontSize: '0.75rem', fontWeight: 700 }}>
                       {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                     </Avatar>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: '#F1F5F9',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        display: { xs: 'none', sm: 'block' },
-                        maxWidth: 130,
-                      }}
-                      noWrap
-                    >
+                    <Typography variant="body2" sx={{ color: '#0F172A', fontWeight: 700, maxWidth: 120 }} noWrap>
                       {currentUser.name || 'Enterprise'}
                     </Typography>
                   </Box>
-
                   <Menu
                     anchorEl={userMenuAnchor}
                     open={Boolean(userMenuAnchor)}
                     onClose={() => setUserMenuAnchor(null)}
-                    PaperProps={{
-                      sx: {
-                        mt: 1.2,
-                        bgcolor: '#1A2235',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
-                        minWidth: 200,
-                        boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
-                      },
-                    }}
+                    PaperProps={{ sx: { mt: 1, minWidth: 200, borderRadius: '8px', border: '1px solid #E2E8F0' } }}
                   >
-                    <Box sx={{ px: 2, py: 1.2 }}>
-                      <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', fontSize: '0.72rem' }}>
-                        Signed in as
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>
+                        {t('loggedInAs')}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.85rem' }} noWrap>
+                      <Typography variant="body2" sx={{ color: '#0F2E59', fontWeight: 700 }} noWrap>
                         {currentUser.email || 'director@msme.in'}
                       </Typography>
                     </Box>
-                    <Divider sx={{ my: 0.5, borderColor: 'rgba(255, 255, 255, 0.08)' }} />
-                    <MenuItem
-                      onClick={() => {
-                        navigate('/dashboard')
-                        setUserMenuAnchor(null)
-                      }}
-                      sx={{ color: '#F1F5F9', fontSize: '0.85rem', py: 1 }}
-                    >
-                      <ListItemIcon sx={{ color: '#818CF8', minWidth: 28 }}>
+                    <Divider />
+                    <MenuItem onClick={() => { navigate('/dashboard'); setUserMenuAnchor(null); }}>
+                      <ListItemIcon sx={{ minWidth: 28, color: '#0F2E59' }}>
                         <GridViewIcon fontSize="small" />
                       </ListItemIcon>
-                      Schemes Dashboard
+                      {t('schemesDashboard')}
                     </MenuItem>
-                    <Divider sx={{ my: 0.5, borderColor: 'rgba(255, 255, 255, 0.08)' }} />
-                    <MenuItem
-                      onClick={handleLogout}
-                      sx={{ color: '#F87171', fontSize: '0.85rem', py: 1 }}
-                    >
-                      <ListItemIcon sx={{ color: '#F87171', minWidth: 28 }}>
+                    <MenuItem onClick={handleLogout} sx={{ color: '#DC2626' }}>
+                      <ListItemIcon sx={{ minWidth: 28, color: '#DC2626' }}>
                         <LogoutIcon fontSize="small" />
                       </ListItemIcon>
-                      Sign Out
+                      {t('signOut')}
                     </MenuItem>
                   </Menu>
                 </Stack>
               ) : (
-                /* Unauthenticated State: Sign In & Register */
-                <Stack direction="row" spacing={1.2} alignItems="center">
+                <Stack direction="row" spacing={1.5} alignItems="center">
                   <Button
                     onClick={() => navigate('/login')}
                     sx={{
-                      color: '#CBD5E1',
-                      fontSize: '0.86rem',
-                      fontWeight: 600,
+                      color: '#0F2E59',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
                       textTransform: 'none',
-                      px: 1.8,
+                      px: 2.2,
                       py: 0.7,
                       borderRadius: '8px',
-                      transition: 'all 0.15s ease',
-                      '&:hover': {
-                        color: '#FFFFFF',
-                        bgcolor: 'rgba(255, 255, 255, 0.06)',
-                      },
+                      border: '1.5px solid #CBD5E1',
+                      bgcolor: '#FFFFFF',
+                      '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
                     }}
                   >
-                    Sign In
+                    {t('signIn')}
                   </Button>
-
                   <Button
                     variant="contained"
                     onClick={() => navigate('/register')}
-                    endIcon={<ArrowForwardIcon sx={{ fontSize: '13px !important' }} />}
+                    endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important' }} />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      bgcolor: '#0F2E59',
                       color: '#FFFFFF',
-                      fontSize: '0.86rem',
-                      fontWeight: 600,
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
                       textTransform: 'none',
-                      px: 2.2,
-                      py: 0.75,
+                      px: 2.4,
+                      py: 0.7,
                       borderRadius: '8px',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(99, 102, 241, 0.35)',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 20px rgba(99, 102, 241, 0.5)',
-                        transform: 'translateY(-1px)',
-                      },
+                      boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
-                    Register
+                    {t('register')}
                   </Button>
                 </Stack>
               )}
 
-              {/* Mobile Menu Icon */}
+              {/* Mobile Menu Hamburger */}
               <IconButton
                 onClick={() => setMobileOpen(!mobileOpen)}
-                sx={{
-                  display: { md: 'none' },
-                  color: '#CBD5E1',
-                  p: 0.8,
-                  borderRadius: '8px',
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
-                }}
+                sx={{ display: { md: 'none' }, color: '#0F2E59' }}
               >
-                {mobileOpen ? <CloseIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
+                {mobileOpen ? <CloseIcon /> : <MenuIcon />}
               </IconButton>
             </Stack>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ─── 3. BIG MAIN NAVBAR (AS IN MSME.GOV.IN) ─── */}
+      <Box
+        component="nav"
+        sx={{
+          bgcolor: '#FFFFFF',
+          borderBottom: '2px solid #E2E8F0',
+          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1200,
+        }}
+      >
+        <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2, md: 3 } }}>
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: { xs: '54px !important', md: '58px !important' },
+              height: { xs: 54, md: 58 },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            {/* Desktop Navigation Items */}
+            <Stack
+              direction="row"
+              spacing={0.5}
+              alignItems="center"
+              sx={{ display: { xs: 'none', md: 'flex' }, height: '100%' }}
+            >
+              {/* 1. Home - Active Indicator in Maroon/Red */}
+              <Box
+                onClick={() => navigate('/')}
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  px: 2.2,
+                  cursor: 'pointer',
+                  position: 'relative',
+                  fontWeight: 800,
+                  fontSize: '0.96rem',
+                  color: isLandingPage ? '#8B0000' : '#1E293B',
+                  letterSpacing: '0.01em',
+                  transition: 'all 0.15s ease',
+                  '&:after': isLandingPage
+                    ? {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        bgcolor: '#8B0000',
+                        borderTopLeftRadius: '3px',
+                        borderTopRightRadius: '3px',
+                      }
+                    : {},
+                  '&:hover': {
+                    color: '#8B0000',
+                    bgcolor: '#F8FAFC',
+                  },
+                }}
+              >
+                {t('home')}
+              </Box>
+
+              {/* 2. Ministry ▾ (About us, Our Performance) */}
+              <Button
+                onClick={(e) => setMinistryAnchor(e.currentTarget)}
+                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  height: '100%',
+                  px: 2,
+                  color: '#1E293B',
+                  fontWeight: 700,
+                  fontSize: '0.94rem',
+                  textTransform: 'none',
+                  borderRadius: 0,
+                  '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
+                }}
+              >
+                {t('ministry')}
+              </Button>
+              <Menu
+                anchorEl={ministryAnchor}
+                open={Boolean(ministryAnchor)}
+                onClose={() => setMinistryAnchor(null)}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 240,
+                    borderRadius: '8px',
+                    boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
+                    border: '1px solid #E2E8F0',
+                  },
+                }}
+              >
+                <MenuItem onClick={() => openModal('about_us')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
+                    <InfoOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('aboutUs')}
+                    secondary={t('aboutUsDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem onClick={() => openModal('performance')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#059669' }}>
+                    <TrendingUpIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('ourPerformance')}
+                    secondary={t('ourPerformanceDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+              </Menu>
+
+              {/* 3. Media ▾ (Photos, Videos, Brochures) */}
+              <Button
+                onClick={(e) => setMediaAnchor(e.currentTarget)}
+                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  height: '100%',
+                  px: 2,
+                  color: '#1E293B',
+                  fontWeight: 700,
+                  fontSize: '0.94rem',
+                  textTransform: 'none',
+                  borderRadius: 0,
+                  '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
+                }}
+              >
+                {t('media')}
+              </Button>
+              <Menu
+                anchorEl={mediaAnchor}
+                open={Boolean(mediaAnchor)}
+                onClose={() => setMediaAnchor(null)}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 260,
+                    borderRadius: '8px',
+                    boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
+                    border: '1px solid #E2E8F0',
+                  },
+                }}
+              >
+                <MenuItem onClick={() => openModal('photos')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0284C7' }}>
+                    <PhotoCameraOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('photos')}
+                    secondary={t('photosDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+                <MenuItem onClick={() => openModal('videos')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#DC2626' }}>
+                    <VideocamOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('videos')}
+                    secondary={t('videosDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem onClick={() => openModal('brochures')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#D97706' }}>
+                    <PictureAsPdfOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('brochures')}
+                    secondary={t('brochuresDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+              </Menu>
+
+              {/* 4. Connect ▾ (Contact us, RTI) */}
+              <Button
+                onClick={(e) => setConnectAnchor(e.currentTarget)}
+                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  height: '100%',
+                  px: 2,
+                  color: '#1E293B',
+                  fontWeight: 700,
+                  fontSize: '0.94rem',
+                  textTransform: 'none',
+                  borderRadius: 0,
+                  '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
+                }}
+              >
+                {t('connect')}
+              </Button>
+              <Menu
+                anchorEl={connectAnchor}
+                open={Boolean(connectAnchor)}
+                onClose={() => setConnectAnchor(null)}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 260,
+                    borderRadius: '8px',
+                    boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
+                    border: '1px solid #E2E8F0',
+                  },
+                }}
+              >
+                <MenuItem onClick={() => openModal('contact_us')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#10B981' }}>
+                    <PhoneInTalkOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('contactUs')}
+                    secondary={t('contactUsDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem onClick={() => openModal('rti')} sx={{ py: 1.2 }}>
+                  <ListItemIcon sx={{ minWidth: 32, color: '#7C3AED' }}>
+                    <GavelOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('rti')}
+                    secondary={t('rtiDesc')}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F2E59' }}
+                    secondaryTypographyProps={{ fontSize: '0.74rem' }}
+                  />
+                </MenuItem>
+              </Menu>
+
+              {/* 5. Schemes Dashboard Link */}
+              <Button
+                onClick={() => navigate('/dashboard')}
+                sx={{
+                  height: '100%',
+                  px: 2,
+                  color: isDashboard ? '#0F2E59' : '#1E293B',
+                  fontWeight: isDashboard ? 800 : 700,
+                  fontSize: '0.94rem',
+                  textTransform: 'none',
+                  borderRadius: 0,
+                  position: 'relative',
+                  '&:after': isDashboard
+                    ? {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        bgcolor: '#0F2E59',
+                      }
+                    : {},
+                  '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
+                }}
+              >
+                {t('schemesDashboard')}
+              </Button>
+
+              {/* 6. Gazette Radar Link */}
+              <Button
+                onClick={() => navigate('/monitor')}
+                sx={{
+                  height: '100%',
+                  px: 2,
+                  color: isMonitor ? '#0F2E59' : '#1E293B',
+                  fontWeight: isMonitor ? 800 : 700,
+                  fontSize: '0.94rem',
+                  textTransform: 'none',
+                  borderRadius: 0,
+                  position: 'relative',
+                  '&:after': isMonitor
+                    ? {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        bgcolor: '#0F2E59',
+                      }
+                    : {},
+                  '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
+                }}
+              >
+                {t('gazetteRadar')}
+              </Button>
+            </Stack>
+
+            {/* Quick Portal Action on Right of Navbar */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={t('verifiedSchemesBadge')}
+                size="small"
+                sx={{
+                  bgcolor: '#ECFDF5',
+                  color: '#065F46',
+                  fontWeight: 700,
+                  border: '1px solid #A7F3D0',
+                  fontSize: '0.76rem',
+                }}
+              />
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => navigate('/dashboard')}
+                endIcon={<OpenInNewIcon sx={{ fontSize: '13px !important' }} />}
+                sx={{
+                  borderColor: '#0F2E59',
+                  color: '#0F2E59',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  px: 1.5,
+                  py: 0.4,
+                  borderRadius: '6px',
+                  '&:hover': { bgcolor: '#F1F5F9' },
+                }}
+              >
+                {t('browseCatalog')}
+              </Button>
+            </Box>
+
+            {/* Mobile Branding Bar */}
+            <Typography variant="subtitle2" sx={{ display: { xs: 'block', md: 'none' }, fontWeight: 800, color: '#0F2E59' }}>
+              Udyam<Box component="span" sx={{ color: '#E65100' }}>Niti</Box> Navigation
+            </Typography>
           </Toolbar>
         </Container>
-      </AppBar>
+      </Box>
 
-      {/* ─── ULTRA-CLEAN MOBILE DRAWER ─── */}
+      {/* ─── 4. MOBILE DRAWER MENU ─── */}
       <Drawer
         anchor="right"
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         PaperProps={{
           sx: {
-            width: 280,
-            bgcolor: '#0E1626',
-            backgroundImage: 'radial-gradient(ellipse at 80% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 70%)',
-            borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
-            p: 2.5,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
+            width: 290,
+            bgcolor: '#FFFFFF',
+            borderLeft: '1px solid #E2E8F0',
+            p: 2,
           },
         }}
       >
-        <Box>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-            <Stack direction="row" alignItems="center" spacing={1.2}>
-              <Box
-                sx={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 18 }} />
-              </Box>
-              <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.15rem' }}>
-                Udyam<Box component="span" sx={{ color: '#818CF8' }}>Niti</Box>
-              </Typography>
-            </Stack>
-            <IconButton size="small" onClick={() => setMobileOpen(false)} sx={{ color: '#94A3B8' }}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Stack>
-
-          {/* Live Status inside mobile drawer */}
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.8,
-              px: 1.2,
-              py: 0.4,
-              borderRadius: '9999px',
-              bgcolor: 'rgba(16, 185, 129, 0.08)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              mb: 3,
-            }}
-          >
-            <FiberManualRecordIcon sx={{ color: '#10B981', fontSize: 8 }} />
-            <Typography variant="caption" sx={{ color: '#6EE7B7', fontWeight: 600, fontSize: '0.7rem' }}>
-              Gazette Intelligence Active
-            </Typography>
-          </Box>
-
-          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.05em', px: 1, mb: 1, display: 'block' }}>
-            NAVIGATION
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+            Udyam<Box component="span" sx={{ color: '#E65100' }}>Niti</Box>
           </Typography>
-
-          <List sx={{ p: 0 }}>
-            {isLandingPage ? (
-              <>
-                <ListItem disablePadding sx={{ mb: 1 }}>
-                  <ListItemButton
-                    onClick={() => scrollToSection('services')}
-                    sx={{
-                      borderRadius: '8px',
-                      color: activeNav === 'services' ? '#FFFFFF' : '#CBD5E1',
-                      bgcolor: activeNav === 'services' ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32, color: '#818CF8' }}>
-                      <AutoAwesomeIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Services" primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 600 }} />
-                  </ListItemButton>
-                </ListItem>
-
-                <ListItem disablePadding sx={{ mb: 1 }}>
-                  <ListItemButton
-                    onClick={() => scrollToSection('benefits')}
-                    sx={{
-                      borderRadius: '8px',
-                      color: activeNav === 'benefits' ? '#FFFFFF' : '#CBD5E1',
-                      bgcolor: activeNav === 'benefits' ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32, color: '#34D399' }}>
-                      <VerifiedUserIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Benefits" primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 600 }} />
-                  </ListItemButton>
-                </ListItem>
-
-                <ListItem disablePadding sx={{ mb: 1 }}>
-                  <ListItemButton
-                    onClick={() => scrollToSection('faq')}
-                    sx={{
-                      borderRadius: '8px',
-                      color: activeNav === 'faq' ? '#FFFFFF' : '#CBD5E1',
-                      bgcolor: activeNav === 'faq' ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32, color: '#FBBF24' }}>
-                      <HelpOutlineIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="FAQs" primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 600 }} />
-                  </ListItemButton>
-                </ListItem>
-              </>
-            ) : (
-              <>
-                <ListItem disablePadding sx={{ mb: 1 }}>
-                  <ListItemButton onClick={() => { navigate('/'); setMobileOpen(false) }} sx={{ borderRadius: '8px', color: '#E2E8F0' }}>
-                    <ListItemText primary="Landing Page" />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding sx={{ mb: 1 }}>
-                  <ListItemButton onClick={() => { navigate('/dashboard'); setMobileOpen(false) }} sx={{ borderRadius: '8px', color: '#E2E8F0' }}>
-                    <ListItemText primary="Schemes Dashboard" />
-                  </ListItemButton>
-                </ListItem>
-              </>
-            )}
-          </List>
-        </Box>
-
-        {/* Bottom Drawer CTAs */}
-        <Box sx={{ pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          {currentUser ? (
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={handleLogout}
-              sx={{ borderColor: '#EF4444', color: '#EF4444', textTransform: 'none', borderRadius: '8px' }}
-            >
-              Sign Out
-            </Button>
-          ) : (
-            <Stack spacing={1.5}>
+          <IconButton onClick={() => setMobileOpen(false)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Stack>
+        {/* Mobile Language Selector */}
+        <Box sx={{ mb: 2, p: 1.5, bgcolor: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 800, display: 'block', mb: 1 }}>
+            {t('selectLanguage')}
+          </Typography>
+          <Stack direction="row" spacing={1}>
+            {(['en', 'hi', 'gu'] as Language[]).map((l) => (
               <Button
-                fullWidth
-                variant="outlined"
-                onClick={() => { navigate('/login'); setMobileOpen(false) }}
+                key={l}
+                size="small"
+                variant={lang === l ? 'contained' : 'outlined'}
+                onClick={() => setLang(l)}
                 sx={{
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#FFFFFF',
+                  flex: 1,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  py: 0.5,
+                  px: 0.5,
+                  minWidth: 0,
+                  bgcolor: lang === l ? '#0F2E59' : '#FFFFFF',
+                  borderColor: lang === l ? '#0F2E59' : '#CBD5E1',
+                  color: lang === l ? '#FFFFFF' : '#334155',
                   textTransform: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  py: 1,
                 }}
               >
-                Sign In
+                {LANGUAGE_LABELS[l]}
               </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => { navigate('/register'); setMobileOpen(false) }}
-                endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
-                sx={{
-                  background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                  color: '#FFFFFF',
-                  textTransform: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  py: 1,
-                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                }}
-              >
-                Register Enterprise
-              </Button>
-            </Stack>
-          )}
+            ))}
+          </Stack>
         </Box>
+
+        <List disablePadding>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => { navigate('/'); setMobileOpen(false); }}>
+              <ListItemText primary={t('home')} primaryTypographyProps={{ fontWeight: 700, color: '#8B0000' }} />
+            </ListItemButton>
+          </ListItem>
+
+          <Typography variant="caption" sx={{ px: 2, pt: 1.5, display: 'block', color: '#64748B', fontWeight: 800 }}>
+            {t('ministry').toUpperCase()}
+          </Typography>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('about_us')}>
+              <ListItemText primary={t('aboutUs')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('performance')}>
+              <ListItemText primary={t('ourPerformance')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+
+          <Typography variant="caption" sx={{ px: 2, pt: 1.5, display: 'block', color: '#64748B', fontWeight: 800 }}>
+            {t('media').toUpperCase()}
+          </Typography>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('photos')}>
+              <ListItemText primary={t('photos')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('videos')}>
+              <ListItemText primary={t('videos')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('brochures')}>
+              <ListItemText primary={t('brochures')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+
+          <Typography variant="caption" sx={{ px: 2, pt: 1.5, display: 'block', color: '#64748B', fontWeight: 800 }}>
+            {t('connect').toUpperCase()}
+          </Typography>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('contact_us')}>
+              <ListItemText primary={t('contactUs')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => openModal('rti')}>
+              <ListItemText primary={t('rti')} primaryTypographyProps={{ fontSize: '0.9rem', color: '#1E293B' }} />
+            </ListItemButton>
+          </ListItem>
+
+          <Divider sx={{ my: 1.5 }} />
+
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}>
+              <ListItemText primary={t('schemesDashboard')} primaryTypographyProps={{ fontWeight: 700, color: '#0F2E59' }} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => { navigate('/monitor'); setMobileOpen(false); }}>
+              <ListItemText primary={t('gazetteRadar')} primaryTypographyProps={{ fontWeight: 700, color: '#0F2E59' }} />
+            </ListItemButton>
+          </ListItem>
+        </List>
       </Drawer>
+
+      {/* ─── 5. INTERACTIVE CONTENT MODALS FOR DROPDOWN ITEMS ─── */}
+
+      {/* MODAL 1: About Us */}
+      <Dialog open={modalOpen === 'about_us'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          About Ministry of Micro, Small & Medium Enterprises
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body1" sx={{ color: '#1E293B', mb: 2, lineHeight: 1.7 }}>
+            The Ministry of Micro, Small and Medium Enterprises (M/o MSME) envisions a vibrant MSME sector by promoting growth and development of the MSME Sector, including Khadi, Village and Coir Industries, in cooperation with concerned Ministries/Departments, State Governments and other Stakeholders.
+          </Typography>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
+                  Our Mission
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#475569' }}>
+                  Promote growth and development of technically sound, competitive and sustainable micro, small and medium enterprises across manufacturing and services.
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
+                  Key Divisions & Organizations
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#475569' }}>
+                  • Development Commissioner (MSME)<br />
+                  • Khadi and Village Industries Commission (KVIC)<br />
+                  • Coir Board & National Small Industries Corp (NSIC)<br />
+                  • National Institute for MSME (ni-msme)
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 2: Our Performance */}
+      <Dialog open={modalOpen === 'performance'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#059669', color: '#FFFFFF', fontWeight: 800 }}>
+          Our Performance & National MSME Milestones
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body1" sx={{ color: '#1E293B', mb: 3 }}>
+            Verified impact indicators reflecting national economic contribution of Indian Micro, Small and Medium Enterprises:
+          </Typography>
+          <Grid container spacing={2}>
+            {[
+              { stat: '6.3+ Crore', label: 'Registered Enterprises', desc: 'Active Udyam Verified MSME units nationwide' },
+              { stat: '₹5.2 Lakh Cr', label: 'Credit Guaranteed', desc: 'Collateral-free credit backing delivered under CGTMSE' },
+              { stat: '₹12,400 Cr', label: 'Margin Money Subsidy', desc: 'Direct financial assistance disbursed through PMEGP' },
+              { stat: '500+ Clusters', label: 'SFURTI & CDP Clusters', desc: 'Traditional artisanal and manufacturing common facilities' },
+            ].map((card, i) => (
+              <Grid item xs={12} sm={6} key={i}>
+                <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', textAlign: 'center' }}>
+                  <Typography variant="h4" sx={{ fontWeight: 900, color: '#0F2E59', mb: 0.5 }}>
+                    {card.stat}
+                  </Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#059669', mb: 0.5 }}>
+                    {card.label}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B' }}>
+                    {card.desc}
+                  </Typography>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#059669' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 3: Photos */}
+      <Dialog open={modalOpen === 'photos'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          Media Gallery • Photos
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
+            High-resolution visual highlights from National MSME Summits, Award Ceremonies, and Cluster Exhibitions:
+          </Typography>
+          <Grid container spacing={2}>
+            {[
+              {
+                title: 'National MSME Awards Ceremony',
+                desc: 'Honoring top performing Micro & Small entrepreneurs in manufacturing excellence.',
+                tag: 'National Awards',
+              },
+              {
+                title: 'SFURTI Cluster Exhibition & Khadi Pavilions',
+                desc: 'Showcasing rural artisans, coir products, and traditional textile technologies.',
+                tag: 'Cluster Expo',
+              },
+              {
+                title: 'ZED Certification Industry Conclave',
+                desc: 'Recognizing zero-defect and green-rated manufacturing facilities across India.',
+                tag: 'Quality Conclave',
+              },
+              {
+                title: 'International MSME Trade Delegation',
+                desc: 'Facilitating global market access for Indian exporters under the IC Scheme.',
+                tag: 'Global Access',
+              },
+            ].map((p, i) => (
+              <Grid item xs={12} sm={6} key={i}>
+                <Card sx={{ border: '1px solid #E2E8F0' }}>
+                  <Box
+                    sx={{
+                      height: 140,
+                      bgcolor: '#E2E8F0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: `linear-gradient(135deg, ${i % 2 === 0 ? '#0F2E59' : '#059669'} 0%, #1E3A8A 100%)`,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    <Stack alignItems="center" spacing={1}>
+                      <PhotoCameraOutlinedIcon sx={{ fontSize: 36 }} />
+                      <Chip label={p.tag} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#FFFFFF', fontWeight: 700 }} />
+                    </Stack>
+                  </Box>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 0.5 }}>
+                      {p.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748B' }}>
+                      {p.desc}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 4: Videos */}
+      <Dialog open={modalOpen === 'videos'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          Media Gallery • Videos
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
+            Official video tutorials, policy announcements, and documentary features on Indian MSME transformation:
+          </Typography>
+          <Grid container spacing={2}>
+            {[
+              { title: 'Prime Minister Address at Udyami Bharat', duration: '18 mins', topic: 'Credit & Export Vision' },
+              { title: 'How to Obtain ZED Bronze & Gold Subsidy', duration: '12 mins', topic: 'Technical Guide' },
+              { title: 'Step-by-Step PMEGP Margin Money Loan Process', duration: '15 mins', topic: 'Financial Literacy' },
+              { title: 'TReDS: Resolving Delayed Payments in 48 Hours', duration: '8 mins', topic: 'Invoice Discounting' },
+            ].map((v, i) => (
+              <Grid item xs={12} sm={6} key={i}>
+                <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Box sx={{ width: 44, height: 44, borderRadius: '8px', bgcolor: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <VideocamOutlinedIcon sx={{ color: '#DC2626' }} />
+                    </Box>
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                        {v.title}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748B' }}>
+                        {v.topic} • {v.duration}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 5: Brochures & Guidelines (Featuring user's uploaded PDFs) */}
+      <Dialog open={modalOpen === 'brochures'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          Official Policy Guidelines & Scheme Brochures
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
+            Official Gazette publications and operational scheme guideline PDFs archived in your product's scheme repository:
+          </Typography>
+          <Grid container spacing={1.5}>
+            {[
+              { name: 'Prime Minister Employment Generation Programme (PMEGP)', file: 'pmegp scheme.pdf', ministry: 'M/o MSME' },
+              { name: 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)', file: 'SFURTI_NEW_GUIDELINES.pdf', ministry: 'M/o MSME' },
+              { name: 'Zero Defect Zero Effect (ZED) Certification Guidance', file: 'ZED_Guidance_Document_NIC_Division_24.pdf', ministry: 'QCI / MSME' },
+              { name: 'Trade Receivables Discounting System (TReDS) Circular 262', file: 'TReDS Cicular 262.pdf', ministry: 'RBI / MSME' },
+              { name: 'International Cooperation (IC) Scheme Guidelines', file: 'Final and approved IC Scheme Guidelines-2021.pdf', ministry: 'M/o MSME' },
+              { name: 'Micro & Small Enterprises Cluster Development (MSME-CDP)', file: 'msme-cdp.pdf', ministry: 'O/o DC MSME' },
+              { name: 'Coir Vikas Yojana (CVY) Assistance Framework', file: 'cvy.schemes.pdf', ministry: 'Coir Board' },
+              { name: 'Credit Guarantee Scheme (CGS) for Export Credit', file: 'Circular 257 - CGS for Export credit merged.pdf', ministry: 'CGTMSE' },
+            ].map((b, i) => (
+              <Grid item xs={12} key={i}>
+                <Paper sx={{ p: 1.8, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <PictureAsPdfOutlinedIcon sx={{ color: '#DC2626', fontSize: 24 }} />
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '0.88rem' }}>
+                        {b.name}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748B' }}>
+                        File: {b.file} • Authority: {b.ministry}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<DownloadIcon sx={{ fontSize: 15 }} />}
+                    onClick={() => {
+                      toast.success(`Opening ${b.file} from backend/data/scheme_pdfs/`)
+                    }}
+                    sx={{ textTransform: 'none', borderColor: '#CBD5E1', color: '#0F2E59', fontWeight: 700 }}
+                  >
+                    View PDF
+                  </Button>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 6: Contact Us */}
+      <Dialog open={modalOpen === 'contact_us'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          Contact Directory & MSME Facilitation Centers
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <PhoneInTalkOutlinedIcon sx={{ color: '#059669' }} /> Central Helpdesk
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#1E293B', mb: 1 }}>
+                  <strong>Toll-Free Helpline:</strong> 1800 11 7800 (9:00 AM - 6:00 PM)
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#1E293B', mb: 1 }}>
+                  <strong>Alternative Line:</strong> 1800 180 6763
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#1E293B' }}>
+                  <strong>Email:</strong> champion-msme@gov.in / support@udyamniti.gov.in
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <LocationOnOutlinedIcon sx={{ color: '#DC2626' }} /> Head Office
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#475569', lineHeight: 1.6 }}>
+                  Ministry of Micro, Small and Medium Enterprises<br />
+                  Udyog Bhawan, Rafi Marg, New Delhi - 110011<br />
+                  Government of India
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* MODAL 7: RTI */}
+      <Dialog open={modalOpen === 'rti'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
+          Right to Information (RTI) Act, 2005
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, mt: 1 }}>
+          <Typography variant="body1" sx={{ color: '#1E293B', mb: 2, lineHeight: 1.7 }}>
+            In accordance with the Right to Information Act, 2005, the Ministry of MSME maintains proactive public disclosures under Section 4(1)(b) to ensure statutory transparency, administrative accountability, and citizen empowerment.
+          </Typography>
+          <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
+              Filing an Online RTI Application
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#475569', mb: 1.5 }}>
+              Indian citizens may submit online RTI requests and first appeals regarding Central MSME policies, budget allocations, and subsidy sanctions directly through the official National RTI Portal:
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              href="https://rtionline.gov.in"
+              target="_blank"
+              endIcon={<OpenInNewIcon sx={{ fontSize: 14 }} />}
+              sx={{ textTransform: 'none', borderColor: '#0F2E59', color: '#0F2E59', fontWeight: 700 }}
+            >
+              Visit rtionline.gov.in
+            </Button>
+          </Paper>
+          <Typography variant="caption" sx={{ color: '#64748B' }}>
+            Appellate Authority: Joint Secretary, Ministry of MSME, Udyog Bhawan, New Delhi.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
+          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* ─── MAIN CONTENT ─── */}
       <Box component="main" sx={{ flex: 1 }}>
         <Outlet />
       </Box>
 
-      {/* ─── MINIMAL CLEAN FOOTER ─── */}
-      <Box
-        component="footer"
-        sx={{
-          py: 4,
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          bgcolor: 'rgba(10, 15, 30, 0.95)',
-        }}
-      >
-        <Container maxWidth="lg">
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
-          >
-            <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.85rem' }}>
-              © {new Date().getFullYear()} UdyamNiti • Central & Gujarat Government MSME Scheme Intelligence
-            </Typography>
-
-            <Stack direction="row" spacing={3}>
-              <Typography
-                component="a"
-                href="#services"
-                onClick={(e) => { e.preventDefault(); scrollToSection('services') }}
-                sx={{ color: '#94A3B8', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-              >
-                Services
+      {/* ─── MINIMAL CLEAN FOOTER (For internal dashboard routes) ─── */}
+      {!isLandingPage && (
+        <Box
+          component="footer"
+          sx={{
+            py: 3,
+            borderTop: '1px solid #E2E8F0',
+            bgcolor: '#FFFFFF',
+          }}
+        >
+          <Container maxWidth="xl" disableGutters sx={{ px: 3 }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={2}
+            >
+              <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.85rem' }}>
+                © {new Date().getFullYear()} UdyamNiti • Government of India & Gujarat State MSME Scheme Intelligence
               </Typography>
-              <Typography
-                component="a"
-                href="#benefits"
-                onClick={(e) => { e.preventDefault(); scrollToSection('benefits') }}
-                sx={{ color: '#94A3B8', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-              >
-                Benefits
-              </Typography>
-              <Typography
-                component="a"
-                href="#faq"
-                onClick={(e) => { e.preventDefault(); scrollToSection('faq') }}
-                sx={{ color: '#94A3B8', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-              >
-                FAQs
-              </Typography>
-              <Typography
-                component="a"
-                href="/login"
-                onClick={(e) => { e.preventDefault(); navigate('/login') }}
-                sx={{ color: '#94A3B8', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-              >
-                Sign In
-              </Typography>
-              <Typography
-                component="a"
-                href="/register"
-                onClick={(e) => { e.preventDefault(); navigate('/register') }}
-                sx={{ color: '#94A3B8', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-              >
-                Register
-              </Typography>
+              <Stack direction="row" spacing={3}>
+                <Typography
+                  component="a"
+                  onClick={() => openModal('about_us')}
+                  sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
+                >
+                  {t('aboutUs')}
+                </Typography>
+                <Typography
+                  component="a"
+                  onClick={() => openModal('contact_us')}
+                  sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
+                >
+                  {t('contactUs')}
+                </Typography>
+                <Typography
+                  component="a"
+                  onClick={() => openModal('rti')}
+                  sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
+                >
+                  {t('rti')}
+                </Typography>
+              </Stack>
             </Stack>
-          </Stack>
-        </Container>
-      </Box>
+          </Container>
+        </Box>
+      )}
     </Box>
   )
 }

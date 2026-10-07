@@ -246,7 +246,7 @@ export const PrototypeEvaluationDashboard: React.FC = () => {
 
         {error && (
           <Alert severity="warning" sx={{ mb: 3 }}>
-            {error} — Showing cached or fallback telemetry metrics.
+            {error} - Showing cached or fallback telemetry metrics.
           </Alert>
         )}
 
