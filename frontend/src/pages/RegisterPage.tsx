@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Card,
@@ -13,10 +13,9 @@ import {
   InputAdornment,
   IconButton,
   Grid,
-  Alert,
   Chip,
-  alpha,
   Paper,
+  Container,
 } from '@mui/material'
 import BusinessIcon from '@mui/icons-material/Business'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
@@ -26,17 +25,19 @@ import PolicyIcon from '@mui/icons-material/Policy'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import FlashOnIcon from '@mui/icons-material/FlashOn'
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 
 // Official Google Logo SVG
 const GoogleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }}>
+  <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: 10, display: 'inline-block', verticalAlign: 'middle' }}>
     <path
       fill="#4285F4"
       d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
@@ -56,22 +57,39 @@ const GoogleIcon = () => (
   </svg>
 )
 
-type RegisterStep = 'EMAIL_INPUT' | 'MANUAL_FORM' | 'GOOGLE_OTP'
-
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate()
-  const [step, setStep] = useState<RegisterStep>('EMAIL_INPUT')
+  const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<'FORM' | 'GOOGLE_OTP'>('FORM')
+
+  // Form Fields - Comprehensive MSME Profile Questions
+  const [enterpriseName, setEnterpriseName] = useState('')
+  const [constitution, setConstitution] = useState('Private Limited Company')
+  const [udyam, setUdyam] = useState('')
+  
+  // Turnover & Investment (MSMED Act Criteria)
+  const [turnover, setTurnover] = useState('1_to_5_cr')
+  const [investment, setInvestment] = useState('25l_to_1cr')
+  const [msmeCategory, setMsmeCategory] = useState('micro')
+  const [businessAge, setBusinessAge] = useState('3')
+
+  // Sector & Geography
+  const [industry, setIndustry] = useState('Precision Engineering & Mfg')
+  const [state, setState] = useState('Gujarat')
+  const [district, setDistrict] = useState('Surat')
+
+  // Special Beneficiary Criteria
+  const [beneficiaryCategory, setBeneficiaryCategory] = useState('General')
+  const [exportStatus, setExportStatus] = useState('IEC Holder / Active Exporter')
+
+  // Director Credentials
+  const [directorName, setDirectorName] = useState('')
+  const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [enterpriseName, setEnterpriseName] = useState('')
-  const [msmeCategory, setMsmeCategory] = useState('small')
-  const [sector, setSector] = useState('manufacturing')
-  const [state, setState] = useState('Gujarat')
-  const [udyam, setUdyam] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  // 4-Digit OTP State for Google Emails
+  // 4-Digit OTP State
   const [otpDigits, setOtpDigits] = useState(['', '', '', ''])
   const inputRefs = [
     useRef<HTMLInputElement>(null),
@@ -80,73 +98,98 @@ export const RegisterPage: React.FC = () => {
     useRef<HTMLInputElement>(null),
   ]
 
-  // Step 1: Submit Email
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  // Auto-calculate suggested MSME category based on turnover & investment
+  const handleTurnoverChange = (val: string) => {
+    setTurnover(val)
+    if (val === 'up_to_1_cr' || val === '1_to_5_cr') {
+      setMsmeCategory('micro')
+    } else if (val === '5_to_50_cr') {
+      setMsmeCategory('small')
+    } else {
+      setMsmeCategory('medium')
+    }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const trimmed = email.trim().toLowerCase()
-    if (!trimmed || !trimmed.includes('@')) {
+    if (!enterpriseName.trim()) {
+      toast.error('Please enter enterprise legal name.')
+      return
+    }
+    if (!email.trim() || !email.includes('@')) {
       toast.error('Please enter a valid work or director email address.')
       return
     }
-
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      // If Gmail / Google Email -> 4-Digit OTP flow
-      if (trimmed.includes('@gmail.com') || trimmed.includes('@googlemail.com')) {
-        setStep('GOOGLE_OTP')
-        toast.info('Google email detected! We have dispatched a 4-digit OTP.')
-      } else {
-        // Manual Corporate / Enterprise email -> Password & details form
-        setStep('MANUAL_FORM')
-        toast.info('Manual enterprise email recognized. Please set your password & enterprise profile.')
-      }
-    }, 400)
-  }
-
-  // Step 2A: Manual Registration Submit
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
     if (!password) {
-      toast.error('Please provide a password for your account.')
+      toast.error('Please create an account password.')
       return
     }
+
     setLoading(true)
     setTimeout(() => {
-      localStorage.setItem(
-        'udyamniti_user',
-        JSON.stringify({
-          email,
-          name: enterpriseName || 'Enterprise Member',
-          category:
-            msmeCategory === 'micro'
-              ? 'Micro Enterprise'
-              : msmeCategory === 'small'
-              ? 'Small Enterprise'
-              : 'Medium Enterprise',
-          udyam: udyam || 'UDYAM-REG-2026-PENDING',
-          sector,
-          state,
-          loginMethod: 'manual_registered',
-          isLoggedIn: true,
-        })
-      )
+      const userData = {
+        name: enterpriseName.trim(),
+        directorName: directorName || 'Director',
+        email: email.trim().toLowerCase(),
+        phone,
+        constitution,
+        category:
+          msmeCategory === 'micro'
+            ? 'Micro Enterprise'
+            : msmeCategory === 'small'
+            ? 'Small Enterprise'
+            : 'Medium Enterprise',
+        turnover,
+        investment,
+        sector: industry,
+        state,
+        district,
+        beneficiaryCategory,
+        exportStatus,
+        udyam: udyam || 'UDYAM-GJ-01-0023456',
+        isLoggedIn: true,
+        loginMethod: 'registered_form',
+      }
+      localStorage.setItem('udyamniti_user', JSON.stringify(userData))
       setLoading(false)
-      toast.success('Registration successful! Redirecting to your Schemes Dashboard...')
+      toast.success(`Enterprise registered! Welcome, ${enterpriseName}.`)
       navigate('/dashboard')
     }, 600)
   }
 
-  // Step 2B: OTP Digit change
+  const handleGoogleOneClick = () => {
+    setLoading(true)
+    setTimeout(() => {
+      const googleUser = {
+        name: 'Sardar Precision Exports Ltd.',
+        directorName: 'Rajesh Patel',
+        email: 'rajesh.patel@gmail.com',
+        phone: '+91 98250 12345',
+        constitution: 'Private Limited Company',
+        category: 'Small Enterprise',
+        turnover: '5_to_50_cr',
+        investment: '1cr_to_10cr',
+        sector: 'Precision Engineering & Mfg',
+        state: 'Gujarat',
+        district: 'Surat',
+        beneficiaryCategory: 'General',
+        exportStatus: 'IEC Holder / Active Exporter',
+        udyam: 'UDYAM-GJ-01-0023456',
+        isLoggedIn: true,
+        loginMethod: 'google_oauth',
+      }
+      localStorage.setItem('udyamniti_user', JSON.stringify(googleUser))
+      setLoading(false)
+      toast.success('Google account verified! Redirecting to Schemes Dashboard...')
+      navigate('/dashboard')
+    }, 600)
+  }
+
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) {
-      value = value.slice(-1)
-    }
+    if (value.length > 1) value = value.slice(-1)
     const newDigits = [...otpDigits]
     newDigits[index] = value
     setOtpDigits(newDigits)
-
-    // Auto-focus next input
     if (value && index < 3) {
       inputRefs[index + 1].current?.focus()
     }
@@ -158,88 +201,28 @@ export const RegisterPage: React.FC = () => {
     }
   }
 
-  // Step 2B: OTP Submit (Google Email flow)
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const enteredOtp = otpDigits.join('')
-    if (enteredOtp.length < 4) {
-      toast.error('Please enter all 4 digits of the OTP.')
-      return
-    }
-
     setLoading(true)
     setTimeout(() => {
-      const derivedName = email.split('@')[0].replace(/[._-]/g, ' ')
-      localStorage.setItem(
-        'udyamniti_user',
-        JSON.stringify({
-          email,
-          name: enterpriseName || `${derivedName.toUpperCase()} Enterprises`,
-          category: 'Small Enterprise',
-          udyam: udyam || 'UDYAM-GJ-01-0023456',
-          sector: sector || 'manufacturing',
-          state: state || 'Gujarat',
-          loginMethod: 'google_otp',
-          isLoggedIn: true,
-        })
-      )
-      setLoading(false)
-      toast.success('Google OTP verified! Your enterprise account is active. Redirecting to Dashboard...')
-      navigate('/dashboard')
-    }, 500)
-  }
-
-  // 1-Click Google Sign In / Registration
-  const handleGoogleOneClick = () => {
-    setLoading(true)
-    setTimeout(() => {
-      localStorage.setItem(
-        'udyamniti_user',
-        JSON.stringify({
-          email: 'director.msme@gmail.com',
-          name: 'Verified MSME Director',
-          category: 'Small Enterprise',
-          udyam: 'UDYAM-GJ-01-0023456',
-          sector: 'manufacturing',
-          state: 'Gujarat',
-          loginMethod: 'google_oauth',
-          isLoggedIn: true,
-        })
-      )
-      setLoading(false)
-      toast.success('Google account verified! Redirecting to Dashboard...')
-      navigate('/dashboard')
-    }, 600)
-  }
-
-  const handleDemoFill = () => {
-    setEnterpriseName('ABC Engineering & Exports Pvt. Ltd.')
-    setMsmeCategory('small')
-    setSector('manufacturing')
-    setState('Gujarat')
-    setUdyam('UDYAM-GJ-01-0023456')
-    setEmail('contact@abcengineering.in')
-    setPassword('demo1234')
-    setStep('MANUAL_FORM')
-    toast.info('Sample enterprise details populated.')
+      handleGoogleOneClick()
+    }, 400)
   }
 
   return (
     <Box
       sx={{
         minHeight: 'calc(100vh - 120px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        bgcolor: '#F8FAFC',
+        py: { xs: 4, md: 7 },
         px: 2,
-        py: 6,
-        background: `radial-gradient(ellipse at 50% 15%, ${alpha(tokens.color.violet[900], 0.22)} 0%, transparent 70%)`,
       }}
     >
-      <Box sx={{ width: '100%', maxWidth: step === 'MANUAL_FORM' ? 580 : 460 }}>
-        {/* Header */}
-        <Box sx={{ textAlign: 'center', mb: 3.5 }}>
+      <Container maxWidth="md">
+        {/* Top Header */}
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Box
+            onClick={() => navigate('/')}
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -247,46 +230,42 @@ export const RegisterPage: React.FC = () => {
               width: 48,
               height: 48,
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)',
+              bgcolor: '#0F2E59',
+              boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
               mb: 1.5,
+              cursor: 'pointer',
             }}
           >
             <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 26 }} />
           </Box>
           <Typography
-            variant="h5"
+            variant="h4"
             sx={{
+              fontFamily: tokens.font.heading,
               fontWeight: 800,
+              color: '#0F2E59',
+              fontSize: { xs: '1.6rem', md: '2rem' },
               letterSpacing: '-0.02em',
-              color: tokens.color.slate[50],
-              fontSize: '1.45rem',
             }}
           >
             Create Your Enterprise Account
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: tokens.color.slate[400],
-              mt: 0.5,
-              fontSize: '0.875rem',
-            }}
-          >
-            Instant access to verified Central & State Government incentives & RAG search
+          <Typography variant="body2" sx={{ color: '#64748B', mt: 0.5 }}>
+            Provide your business profile to receive personalized Central & Gujarat State scheme matches
           </Typography>
         </Box>
 
         <Card
           sx={{
-            bgcolor: tokens.color.surface.card,
-            border: `1px solid ${tokens.color.border.subtle}`,
+            bgcolor: '#FFFFFF',
+            border: '1px solid #E2E8F0',
             borderRadius: '16px',
-            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.45)',
+            boxShadow: '0 4px 20px rgba(15, 23, 42, 0.06)',
+            overflow: 'visible',
           }}
         >
-          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-            {/* ─── GOOGLE SIGN IN BUTTON ─── */}
+          <CardContent sx={{ p: { xs: 3, sm: 4, md: 5 } }}>
+            {/* ─── GOOGLE SIGN UP BUTTON (PERFECTLY MATCHING UI) ─── */}
             <Button
               fullWidth
               variant="outlined"
@@ -295,427 +274,412 @@ export const RegisterPage: React.FC = () => {
               sx={{
                 bgcolor: '#FFFFFF',
                 color: '#1E293B',
-                borderColor: '#E2E8F0',
-                py: 1.2,
-                fontWeight: 600,
-                fontSize: '0.9rem',
+                borderColor: '#CBD5E1',
+                py: 1.3,
+                fontWeight: 700,
+                fontSize: '0.92rem',
                 borderRadius: '8px',
                 textTransform: 'none',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.15s ease',
                 '&:hover': {
                   bgcolor: '#F8FAFC',
-                  borderColor: '#CBD5E1',
+                  borderColor: '#0F2E59',
+                  boxShadow: '0 3px 8px rgba(0, 0, 0, 0.08)',
                 },
               }}
             >
               <GoogleIcon />
-              Continue with Google
+              Sign up with Google (Fast Verification)
             </Button>
 
-            <Divider sx={{ my: 3, borderColor: tokens.color.border.subtle }}>
-              <Typography variant="caption" sx={{ color: tokens.color.slate[400], px: 1, fontWeight: 600 }}>
-                OR REGISTER WITH EMAIL
+            <Divider sx={{ my: 3.5, borderColor: '#E2E8F0' }}>
+              <Typography variant="caption" sx={{ color: '#64748B', px: 1, fontWeight: 700, letterSpacing: '0.04em' }}>
+                OR FILL OFFICIAL MSME QUESTIONNAIRE
               </Typography>
             </Divider>
 
-            {/* ─── STEP 1: ENTER EMAIL ONLY ─── */}
-            {step === 'EMAIL_INPUT' && (
-              <form onSubmit={handleEmailSubmit}>
-                <Stack spacing={2.5}>
+            {step === 'FORM' && (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={3.5}>
+                  {/* PART 1: Legal Identification */}
                   <Box>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 1, display: 'block' }}>
-                      Enter Work or Director Email *
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <BusinessIcon sx={{ fontSize: 18, color: '#0F2E59' }} /> 1. Enterprise Legal Identification
                     </Typography>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      placeholder="e.g. director@company.in or name@gmail.com"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <EmailOutlinedIcon sx={{ fontSize: 18, color: tokens.color.slate[400] }} />
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          bgcolor: tokens.color.surface.elevated,
-                          color: '#FFFFFF',
-                          borderRadius: '8px',
-                          fontSize: '0.9rem',
-                        },
-                      }}
-                    />
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[500], display: 'block', mt: 0.8, fontSize: '0.74rem' }}>
-                      Gmail addresses receive a 4-digit OTP. Manual/corporate emails unlock password setup.
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={8}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Enterprise Registered Legal Name *
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          required
+                          value={enterpriseName}
+                          onChange={(e) => setEnterpriseName(e.target.value)}
+                          placeholder="e.g. Apex Precision Engineering Pvt. Ltd."
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Constitution / Type *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={constitution}
+                          onChange={(e) => setConstitution(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="Proprietorship">Proprietorship</MenuItem>
+                          <MenuItem value="Partnership">Partnership Firm</MenuItem>
+                          <MenuItem value="Private Limited Company">Private Limited Company</MenuItem>
+                          <MenuItem value="LLP">Limited Liability Partnership (LLP)</MenuItem>
+                          <MenuItem value="Cooperative Society">Cooperative Society / Trust</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Udyam Registration Number (Optional / Pending)
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={udyam}
+                          onChange={(e) => setUdyam(e.target.value)}
+                          placeholder="UDYAM-GJ-01-0023456"
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Business Age / Year of Incorporation *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={businessAge}
+                          onChange={(e) => setBusinessAge(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="0">New Unit / Startup (&lt;1 Year)</MenuItem>
+                          <MenuItem value="1">1 to 3 Years</MenuItem>
+                          <MenuItem value="3">3 to 5 Years</MenuItem>
+                          <MenuItem value="5">5 to 10 Years</MenuItem>
+                          <MenuItem value="10">10+ Years Established</MenuItem>
+                        </TextField>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  {/* PART 2: MSMED Act Criteria (Turnover & Plant/Machinery) */}
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <AccountBalanceIcon sx={{ fontSize: 18, color: '#059669' }} /> 2. Turnover & Investment Classification (Statutory MSME Rules)
                     </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Expected Annual Turnover *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={turnover}
+                          onChange={(e) => handleTurnoverChange(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="up_to_1_cr">Up to ₹1.00 Crore</MenuItem>
+                          <MenuItem value="1_to_5_cr">₹1.00 Cr to ₹5.00 Crore</MenuItem>
+                          <MenuItem value="5_to_50_cr">₹5.00 Cr to ₹50.00 Crore</MenuItem>
+                          <MenuItem value="50_to_250_cr">₹50.00 Cr to ₹250.00 Crore</MenuItem>
+                          <MenuItem value="above_250_cr">Above ₹250.00 Crore</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Plant & Machinery Investment *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={investment}
+                          onChange={(e) => setInvestment(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="up_to_25l">Up to ₹25 Lakh</MenuItem>
+                          <MenuItem value="25l_to_1cr">₹25 Lakh to ₹1 Crore</MenuItem>
+                          <MenuItem value="1cr_to_10cr">₹1 Crore to ₹10 Crore</MenuItem>
+                          <MenuItem value="10cr_to_50cr">₹10 Crore to ₹50 Crore</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          MSME Category *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={msmeCategory}
+                          onChange={(e) => setMsmeCategory(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="micro">Micro Enterprise (&le; ₹5 Cr Turn)</MenuItem>
+                          <MenuItem value="small">Small Enterprise (&le; ₹50 Cr Turn)</MenuItem>
+                          <MenuItem value="medium">Medium Enterprise (&le; ₹250 Cr Turn)</MenuItem>
+                        </TextField>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  {/* PART 3: Sector & State */}
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LocationOnOutlinedIcon sx={{ fontSize: 18, color: '#2563EB' }} /> 3. Sector & Operational Location
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Industry / Focus Sector *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={industry}
+                          onChange={(e) => setIndustry(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="Precision Engineering & Mfg">Precision Engineering & Machinery</MenuItem>
+                          <MenuItem value="Textiles & Apparel">Textiles, Garments & Technical Fabrics</MenuItem>
+                          <MenuItem value="Agro & Food Processing">Agro & Food Processing</MenuItem>
+                          <MenuItem value="Chemicals & Petrochemicals">Chemicals & Allied Products</MenuItem>
+                          <MenuItem value="Coir & Natural Fibres">Coir, Jute & Natural Fibres</MenuItem>
+                          <MenuItem value="Renewable Energy & EV">Renewable Energy, Solar & Clean Tech</MenuItem>
+                          <MenuItem value="Services & IT Solutions">IT, Software & Professional Services</MenuItem>
+                          <MenuItem value="Handicrafts & Traditional Artisans">Handicrafts & Traditional Clusters</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          State *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="Gujarat">Gujarat (SER / GIDC)</MenuItem>
+                          <MenuItem value="Maharashtra">Maharashtra</MenuItem>
+                          <MenuItem value="Tamil Nadu">Tamil Nadu</MenuItem>
+                          <MenuItem value="Karnataka">Karnataka</MenuItem>
+                          <MenuItem value="Uttar Pradesh">Uttar Pradesh</MenuItem>
+                          <MenuItem value="All India">All-India / Central</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={3}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          District / Hub
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={district}
+                          onChange={(e) => setDistrict(e.target.value)}
+                          placeholder="e.g. Surat, Ahmedabad"
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  {/* PART 4: Special Beneficiary Category & Exports */}
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <VerifiedUserIcon sx={{ fontSize: 18, color: '#D97706' }} /> 4. Beneficiary Category & Export Activity (Subsidy Booster)
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Special Entrepreneur Category *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={beneficiaryCategory}
+                          onChange={(e) => setBeneficiaryCategory(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="General">General Category</MenuItem>
+                          <MenuItem value="Women-Led Enterprise (51%+)">Women-Led Enterprise (51%+ Shareholding)</MenuItem>
+                          <MenuItem value="SC/ST Entrepreneur">SC / ST Entrepreneur (NSSH Covered)</MenuItem>
+                          <MenuItem value="Divyangjan / PwD">Divyangjan / PwD Entrepreneur</MenuItem>
+                          <MenuItem value="North East / Border District">North East / Border Region</MenuItem>
+                        </TextField>
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Export Activity & IEC Status *
+                        </Typography>
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={exportStatus}
+                          onChange={(e) => setExportStatus(e.target.value)}
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        >
+                          <MenuItem value="IEC Holder / Active Exporter">IEC Code Holder / Active Exporter (EPM Eligible)</MenuItem>
+                          <MenuItem value="Planning to Export">Planning to Export / First Time Exporter</MenuItem>
+                          <MenuItem value="Domestic Only">Domestic Indian Market Only</MenuItem>
+                        </TextField>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  {/* PART 5: Director Login Credentials */}
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PersonOutlineIcon sx={{ fontSize: 18, color: '#7C3AED' }} /> 5. Director / Authorized Signatory Credentials
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Director / Contact Person Name *
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          required
+                          value={directorName}
+                          onChange={(e) => setDirectorName(e.target.value)}
+                          placeholder="e.g. Rajesh Patel"
+                          InputProps={{ sx: { bgcolor: '#F8FAFC', borderRadius: '8px' } }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Mobile Number *
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+91 98250 12345"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <PhoneOutlinedIcon sx={{ fontSize: 18, color: '#64748B' }} />
+                              </InputAdornment>
+                            ),
+                            sx: { bgcolor: '#F8FAFC', borderRadius: '8px' },
+                          }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Official Email Address *
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="director@company.in"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <EmailOutlinedIcon sx={{ fontSize: 18, color: '#64748B' }} />
+                              </InputAdornment>
+                            ),
+                            sx: { bgcolor: '#F8FAFC', borderRadius: '8px' },
+                          }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.5, display: 'block' }}>
+                          Create Password *
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Create strong account password"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <LockOutlinedIcon sx={{ fontSize: 18, color: '#64748B' }} />
+                              </InputAdornment>
+                            ),
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton size="small" onClick={() => setShowPassword(!showPassword)}>
+                                  {showPassword ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                            sx: { bgcolor: '#F8FAFC', borderRadius: '8px' },
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
                   </Box>
 
                   <Button
                     type="submit"
                     fullWidth
                     variant="contained"
+                    size="large"
                     disabled={loading}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      bgcolor: '#0F2E59',
                       color: '#FFFFFF',
-                      py: 1.25,
-                      fontWeight: 700,
-                      fontSize: '0.92rem',
+                      py: 1.4,
+                      fontWeight: 800,
+                      fontSize: '0.96rem',
                       borderRadius: '8px',
                       textTransform: 'none',
-                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                      },
+                      boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
-                    {loading ? 'Validating...' : 'Continue with Email →'}
+                    {loading ? 'Creating Enterprise Account...' : 'Complete Registration & Open Dashboard →'}
                   </Button>
                 </Stack>
               </form>
             )}
 
-            {/* ─── STEP 2A: MANUAL REGISTERED EMAIL (PASSWORD & PROFILE) ─── */}
-            {step === 'MANUAL_FORM' && (
-              <form onSubmit={handleManualSubmit}>
-                {/* Email Chip with Change Action */}
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 1.5,
-                    bgcolor: 'rgba(99, 102, 241, 0.08)',
-                    border: '1px solid rgba(99, 102, 241, 0.25)',
-                    borderRadius: '8px',
-                    mb: 2.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <EmailOutlinedIcon sx={{ fontSize: 18, color: '#818CF8' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: tokens.color.slate[400], display: 'block', fontSize: '0.72rem' }}>
-                        Enterprise Email
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
-                        {email}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  <Button
-                    size="small"
-                    onClick={() => setStep('EMAIL_INPUT')}
-                    startIcon={<ArrowBackIcon sx={{ fontSize: 14 }} />}
-                    sx={{ color: '#818CF8', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
-                  >
-                    Change
-                  </Button>
-                </Paper>
-
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      Enterprise Legal Name *
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      value={enterpriseName}
-                      onChange={(e) => setEnterpriseName(e.target.value)}
-                      required
-                      placeholder="e.g. Apex Precision Engineering Pvt. Ltd."
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <BusinessIcon sx={{ fontSize: 18, color: tokens.color.slate[400] }} />
-                          </InputAdornment>
-                        ),
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      MSME Category *
-                    </Typography>
-                    <TextField
-                      select
-                      fullWidth
-                      size="small"
-                      value={msmeCategory}
-                      onChange={(e) => setMsmeCategory(e.target.value)}
-                      InputProps={{
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    >
-                      <MenuItem value="micro">Micro (Turnover &le; ₹5 Cr)</MenuItem>
-                      <MenuItem value="small">Small (Turnover &le; ₹50 Cr)</MenuItem>
-                      <MenuItem value="medium">Medium (Turnover &le; ₹250 Cr)</MenuItem>
-                    </TextField>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      Sector / Focus *
-                    </Typography>
-                    <TextField
-                      select
-                      fullWidth
-                      size="small"
-                      value={sector}
-                      onChange={(e) => setSector(e.target.value)}
-                      InputProps={{
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    >
-                      <MenuItem value="manufacturing">Precision Engineering & Mfg</MenuItem>
-                      <MenuItem value="textiles">Textiles & Apparel (Surat Hub)</MenuItem>
-                      <MenuItem value="export">Export & Foreign Trade (EPM)</MenuItem>
-                      <MenuItem value="coir">Agro, Coir & Natural Fibres</MenuItem>
-                      <MenuItem value="services">Services & IT Solutions</MenuItem>
-                    </TextField>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      Operational State *
-                    </Typography>
-                    <TextField
-                      select
-                      fullWidth
-                      size="small"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LocationOnOutlinedIcon sx={{ fontSize: 18, color: tokens.color.slate[400] }} />
-                          </InputAdornment>
-                        ),
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    >
-                      <MenuItem value="Gujarat">Gujarat (SER / GIDC)</MenuItem>
-                      <MenuItem value="Maharashtra">Maharashtra</MenuItem>
-                      <MenuItem value="Tamil Nadu">Tamil Nadu</MenuItem>
-                      <MenuItem value="Karnataka">Karnataka</MenuItem>
-                      <MenuItem value="Uttar Pradesh">Uttar Pradesh</MenuItem>
-                      <MenuItem value="All India">All-India / Central Only</MenuItem>
-                    </TextField>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      Udyam Reg. Number (Optional)
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      value={udyam}
-                      onChange={(e) => setUdyam(e.target.value)}
-                      placeholder="UDYAM-XX-00-0000000"
-                      InputProps={{
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[300], fontWeight: 600, mb: 0.5, display: 'block' }}>
-                      Account Password *
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder="Create a strong account password"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockOutlinedIcon sx={{ fontSize: 18, color: tokens.color.slate[400] }} />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              size="small"
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                              sx={{ color: tokens.color.slate[400] }}
-                            >
-                              {showPassword ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                        sx: { bgcolor: tokens.color.surface.elevated, borderRadius: '8px', fontSize: '0.88rem' },
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sx={{ mt: 1 }}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      disabled={loading}
-                      endIcon={<ArrowForwardIcon />}
-                      sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                        color: '#FFFFFF',
-                        py: 1.25,
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        borderRadius: '8px',
-                        textTransform: 'none',
-                        boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                        '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)' },
-                      }}
-                    >
-                      {loading ? 'Creating Enterprise Account...' : 'Register & Launch Dashboard →'}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </form>
-            )}
-
-            {/* ─── STEP 2B: GOOGLE EMAIL 4-DIGIT OTP VERIFICATION ─── */}
-            {step === 'GOOGLE_OTP' && (
-              <form onSubmit={handleOtpSubmit}>
-                <Stack spacing={2.5}>
-                  {/* Google Verified Banner */}
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 1.5,
-                      bgcolor: 'rgba(66, 133, 244, 0.08)',
-                      border: '1px solid rgba(66, 133, 244, 0.25)',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <GoogleIcon />
-                      <Box>
-                        <Typography variant="caption" sx={{ color: '#93C5FD', display: 'block', fontSize: '0.72rem' }}>
-                          Google Account Detected
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
-                          {email}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                    <Button
-                      size="small"
-                      onClick={() => setStep('EMAIL_INPUT')}
-                      startIcon={<ArrowBackIcon sx={{ fontSize: 14 }} />}
-                      sx={{ color: '#93C5FD', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
-                    >
-                      Change
-                    </Button>
-                  </Paper>
-
-                  <Box sx={{ textAlign: 'center' }}>
-                    <KeyOutlinedIcon sx={{ color: '#818CF8', fontSize: 32, mb: 1 }} />
-                    <Typography variant="subtitle1" sx={{ color: '#FFFFFF', fontWeight: 700 }}>
-                      Enter 4-Digit Security OTP
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: tokens.color.slate[400], display: 'block', mt: 0.5 }}>
-                      A 4-digit verification code was sent to your Google mailbox.
-                    </Typography>
-                  </Box>
-
-                  {/* 4 Digit Boxes */}
-                  <Stack direction="row" spacing={2} justifyContent="center" sx={{ my: 1 }}>
-                    {otpDigits.map((digit, index) => (
-                      <Box
-                        key={index}
-                        component="input"
-                        ref={inputRefs[index]}
-                        type="text"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOtpChange(index, e.target.value)}
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleOtpKeyDown(index, e)}
-                        autoFocus={index === 0}
-                        sx={{
-                          width: 54,
-                          height: 58,
-                          textAlign: 'center',
-                          fontSize: '1.5rem',
-                          fontWeight: 700,
-                          color: '#FFFFFF',
-                          bgcolor: tokens.color.surface.elevated,
-                          border: digit ? '2px solid #6366F1' : '1px solid rgba(255, 255, 255, 0.15)',
-                          borderRadius: '10px',
-                          outline: 'none',
-                          boxShadow: digit ? '0 0 12px rgba(99, 102, 241, 0.35)' : 'none',
-                          transition: 'all 0.2s',
-                          '&:focus': {
-                            borderColor: '#818CF8',
-                            boxShadow: '0 0 16px rgba(129, 140, 248, 0.45)',
-                          },
-                        }}
-                      />
-                    ))}
-                  </Stack>
-
-                  {/* Demo helper */}
-                  <Stack direction="row" justifyContent="center" alignItems="center" spacing={1}>
-                    <Chip
-                      icon={<FlashOnIcon sx={{ fontSize: '14px !important', color: '#F59E0B !important' }} />}
-                      label="Demo OTP: 4829"
-                      size="small"
-                      onClick={() => setOtpDigits(['4', '8', '2', '9'])}
-                      sx={{
-                        bgcolor: 'rgba(245, 158, 11, 0.1)',
-                        color: '#FCD34D',
-                        border: '1px solid rgba(245, 158, 11, 0.25)',
-                        cursor: 'pointer',
-                        fontSize: '0.75rem',
-                        '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' },
-                      }}
-                    />
-                  </Stack>
-
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    disabled={loading}
-                    endIcon={<CheckCircleOutlineIcon />}
-                    sx={{
-                      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                      color: '#FFFFFF',
-                      py: 1.25,
-                      fontWeight: 700,
-                      fontSize: '0.92rem',
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                      },
-                    }}
-                  >
-                    {loading ? 'Verifying OTP...' : 'Verify OTP & Launch Dashboard →'}
-                  </Button>
-                </Stack>
-              </form>
-            )}
-
-            <Divider sx={{ my: 3, borderColor: tokens.color.border.subtle }}>
-              <Typography variant="caption" sx={{ color: tokens.color.slate[500], px: 1 }}>
+            <Divider sx={{ my: 3, borderColor: '#E2E8F0' }}>
+              <Typography variant="caption" sx={{ color: '#64748B', px: 1 }}>
                 ALREADY REGISTERED?
               </Typography>
             </Divider>
@@ -725,24 +689,21 @@ export const RegisterPage: React.FC = () => {
               variant="outlined"
               onClick={() => navigate('/login')}
               sx={{
-                borderColor: tokens.color.border.subtle,
-                color: tokens.color.slate[200],
-                py: 0.9,
-                fontWeight: 600,
-                fontSize: '0.85rem',
+                borderColor: '#CBD5E1',
+                color: '#0F2E59',
+                py: 1.1,
+                fontWeight: 700,
+                fontSize: '0.9rem',
                 borderRadius: '8px',
                 textTransform: 'none',
-                '&:hover': {
-                  borderColor: tokens.color.slate[500],
-                  bgcolor: alpha(tokens.color.slate[700], 0.2),
-                },
+                '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
               }}
             >
               Sign In with Existing Account
             </Button>
           </CardContent>
         </Card>
-      </Box>
+      </Container>
     </Box>
   )
 }

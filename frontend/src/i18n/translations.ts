@@ -65,101 +65,292 @@ export const translations = {
     hi: 'मंत्रालय',
     gu: 'મંત્રાલય',
   },
-  aboutUs: {
-    en: 'About us',
-    hi: 'हमारे बारे में',
-    gu: 'અમારા વિશે',
+  schemesAndBenefits: {
+    en: 'Schemes & Benefits',
+    hi: 'योजनाएं और लाभ',
+    gu: 'યોજનાઓ અને લાભો',
   },
-  aboutUsDesc: {
-    en: 'Ministry Vision, Mission & Structure',
-    hi: 'मंत्रालय विजन, मिशन और संरचना',
-    gu: 'મંત્રાલય વિઝન, મિશન અને સંરચના',
+  resources: {
+    en: 'Resources',
+    hi: 'संसाधन',
+    gu: 'સંસાધનો',
   },
-  ourPerformance: {
-    en: 'Our Performance',
-    hi: 'हमारा प्रदर्शन',
-    gu: 'અમારું પ્રદર્શન',
+  updates: {
+    en: 'Updates',
+    hi: 'अपडेट्स',
+    gu: 'અપડેટ્સ',
   },
-  ourPerformanceDesc: {
-    en: 'Key MSME Indicators & Growth Records',
-    hi: 'प्रमुख MSME संकेतक और विकास रिकॉर्ड',
-    gu: 'મુખ્ય MSME સૂચકાંકો અને વૃદ્ધિ રેકોર્ડ',
+  support: {
+    en: 'Support',
+    hi: 'सहायता',
+    gu: 'સહાયતા',
   },
-  media: {
-    en: 'Media',
-    hi: 'मीडिया',
-    gu: 'મીડિયા',
+  findBenefitsForMyBusiness: {
+    en: '✨ Find Benefits for My Business',
+    hi: '✨ मेरे व्यवसाय के लिए लाभ खोजें',
+    gu: '✨ મારા વ્યવસાય માટે લાભો શોધો',
   },
-  photos: {
-    en: 'Photos',
-    hi: 'फोटो',
-    gu: 'ફોટો',
+  searchPlaceholder: {
+    en: 'Search schemes, benefits or programs...',
+    hi: 'योजनाएं, लाभ या कार्यक्रम खोजें...',
+    gu: 'યોજનાઓ, લાભો અથવા કાર્યક્રમો શોધો...',
   },
-  photosDesc: {
-    en: 'National MSME Summits & Award Ceremonies',
-    hi: 'राष्ट्रीय MSME शिखर सम्मेलन और पुरस्कार समारोह',
-    gu: 'રાષ્ટ્રીય MSME શિખર સંમેલન અને પુરસ્કાર સમારોહ',
+
+  // ─── MINISTRY DROPDOWN ──────────────────────────────────────────────────────
+  aboutMinistry: {
+    en: 'About the Ministry',
+    hi: 'मंत्रालय के बारे में',
+    gu: 'મંત્રાલય વિશે',
   },
-  videos: {
-    en: 'Videos',
-    hi: 'वीडियो',
-    gu: 'વીડિયો',
+  aboutMinistryDesc: {
+    en: 'History, Role & Objectives of M/o MSME',
+    hi: 'MSME मंत्रालय का इतिहास, भूमिका और उद्देश्य',
+    gu: 'MSME મંત્રાલયનો ઇતિહાસ, ભૂમિકા અને ઉદ્દેશ્યો',
   },
-  videosDesc: {
-    en: 'Official Policy Announcements & Tutorials',
-    hi: 'आधिकारिक नीति घोषणाएं और ट्यूटोरियल',
-    gu: 'અધિકૃત નીતિ ઘોષણાઓ અને ટ્યુટોરિયલ્સ',
+  visionMission: {
+    en: 'Vision, Mission & Objectives',
+    hi: 'विजन, मिशन और उद्देश्य',
+    gu: 'વિઝન, મિશન અને ઉદ્દેશ્યો',
   },
-  brochures: {
-    en: 'Brochures & PDFs',
-    hi: 'ब्रोशर और PDF',
-    gu: 'બ્રોશર અને PDF',
+  visionMissionDesc: {
+    en: 'Empowering competitive & sustainable MSMEs',
+    hi: 'प्रतिस्पर्धी और टिकाऊ MSMEs को सशक्त बनाना',
+    gu: 'સ્પર્ધાત્મક અને ટકાઉ MSMEs ને સશક્ત બનાવવું',
   },
-  brochuresDesc: {
-    en: 'Official Scheme Guideline Documents',
-    hi: 'आधिकारिक योजना दिशानिर्देश दस्तावेज',
-    gu: 'અધિકૃત યોજના માર્ગદર્શિકા દસ્તાવેજો',
+  leadership: {
+    en: 'Leadership',
+    hi: 'नेतृत्व',
+    gu: 'નેતૃત્વ',
   },
-  connect: {
-    en: 'Connect',
-    hi: 'संपर्क',
-    gu: 'સંપર્ક',
+  leadershipDesc: {
+    en: 'Hon’ble Ministers & Administrative Leadership',
+    hi: 'माननीय मंत्री और प्रशासनिक नेतृत्व',
+    gu: 'માનનીય મંત્રીઓ અને વહીવટી નેતૃત્વ',
   },
-  contactUs: {
-    en: 'Contact us',
-    hi: 'संपर्क करें',
-    gu: 'સંપર્ક કરો',
+  divisions: {
+    en: 'Divisions',
+    hi: 'प्रभाग',
+    gu: 'વિભાગો',
   },
-  contactUsDesc: {
-    en: 'MSME Helpdesk & Facilitation Centers',
-    hi: 'MSME हेल्पडेस्क और सुविधा केंद्र',
-    gu: 'MSME હેલ્પડેસ્ક અને સુવિધા કેન્દ્રો',
+  divisionsDesc: {
+    en: 'Policy, Credit, Technology, SME & ARI',
+    hi: 'नीति, ऋण, प्रौद्योगिकी, SME और ARI प्रभाग',
+    gu: 'નીતિ, ક્રેડિટ, ટેકનોલોજી, SME અને ARI વિભાગો',
   },
-  rti: {
-    en: 'RTI (Right to Information)',
-    hi: 'RTI (सूचना का अधिकार)',
-    gu: 'RTI (માહિતી અધિકાર)',
+  organisations: {
+    en: 'Organisations',
+    hi: 'संगठन',
+    gu: 'સંસ્થાઓ',
   },
-  rtiDesc: {
-    en: 'File RTI Applications Online',
-    hi: 'ऑनलाइन RTI आवेदन दाखिल करें',
-    gu: 'ઓનલાઈન RTI અરજી દાખલ કરો',
+  organisationsDesc: {
+    en: 'DC-MSME, NSIC, KVIC, Coir Board, NI-MSME, MGIRI',
+    hi: 'DC-MSME, NSIC, KVIC, कॉयर बोर्ड, NI-MSME, MGIRI',
+    gu: 'DC-MSME, NSIC, KVIC, કોઈર બોર્ડ, NI-MSME, MGIRI',
   },
-  gazetteRadar: {
-    en: 'Gazette Radar',
-    hi: 'गजट रडार',
-    gu: 'ગેઝેટ રડાર',
+  rolesAndResponsibilities: {
+    en: 'Roles & Responsibilities',
+    hi: 'भूमिकाएं और जिम्मेदारियां',
+    gu: 'ભૂમિકાઓ અને જવાબદારીઓ',
   },
-  verifiedSchemes: {
-    en: '30+ Verified Schemes',
-    hi: '30+ सत्यापित योजनाएं',
-    gu: '30+ ચકાસાયેલ યોજનાઓ',
+  rolesAndResponsibilitiesDesc: {
+    en: 'Finance, Tech, Skills, Infra, Marketing & Quality',
+    hi: 'वित्त, प्रौद्योगिकी, कौशल, बुनियादी ढांचा, विपणन और गुणवत्ता',
+    gu: 'નાણા, ટેકનોલોજી, કૌશલ્ય, ઈન્ફ્રા, માર્કેટિંગ અને ગુણવત્તા',
   },
-  browseCatalog: {
-    en: 'Browse Catalog',
-    hi: 'कैटलॉग देखें',
-    gu: 'કેટલોગ જુઓ',
+  msmeOverview: {
+    en: 'MSME Overview',
+    hi: 'MSME अवलोकन',
+    gu: 'MSME ઝાંખી',
   },
+  msmeOverviewDesc: {
+    en: 'Classification criteria & Udyam Registration',
+    hi: 'वर्गीकरण मानदंड और उद्यम पंजीकरण',
+    gu: 'વર્ગીકરણ માપદંડ અને ઉદ્યમ નોંધણી',
+  },
+  ministryDirectory: {
+    en: 'Ministry Directory',
+    hi: 'मंत्रालय निर्देशिका',
+    gu: 'મંત્રાલય ડિરેક્ટરી',
+  },
+  ministryDirectoryDesc: {
+    en: 'Search officers, nodal desks & phone numbers',
+    hi: 'अधिकारियों, नोडल डेस्क और फोन नंबर खोजें',
+    gu: 'અધિકારીઓ, નોડલ ડેસ્ક અને ફોન નંબર શોધો',
+  },
+
+  // ─── SCHEMES & BENEFITS DROPDOWN ────────────────────────────────────────────
+  exploreAllSchemes: {
+    en: 'Explore All Schemes',
+    hi: 'सभी योजनाएं देखें',
+    gu: 'બધી યોજનાઓ જુઓ',
+  },
+  findSchemesForMyBusiness: {
+    en: 'Find Schemes for My Business ⭐',
+    hi: 'मेरे व्यवसाय के लिए योजनाएं खोजें ⭐',
+    gu: 'મારા વ્યવસાય માટે યોજનાઓ શોધો ⭐',
+  },
+  creditAndFinance: {
+    en: 'Credit & Finance',
+    hi: 'ऋण और वित्त',
+    gu: 'ક્રેડિટ અને નાણાં',
+  },
+  subsidiesAndIncentives: {
+    en: 'Subsidies & Incentives',
+    hi: 'सब्सिडी और प्रोत्साहन',
+    gu: 'સબસિડી અને પ્રોત્સાહનો',
+  },
+  technologyAndInnovation: {
+    en: 'Technology & Innovation',
+    hi: 'प्रौद्योगिकी और नवाचार',
+    gu: 'ટેકનોલોજી અને નવીનતા',
+  },
+  skillDevelopment: {
+    en: 'Skill Development',
+    hi: 'कौशल विकास',
+    gu: 'કૌશલ્ય વિકાસ',
+  },
+  marketingSupport: {
+    en: 'Marketing Support',
+    hi: 'विपणन सहायता',
+    gu: 'માર્કેટિંગ સપોર્ટ',
+  },
+  exportSupport: {
+    en: 'Export Support',
+    hi: 'निर्यात सहायता',
+    gu: 'નિકાસ સહાય',
+  },
+  infrastructureAndClusters: {
+    en: 'Infrastructure & Clusters',
+    hi: 'बुनियादी ढांचा और क्लस्टर',
+    gu: 'ઇન્ફ્રાસ્ટ્રક્ચર અને ક્લસ્ટર્સ',
+  },
+  womenEntrepreneurs: {
+    en: 'Women Entrepreneurs',
+    hi: 'महिला उद्यमी',
+    gu: 'મહિલા ઉદ્યોગસાહસિકો',
+  },
+  scstEntrepreneurs: {
+    en: 'SC/ST Entrepreneurs',
+    hi: 'एससी/एसटी उद्यमी',
+    gu: 'SC/ST ઉદ્યોગસાહસિકો',
+  },
+  startupAndEntrepreneurship: {
+    en: 'Startup & Entrepreneurship',
+    hi: 'स्टार्टअप और उद्यमिता',
+    gu: 'સ્ટાર્ટઅપ અને સાહસિકતા',
+  },
+
+  // ─── RESOURCES DROPDOWN ─────────────────────────────────────────────────────
+  actsAndRules: {
+    en: 'Acts & Rules',
+    hi: 'अधिनियम और नियम',
+    gu: 'કાયદા અને નિયમો',
+  },
+  policies: {
+    en: 'Policies',
+    hi: 'नीतियां',
+    gu: 'નીતિઓ',
+  },
+  schemeGuidelines: {
+    en: 'Scheme Guidelines (Official PDFs)',
+    hi: 'योजना दिशानिर्देश (आधिकारिक PDF)',
+    gu: 'યોજના માર્ગદર્શિકા (અધિકૃત PDF)',
+  },
+  notifications: {
+    en: 'Notifications',
+    hi: 'अधिसूचनाएं',
+    gu: 'સૂચનાઓ',
+  },
+  circularsAndOrders: {
+    en: 'Circulars & Orders',
+    hi: 'परिपत्र और आदेश',
+    gu: 'પરિપત્રો અને ઓર્ડર',
+  },
+  reports: {
+    en: 'Reports',
+    hi: 'रिपोर्ट्स',
+    gu: 'અહેવાલો',
+  },
+  publications: {
+    en: 'Publications',
+    hi: 'प्रकाशन',
+    gu: 'પ્રકાશનો',
+  },
+  formsAndTemplates: {
+    en: 'Forms & Templates',
+    hi: 'प्रपत्र और टेम्पलेट',
+    gu: 'ફોર્મ્સ અને નમૂનાઓ',
+  },
+
+  // ─── UPDATES DROPDOWN ───────────────────────────────────────────────────────
+  whatsNew: {
+    en: "What's New",
+    hi: 'क्या नया है',
+    gu: 'શું નવું છે',
+  },
+  announcements: {
+    en: 'Announcements',
+    hi: 'घोषणाएं',
+    gu: 'ઘોષણાઓ',
+  },
+  schemeUpdates: {
+    en: 'Scheme Updates',
+    hi: 'योजना अपडेट',
+    gu: 'યોજના અપડેટ્સ',
+  },
+  events: {
+    en: 'Events',
+    hi: 'कार्यक्रम',
+    gu: 'ઇવેન્ટ્સ',
+  },
+  pressReleases: {
+    en: 'Press Releases',
+    hi: 'प्रेस विज्ञप्तियां',
+    gu: 'પ્રેસ રિલીઝ',
+  },
+  successStories: {
+    en: 'Success Stories',
+    hi: 'सफलता की कहानियां',
+    gu: 'સફળતાની વાર્તાઓ',
+  },
+  photoGallery: {
+    en: 'Photo Gallery',
+    hi: 'फोटो गैलरी',
+    gu: 'ફોટો ગેલેરી',
+  },
+  videoGallery: {
+    en: 'Video Gallery',
+    hi: 'वीडियो गैलरी',
+    gu: 'વીડિયો ગેલેરી',
+  },
+
+  // ─── SUPPORT DROPDOWN ───────────────────────────────────────────────────────
+  helpCentre: {
+    en: 'Help Centre',
+    hi: 'सहायता केंद्र',
+    gu: 'સહાય કેન્દ્ર',
+  },
+  contactMinistry: {
+    en: 'Contact Ministry',
+    hi: 'मंत्रालय से संपर्क करें',
+    gu: 'મંત્રાલયનો સંપર્ક કરો',
+  },
+  grievanceSupport: {
+    en: 'Grievance Support (Champions Portal)',
+    hi: 'शिकायत निवारण (चैंपियंस पोर्टल)',
+    gu: 'ફરિયાદ નિવારણ (ચેમ્પિયન્સ પોર્ટલ)',
+  },
+  applicationHelp: {
+    en: 'Application Help',
+    hi: 'आवेदन सहायता',
+    gu: 'અરજી સહાય',
+  },
+  askAiAssistant: {
+    en: 'Ask MSME AI Assistant',
+    hi: 'MSME AI सहायक से पूछें',
+    gu: 'MSME AI સહાયકને પૂછો',
+  },
+
   close: {
     en: 'Close',
     hi: 'बंद करें',

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Card,
@@ -13,10 +13,9 @@ import {
   FormControlLabel,
   InputAdornment,
   IconButton,
-  Alert,
   Chip,
-  alpha,
   Paper,
+  Container,
 } from '@mui/material'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
@@ -25,16 +24,15 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import PolicyIcon from '@mui/icons-material/Policy'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
 import FlashOnIcon from '@mui/icons-material/FlashOn'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 
-// Official Google Logo SVG
+// Official Google Logo SVG matching RegisterPage
 const GoogleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }}>
+  <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: 10, display: 'inline-block', verticalAlign: 'middle' }}>
     <path
       fill="#4285F4"
       d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
@@ -78,8 +76,8 @@ export const LoginPage: React.FC = () => {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmed = email.trim().toLowerCase()
-    if (!trimmed) {
-      toast.error('Please enter a valid email address.')
+    if (!trimmed || !trimmed.includes('@')) {
+      toast.error('Please enter a valid work or director email address.')
       return
     }
 
@@ -89,7 +87,7 @@ export const LoginPage: React.FC = () => {
       // If Gmail / Google Email -> 4-Digit OTP Flow
       if (trimmed.includes('@gmail.com') || trimmed.includes('@googlemail.com')) {
         setStep('GOOGLE_OTP')
-        toast.info('Google account detected! A 4-digit OTP has been sent.')
+        toast.info('Google email recognized! Enter the 4-digit verification code.')
       } else {
         // Manually registered corporate email -> Password Flow
         setStep('PASSWORD_AUTH')
@@ -110,16 +108,19 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem(
         'udyamniti_user',
         JSON.stringify({
-          email,
-          name: 'ABC Engineering Ltd.',
+          email: email.trim().toLowerCase(),
+          name: 'ABC Precision Engineering Pvt. Ltd.',
+          directorName: 'Rajesh Patel',
           category: 'Small Enterprise',
+          sector: 'Precision Engineering & Mfg',
+          state: 'Gujarat',
           udyam: 'UDYAM-GJ-01-0023456',
           loginMethod: 'manual_password',
           isLoggedIn: true,
         })
       )
       setLoading(false)
-      toast.success('Welcome back, ABC Engineering! Redirecting to Dashboard...')
+      toast.success('Welcome back! Redirecting to Dashboard...')
       navigate('/dashboard')
     }, 600)
   }
@@ -159,16 +160,19 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem(
         'udyamniti_user',
         JSON.stringify({
-          email,
+          email: email.trim().toLowerCase(),
           name: email.split('@')[0].toUpperCase() + ' (Google Verified)',
+          directorName: 'Authorized Signatory',
           category: 'Small Enterprise',
+          sector: 'Precision Engineering & Mfg',
+          state: 'Gujarat',
           udyam: 'UDYAM-GJ-01-0023456',
           loginMethod: 'google_otp',
           isLoggedIn: true,
         })
       )
       setLoading(false)
-      toast.success('Google OTP Verified! Redirecting to Schemes Dashboard...')
+      toast.success('Google OTP Verified! Redirecting to Dashboard...')
       navigate('/dashboard')
     }, 500)
   }
@@ -180,9 +184,12 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem(
         'udyamniti_user',
         JSON.stringify({
-          email: 'director@googlemail.com',
-          name: 'Google Enterprise Member',
-          category: 'Medium Enterprise',
+          email: 'director.msme@gmail.com',
+          name: 'Sardar Precision Exports Ltd.',
+          directorName: 'Rajesh Patel',
+          category: 'Small Enterprise',
+          sector: 'Precision Engineering & Mfg',
+          state: 'Gujarat',
           udyam: 'UDYAM-GJ-01-0023456',
           loginMethod: 'google_oauth',
           isLoggedIn: true,
@@ -198,16 +205,15 @@ export const LoginPage: React.FC = () => {
     <Box
       sx={{
         minHeight: 'calc(100vh - 120px)',
+        bgcolor: '#F8FAFC',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         px: 2,
-        py: 6,
-        bgcolor: '#0A0F1E',
-        background: `radial-gradient(ellipse at 50% 20%, ${alpha(tokens.color.violet[900], 0.25)} 0%, transparent 70%)`,
+        py: { xs: 5, md: 8 },
       }}
     >
-      <Box sx={{ width: '100%', maxWidth: 460 }}>
+      <Container maxWidth="xs" disableGutters>
         {/* Header Logo */}
         <Box sx={{ textAlign: 'center', mb: 3.5 }}>
           <Box
@@ -219,32 +225,41 @@ export const LoginPage: React.FC = () => {
               width: 48,
               height: 48,
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.35)',
+              bgcolor: '#0F2E59',
+              boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
               mb: 1.5,
               cursor: 'pointer',
             }}
           >
             <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 26 }} />
           </Box>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#FFFFFF', fontSize: '1.5rem', letterSpacing: '-0.02em' }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: tokens.font.heading,
+              fontWeight: 800,
+              color: '#0F2E59',
+              fontSize: '1.65rem',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Sign in to UdyamNiti
           </Typography>
-          <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>
+          <Typography variant="body2" sx={{ color: '#64748B', mt: 0.5 }}>
             Access official MSME schemes & policy intelligence
           </Typography>
         </Box>
 
         <Card
           sx={{
-            bgcolor: '#1A2235',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            bgcolor: '#FFFFFF',
+            border: '1px solid #E2E8F0',
             borderRadius: '16px',
-            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 4px 20px rgba(15, 23, 42, 0.06)',
           }}
         >
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-            {/* ─── GOOGLE SIGN IN BUTTON ─── */}
+            {/* ─── GOOGLE SIGN IN BUTTON (MATCHING UI) ─── */}
             <Button
               fullWidth
               variant="outlined"
@@ -253,26 +268,28 @@ export const LoginPage: React.FC = () => {
               sx={{
                 bgcolor: '#FFFFFF',
                 color: '#1E293B',
-                borderColor: '#E2E8F0',
-                py: 1.2,
-                fontWeight: 600,
-                fontSize: '0.9rem',
+                borderColor: '#CBD5E1',
+                py: 1.3,
+                fontWeight: 700,
+                fontSize: '0.92rem',
                 borderRadius: '8px',
                 textTransform: 'none',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.15s ease',
                 '&:hover': {
                   bgcolor: '#F8FAFC',
-                  borderColor: '#CBD5E1',
+                  borderColor: '#0F2E59',
+                  boxShadow: '0 3px 8px rgba(0, 0, 0, 0.08)',
                 },
               }}
             >
               <GoogleIcon />
-              Continue with Google
+              Sign in with Google
             </Button>
 
-            <Divider sx={{ my: 3, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-              <Typography variant="caption" sx={{ color: '#64748B', px: 1, fontWeight: 600 }}>
-                OR WITH EMAIL
+            <Divider sx={{ my: 3, borderColor: '#E2E8F0' }}>
+              <Typography variant="caption" sx={{ color: '#64748B', px: 1, fontWeight: 700, letterSpacing: '0.04em' }}>
+                OR WITH WORK EMAIL
               </Typography>
             </Divider>
 
@@ -281,7 +298,7 @@ export const LoginPage: React.FC = () => {
               <form onSubmit={handleEmailSubmit}>
                 <Stack spacing={2.5}>
                   <Box>
-                    <Typography variant="caption" sx={{ color: '#CBD5E1', fontWeight: 600, mb: 1, display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.8, display: 'block' }}>
                       Enterprise or Director Email
                     </Typography>
                     <TextField
@@ -291,23 +308,18 @@ export const LoginPage: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      placeholder="name@company.in or name@gmail.com"
+                      placeholder="e.g. director@company.in or name@gmail.com"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <EmailOutlinedIcon sx={{ fontSize: 18, color: '#94A3B8' }} />
+                            <EmailOutlinedIcon sx={{ fontSize: 18, color: '#64748B' }} />
                           </InputAdornment>
                         ),
-                        sx: {
-                          bgcolor: '#111827',
-                          color: '#FFFFFF',
-                          borderRadius: '8px',
-                          fontSize: '0.9rem',
-                        },
+                        sx: { bgcolor: '#F8FAFC', borderRadius: '8px', fontSize: '0.9rem' },
                       }}
                     />
                     <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.8, fontSize: '0.74rem' }}>
-                      Gmail users will receive a 4-digit OTP. Registered corporate emails use a password.
+                      Gmail users receive a 4-digit OTP. Registered corporate emails use password.
                     </Typography>
                   </Box>
 
@@ -318,36 +330,33 @@ export const LoginPage: React.FC = () => {
                     disabled={loading}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      bgcolor: '#0F2E59',
                       color: '#FFFFFF',
                       py: 1.25,
-                      fontWeight: 700,
+                      fontWeight: 800,
                       fontSize: '0.92rem',
                       borderRadius: '8px',
                       textTransform: 'none',
-                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                      },
+                      boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
-                    {loading ? 'Verifying Email...' : 'Continue with Email →'}
+                    {loading ? 'Verifying...' : 'Continue with Email →'}
                   </Button>
                 </Stack>
               </form>
             )}
 
-            {/* ─── STEP 2A: PASSWORD AUTH (MANUAL REGISTERED EMAIL) ─── */}
+            {/* ─── STEP 2A: PASSWORD AUTH ─── */}
             {step === 'PASSWORD_AUTH' && (
               <form onSubmit={handlePasswordSubmit}>
                 <Stack spacing={2.5}>
-                  {/* Selected Email Card */}
                   <Paper
                     elevation={0}
                     sx={{
                       p: 1.5,
-                      bgcolor: 'rgba(16, 185, 129, 0.08)',
-                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      bgcolor: '#ECFDF5',
+                      border: '1px solid #A7F3D0',
                       borderRadius: '8px',
                       display: 'flex',
                       alignItems: 'center',
@@ -355,12 +364,12 @@ export const LoginPage: React.FC = () => {
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <CheckCircleOutlineIcon sx={{ color: '#34D399', fontSize: 18 }} />
+                      <CheckCircleOutlineIcon sx={{ color: '#059669', fontSize: 18 }} />
                       <Box>
-                        <Typography variant="caption" sx={{ color: '#34D399', fontWeight: 700, display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: '#065F46', fontWeight: 700, display: 'block' }}>
                           Registered Enterprise Email
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
+                        <Typography variant="body2" sx={{ color: '#0F2E59', fontWeight: 700, fontSize: '0.85rem' }}>
                           {email}
                         </Typography>
                       </Box>
@@ -368,14 +377,14 @@ export const LoginPage: React.FC = () => {
                     <Button
                       size="small"
                       onClick={() => setStep('EMAIL_INPUT')}
-                      sx={{ color: '#94A3B8', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
+                      sx={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
                     >
                       Change
                     </Button>
                   </Paper>
 
                   <Box>
-                    <Typography variant="caption" sx={{ color: '#CBD5E1', fontWeight: 600, mb: 1, display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, mb: 0.8, display: 'block' }}>
                       Account Password
                     </Typography>
                     <TextField
@@ -385,30 +394,21 @@ export const LoginPage: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      placeholder="Enter your password"
+                      placeholder="Enter your account password"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <LockOutlinedIcon sx={{ fontSize: 18, color: '#94A3B8' }} />
+                            <LockOutlinedIcon sx={{ fontSize: 18, color: '#64748B' }} />
                           </InputAdornment>
                         ),
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton
-                              size="small"
-                              onClick={() => setShowPassword(!showPassword)}
-                              sx={{ color: '#94A3B8' }}
-                            >
+                            <IconButton size="small" onClick={() => setShowPassword(!showPassword)}>
                               {showPassword ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
                             </IconButton>
                           </InputAdornment>
                         ),
-                        sx: {
-                          bgcolor: '#111827',
-                          color: '#FFFFFF',
-                          borderRadius: '8px',
-                          fontSize: '0.9rem',
-                        },
+                        sx: { bgcolor: '#F8FAFC', borderRadius: '8px', fontSize: '0.9rem' },
                       }}
                     />
                   </Box>
@@ -420,21 +420,16 @@ export const LoginPage: React.FC = () => {
                           size="small"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
-                          sx={{ color: '#64748B', '&.Mui-checked': { color: '#818CF8' } }}
+                          sx={{ color: '#64748B', '&.Mui-checked': { color: '#0F2E59' } }}
                         />
                       }
-                      label={<Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.8rem' }}>Remember device</Typography>}
+                      label={<Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.8rem' }}>Remember device</Typography>}
                     />
                     <Chip
                       size="small"
-                      icon={<VerifiedUserIcon sx={{ fontSize: 13, color: '#34D399' }} />}
+                      icon={<VerifiedUserIcon sx={{ fontSize: 13, color: '#059669' }} />}
                       label="SSL Secured"
-                      sx={{
-                        bgcolor: 'rgba(16, 185, 129, 0.1)',
-                        color: '#34D399',
-                        fontSize: '0.68rem',
-                        height: 22,
-                      }}
+                      sx={{ bgcolor: '#ECFDF5', color: '#065F46', fontSize: '0.68rem', height: 22 }}
                     />
                   </Stack>
 
@@ -445,17 +440,15 @@ export const LoginPage: React.FC = () => {
                     disabled={loading}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      bgcolor: '#0F2E59',
                       color: '#FFFFFF',
                       py: 1.25,
-                      fontWeight: 700,
+                      fontWeight: 800,
                       fontSize: '0.92rem',
                       borderRadius: '8px',
                       textTransform: 'none',
-                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                      },
+                      boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
                     {loading ? 'Authenticating...' : 'Sign In & Go to Dashboard →'}
@@ -464,17 +457,16 @@ export const LoginPage: React.FC = () => {
               </form>
             )}
 
-            {/* ─── STEP 2B: 4-DIGIT OTP AUTH (GOOGLE EMAIL) ─── */}
+            {/* ─── STEP 2B: 4-DIGIT OTP AUTH ─── */}
             {step === 'GOOGLE_OTP' && (
               <form onSubmit={handleOtpSubmit}>
                 <Stack spacing={2.5}>
-                  {/* Google Email Detected Banner */}
                   <Paper
                     elevation={0}
                     sx={{
                       p: 1.5,
-                      bgcolor: 'rgba(66, 133, 244, 0.1)',
-                      border: '1px solid rgba(66, 133, 244, 0.3)',
+                      bgcolor: '#EFF6FF',
+                      border: '1px solid #BFDBFE',
                       borderRadius: '8px',
                       display: 'flex',
                       alignItems: 'center',
@@ -482,12 +474,12 @@ export const LoginPage: React.FC = () => {
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <KeyOutlinedIcon sx={{ color: '#60A5FA', fontSize: 18 }} />
+                      <KeyOutlinedIcon sx={{ color: '#2563EB', fontSize: 18 }} />
                       <Box>
-                        <Typography variant="caption" sx={{ color: '#60A5FA', fontWeight: 700, display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: '#1D4ED8', fontWeight: 700, display: 'block' }}>
                           Google Account Detected
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
+                        <Typography variant="body2" sx={{ color: '#0F2E59', fontWeight: 700, fontSize: '0.85rem' }}>
                           {email}
                         </Typography>
                       </Box>
@@ -495,18 +487,17 @@ export const LoginPage: React.FC = () => {
                     <Button
                       size="small"
                       onClick={() => setStep('EMAIL_INPUT')}
-                      sx={{ color: '#94A3B8', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
+                      sx={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'none', p: 0.5 }}
                     >
                       Change
                     </Button>
                   </Paper>
 
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="caption" sx={{ color: '#CBD5E1', fontWeight: 600, display: 'block', mb: 1 }}>
-                      Enter 4-Digit Verification Code
+                    <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, display: 'block', mb: 1 }}>
+                      Enter 4-Digit Security Code
                     </Typography>
 
-                    {/* 4 Box Digits */}
                     <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ my: 1.5 }}>
                       {[0, 1, 2, 3].map((idx) => (
                         <TextField
@@ -522,21 +513,18 @@ export const LoginPage: React.FC = () => {
                               textAlign: 'center',
                               fontSize: '1.4rem',
                               fontWeight: 800,
-                              color: '#FFFFFF',
+                              color: '#0F2E59',
                               padding: '12px 0',
                             },
                           }}
                           sx={{
                             width: 54,
-                            bgcolor: '#111827',
+                            bgcolor: '#F8FAFC',
                             borderRadius: '10px',
                             '& .MuiOutlinedInput-root': {
                               borderRadius: '10px',
                               '& fieldset': {
-                                borderColor: otpDigits[idx] ? '#818CF8' : 'rgba(255, 255, 255, 0.15)',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: '#818CF8',
+                                borderColor: otpDigits[idx] ? '#0F2E59' : '#CBD5E1',
                               },
                             },
                           }}
@@ -545,14 +533,16 @@ export const LoginPage: React.FC = () => {
                     </Stack>
 
                     <Chip
-                      label="Demo OTP: 4829 (Or enter any 4 digits)"
+                      icon={<FlashOnIcon sx={{ fontSize: '13px !important', color: '#D97706 !important' }} />}
+                      label="Demo OTP: 4829 (Or any 4 digits)"
                       size="small"
+                      onClick={() => setOtpDigits(['4', '8', '2', '9'])}
                       sx={{
-                        bgcolor: 'rgba(245, 158, 11, 0.12)',
-                        color: '#FCD34D',
+                        bgcolor: '#FEF3C7',
+                        color: '#B45309',
                         fontSize: '0.72rem',
-                        fontWeight: 600,
-                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                        fontWeight: 700,
+                        cursor: 'pointer',
                         mt: 0.5,
                       }}
                     />
@@ -565,26 +555,24 @@ export const LoginPage: React.FC = () => {
                     disabled={loading}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      bgcolor: '#0F2E59',
                       color: '#FFFFFF',
                       py: 1.25,
-                      fontWeight: 700,
+                      fontWeight: 800,
                       fontSize: '0.92rem',
                       borderRadius: '8px',
                       textTransform: 'none',
-                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-                      },
+                      boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
-                    {loading ? 'Verifying OTP...' : 'Verify OTP & Open Dashboard →'}
+                    {loading ? 'Verifying OTP...' : 'Verify & Open Dashboard →'}
                   </Button>
                 </Stack>
               </form>
             )}
 
-            <Divider sx={{ my: 3, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+            <Divider sx={{ my: 3, borderColor: '#E2E8F0' }}>
               <Typography variant="caption" sx={{ color: '#64748B', px: 1 }}>
                 NEW TO UDYAMNITI?
               </Typography>
@@ -595,16 +583,16 @@ export const LoginPage: React.FC = () => {
               variant="outlined"
               onClick={() => navigate('/register')}
               sx={{
-                borderColor: 'rgba(255, 255, 255, 0.15)',
-                color: '#CBD5E1',
-                py: 1,
-                fontWeight: 600,
-                fontSize: '0.86rem',
+                borderColor: '#CBD5E1',
+                color: '#0F2E59',
+                py: 1.1,
+                fontWeight: 700,
+                fontSize: '0.88rem',
                 borderRadius: '8px',
                 textTransform: 'none',
                 '&:hover': {
-                  borderColor: '#818CF8',
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                  borderColor: '#0F2E59',
+                  bgcolor: '#F8FAFC',
                 },
               }}
             >
@@ -612,7 +600,7 @@ export const LoginPage: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-      </Box>
+      </Container>
     </Box>
   )
 }
