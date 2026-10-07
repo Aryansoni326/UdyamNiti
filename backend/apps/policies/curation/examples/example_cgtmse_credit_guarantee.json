@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "template_version": "1.0.0",
+    "curator_name": "Aarav Mehta",
+    "curator_email": "aarav.mehta@udyamniti.gov.in",
+    "curation_date": "2026-09-28",
+    "reviewer_name": "Pooja Sharma (Senior Legal Counsel)",
+    "reviewer_email": "pooja.sharma@udyamniti.gov.in",
+    "review_date": "2026-09-29",
+    "review_status": "approved",
+    "review_notes": "Curated from official CGTMSE Operational Guidelines Circular 112/2023. Validated ₹500 Lakh cap and 85% coverage."
+  },
+  "scheme_id": "IN-CENTRAL-CGTMSE-2024",
+  "scheme_name": "Credit Guarantee Fund Trust for Micro and Small Enterprises (CGTMSE)",
+  "short_name": "CGTMSE",
+  "authority": "Credit Guarantee Fund Trust for Micro and Small Enterprises (Ministry of MSME & SIDBI)",
+  "central_or_state": "central",
+  "applicable_state": null,
+  "version": 1,
+  "status": "active",
+  "objective": "To make available collateral-free credit to micro and small enterprises by providing institutional guarantee coverage to member lending institutions against default.",
+  "support_categories": [
+    "collateral_free_credit",
+    "credit_guarantee"
+  ],
+  "benefit_type": "credit_guarantee",
+  "target_enterprise_types": [
+    "micro",
+    "small"
+  ],
+  "target_sectors": [
+    "Manufacturing",
+    "Services",
+    "Retail Trade",
+    "Education & Health"
+  ],
+  "exclusions": [
+    "Medium enterprises having turnover exceeding ₹50 Crore",
+    "Educational institutions not affiliated with authorized bodies",
+    "Self-help groups and non-commercial trusts",
+    "Loans already covered under other statutory guarantee schemes (e.g. NCGTC)"
+  ],
+  "eligibility_rules": [
+    {
+      "rule_id": "R-CGTMSE-SIZE-01",
+      "rule_name": "Micro and Small Classification",
+      "field_path": "business_profile.msme_category",
+      "operator": "in",
+      "expected_value": [
+        "micro",
+        "small"
+      ],
+      "importance": "mandatory",
+      "display_label": "Micro or Small Enterprise Qualification",
+      "failure_message": "Ineligible: CGTMSE guarantees are restricted to Micro and Small enterprises. Medium enterprises are ineligible.",
+      "ambiguity_notes": null,
+      "effective_from": "2023-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CGTMSE Scheme Brochure & Operational Circular 2023",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Trust / Ministry of MSME",
+        "notification_or_doc_number": "Circular No. 112/2023",
+        "clause_or_section": "Para 2.1",
+        "page_number": 2,
+        "exact_quote": "Guarantees are eligible for new or existing Micro and Small Enterprises as defined under the MSMED Act, 2006.",
+        "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    },
+    {
+      "rule_id": "R-CGTMSE-NPA-02",
+      "rule_name": "Standard Banking Asset Standing",
+      "field_path": "business_profile.is_npa",
+      "operator": "bool_false",
+      "expected_value": false,
+      "importance": "mandatory",
+      "display_label": "Standard Non-NPA Account",
+      "failure_message": "Ineligible: Borrower accounts in default or classified as NPA by any lending institution cannot receive fresh guarantee cover.",
+      "ambiguity_notes": null,
+      "effective_from": "2023-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CGTMSE Operational Circular 2023",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Trust",
+        "notification_or_doc_number": "Circular No. 112/2023",
+        "clause_or_section": "Para 4.2",
+        "page_number": 4,
+        "exact_quote": "The credit facility must be in standard asset category at the time of guarantee application.",
+        "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "financial_conditions": [
+    {
+      "condition_id": "FC-CGTMSE-01",
+      "parameter_name": "Maximum Guarantee Credit Limit Ceiling",
+      "field_path": "goal.parsed_investment_amount_lakhs",
+      "operator": "lte",
+      "threshold_value": 500.0,
+      "currency_unit": "INR_LAKHS",
+      "evidence": {
+        "document_title": "CGTMSE Revised Guidelines 2023",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Trust",
+        "notification_or_doc_number": "Circular No. 112/2023",
+        "clause_or_section": "Para 3.1",
+        "page_number": 3,
+        "exact_quote": "The maximum credit facility eligible for guarantee coverage has been enhanced from ₹200 Lakh to ₹500 Lakh per borrower.",
+        "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "registration_requirements": [
+    {
+      "portal_name": "Udyam Registration Portal",
+      "registration_type": "Statutory Prerequisite",
+      "mandatory": true,
+      "timing": "Prior to MLI credit sanction",
+      "verification_method": "Udyam Number validation by Member Lending Institution",
+      "portal_url": "https://udyamregistration.gov.in"
+    }
+  ],
+  "prerequisites": [
+    "Valid Udyam Registration Certificate.",
+    "Credit proposal appraised and approved by a Member Lending Institution (MLI) without collateral security.",
+    "Borrower PAN and Aadhaar authentication."
+  ],
+  "required_documents": [
+    "Udyam Registration Certificate",
+    "Detailed Project Report / Business Viability Plan",
+    "Income Tax Returns / Financial Statements for preceding 2 years",
+    "Letter of Guarantee Application from Member Lending Institution",
+    "Undertaking of zero third-party collateral mortgage"
+  ],
+  "benefit_calculation": {
+    "formula_type": "credit_guarantee",
+    "base_field": "sanctioned_loan_amount_lakhs",
+    "base_percentage": 75.0,
+    "maximum_cap_lakhs": 500.0,
+    "priority_multipliers": {
+      "women_owned": 10.0,
+      "sc_st_owned": 10.0,
+      "micro_up_to_5_lakhs": 10.0
+    },
+    "formula_expression": "min(sanctioned_loan_amount_lakhs, 500.0) * (0.75 + bonus_pct)",
+    "evidence": {
+      "document_title": "CGTMSE Revised Guidelines 2023",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "CGTMSE Trust",
+      "notification_or_doc_number": "Circular No. 112/2023",
+      "clause_or_section": "Para 3.3 Table-B",
+      "page_number": 3,
+      "exact_quote": "Extent of guarantee coverage is 85% for Micro enterprises up to ₹5 Lakhs, and 85% for units owned or operated by Women and SC/ST entrepreneurs up to ₹500 Lakhs.",
+      "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "possible_relationships": [
+    {
+      "target_scheme_id": "IN-CENTRAL-MSME-CLCSS-2024",
+      "target_scheme_name": "Credit Linked Capital Subsidy Scheme (CLCSS)",
+      "relationship_type": "stacks_with",
+      "description": "CGTMSE credit guarantee covers the bank term loan which simultaneously receives 15% CLCSS upfront capital subsidy.",
+      "statutory_non_duplication_clause": "CGTMSE Operational Circular 112/2023 Para 3.4 explicitly allows combining guarantee with government capital subsidy schemes.",
+      "evidence": {
+        "document_title": "CGTMSE Operational Circular 112/2023",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Trust",
+        "notification_or_doc_number": "Circular No. 112/2023",
+        "clause_or_section": "Para 3.4",
+        "page_number": 3,
+        "exact_quote": "Guarantee coverage may be extended to term loans sanctioned under government capital subsidy programs including CLCSS.",
+        "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "application_process": "1. Enterprise approaches Member Lending Institution (Scheduled Commercial Bank / NBFC / RRB) with project proposal.\n2. Bank assesses loan request without insisting on collateral security or third-party guarantee.\n3. Upon sanction, bank logs into CGTMSE portal (cgtmse.in) and enters loan particulars.\n4. Bank pays annual guarantee fee directly to the Trust and books guarantee coverage.",
+  "official_application_url": "https://www.cgtmse.in",
+  "source_documents": [
+    {
+      "document_title": "CGTMSE Revised Guidelines 2023",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "CGTMSE Trust",
+      "notification_or_doc_number": "Circular No. 112/2023",
+      "clause_or_section": "Complete Circular",
+      "page_number": 1,
+      "exact_quote": "Modifications in the Credit Guarantee Scheme for Micro and Small Enterprises.",
+      "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "effective_date": "2023-04-01",
+  "effective_until": null,
+  "last_verified_date": "2026-09-28",
+  "is_synthetic_benchmark": false
+}

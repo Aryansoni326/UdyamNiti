@@ -1,0 +1,199 @@
+{
+  "$schema": "./curation_schema.json",
+  "metadata": {
+    "template_version": "1.0.0",
+    "curator_name": "Full Name of Policy Researcher",
+    "curator_email": "curator@udyamniti.gov.in",
+    "curation_date": "2026-09-30",
+    "reviewer_name": "Full Name of Second-Eye Reviewer",
+    "reviewer_email": "reviewer@udyamniti.gov.in",
+    "review_date": "2026-09-30",
+    "review_status": "draft",
+    "review_notes": "Notes on verification findings or edge cases"
+  },
+  "scheme_id": "IN-CENTRAL-MSME-CLCSS-2024",
+  "scheme_name": "Full Official Legal Title as Notified in Gazette",
+  "short_name": "Common Short Title / Acronym",
+  "authority": "Ministry of Micro, Small and Medium Enterprises, Government of India",
+  "central_or_state": "central",
+  "applicable_state": null,
+  "version": 1,
+  "status": "active",
+  "objective": "Official preamble stating the legislative or administrative intent of the program.",
+  "support_categories": [
+    "capital_subsidy",
+    "technology_adoption"
+  ],
+  "benefit_type": "capital_subsidy",
+  "target_enterprise_types": [
+    "micro",
+    "small"
+  ],
+  "target_sectors": [
+    "Manufacturing",
+    "Engineering"
+  ],
+  "exclusions": [
+    "Units manufacturing products listed in the statutory negative list (tobacco, alcohol, etc.)",
+    "Existing units not undertaking verified technology upgrade or expansion"
+  ],
+  "eligibility_rules": [
+    {
+      "rule_id": "R-CLCSS-CAT-01",
+      "rule_name": "Enterprise Size Eligibility",
+      "field_path": "business_profile.msme_category",
+      "operator": "in",
+      "expected_value": [
+        "micro",
+        "small"
+      ],
+      "importance": "mandatory",
+      "display_label": "Micro or Small Enterprise Classification",
+      "failure_message": "Only Micro and Small enterprises qualify for this central capital subsidy.",
+      "ambiguity_notes": null,
+      "effective_from": "2024-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "Office of the Development Commissioner (MSME)",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 3.1(a)",
+        "page_number": 4,
+        "exact_quote": "The scheme covers Micro and Small Enterprises having valid Udyam Registration engaged in manufacturing.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-30"
+      }
+    },
+    {
+      "rule_id": "R-CLCSS-NPA-02",
+      "rule_name": "Standard Credit Asset Standing (Non-NPA)",
+      "field_path": "business_profile.is_npa",
+      "operator": "bool_false",
+      "expected_value": false,
+      "importance": "mandatory",
+      "display_label": "Clean Credit Standing / Non-NPA Account",
+      "failure_message": "Units with non-performing asset (NPA) status or active default are barred by institutional lending guidelines.",
+      "ambiguity_notes": "Restructured accounts undergoing resolution require explicit bank committee clearance.",
+      "effective_from": "2024-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "Office of the Development Commissioner (MSME)",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 5.1",
+        "page_number": 9,
+        "exact_quote": "Term loans sanctioned by Primary Lending Institutions must be standard assets with no overdue NPA history.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-30"
+      }
+    }
+  ],
+  "financial_conditions": [
+    {
+      "condition_id": "FC-CLCSS-01",
+      "parameter_name": "Maximum Eligible Plant & Machinery Investment Ceiling",
+      "field_path": "business_profile.investment_in_plant_machinery_lakhs",
+      "operator": "lte",
+      "threshold_value": 100.0,
+      "currency_unit": "INR_LAKHS",
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "DC-MSME",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 4.1",
+        "page_number": 6,
+        "exact_quote": "The ceiling on eligible loan amount for calculation of subsidy is ₹100 Lakh.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-30"
+      }
+    }
+  ],
+  "registration_requirements": [
+    {
+      "portal_name": "Udyam Registration Portal",
+      "registration_type": "Statutory Prerequisite",
+      "mandatory": true,
+      "timing": "Prior to term loan sanction",
+      "verification_method": "API verification via Udyam Certificate Number",
+      "portal_url": "https://udyamregistration.gov.in"
+    }
+  ],
+  "prerequisites": [
+    "Enterprise must possess an active Udyam Registration Certificate.",
+    "Term loan must be sanctioned by an approved Primary Lending Institution (PLI) via SIDBI/NABARD.",
+    "Commercial machine quotation must confirm new, first-hand technology."
+  ],
+  "required_documents": [
+    "Valid Udyam Registration Certificate",
+    "Audited Balance Sheets and P&L statements for the last 3 financial years",
+    "GSTR-3B filings for preceding 4 quarters",
+    "Bank Term Loan In-Principle Sanction Letter",
+    "Pro-forma Invoice and Technical Quotation for Machinery"
+  ],
+  "benefit_calculation": {
+    "formula_type": "percentage_of_capex",
+    "base_field": "plant_machinery_cost_lakhs",
+    "base_percentage": 15.0,
+    "maximum_cap_lakhs": 15.0,
+    "priority_multipliers": {
+      "sc_st_owned": 0.0,
+      "women_owned": 0.0
+    },
+    "formula_expression": "min(plant_machinery_cost_lakhs * 0.15, 15.0)",
+    "evidence": {
+      "document_title": "CLCSS Operational Guidelines 2024",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "DC-MSME",
+      "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+      "clause_or_section": "Clause 4.1",
+      "page_number": 6,
+      "exact_quote": "Upfront capital subsidy of 15% shall be calculated on the eligible investment in plant and machinery up to a ceiling of ₹100 Lakh (Maximum Subsidy ₹15 Lakh).",
+      "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+      "last_verified_date": "2026-09-30"
+    }
+  },
+  "possible_relationships": [
+    {
+      "target_scheme_id": "GJ-MSME-CAPITAL-2020",
+      "target_scheme_name": "Gujarat Industrial Policy - Assistance to MSMEs",
+      "relationship_type": "stacks_with",
+      "description": "Central CLCSS 15% subsidy stacks with Gujarat State 25% capital subsidy without GFR 230(1) conflict because state guidelines explicitly authorize top-up assistance.",
+      "statutory_non_duplication_clause": "Gujarat MSME Policy Resolution No. SSI-102020-Gujarat Section 12: 'Assistance under this resolution shall be over and above any central government subsidy received, subject to total subsidy not exceeding 75% of asset cost.'",
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy Scheme GR 2020",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Government of Gujarat Industries & Mines Department",
+        "notification_or_doc_number": "GR No. SSI-102020-Gujarat",
+        "clause_or_section": "Section 12.1",
+        "page_number": 14,
+        "exact_quote": "Assistance under this resolution shall be over and above any central government subsidy received.",
+        "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+        "last_verified_date": "2026-09-30"
+      }
+    }
+  ],
+  "application_process": "1. Enterprise prepares project report and obtains term loan sanction from PLI.\n2. PLI uploads claim on the central online portal (clcss.dcmsme.gov.in).\n3. Nodal Agency (SIDBI/NABARD) scrutinizes claim and disburses subsidy into beneficiary reserve loan account.\n4. Subsidized machinery must be installed and held for a lock-in period of 3 years.",
+  "official_application_url": "https://clcss.dcmsme.gov.in",
+  "source_documents": [
+    {
+      "document_title": "CLCSS Operational Guidelines 2024",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "Ministry of MSME, Government of India",
+      "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+      "clause_or_section": "Complete Manual",
+      "page_number": 1,
+      "exact_quote": "Guidelines for Implementation of Credit Linked Capital Subsidy Scheme for Technology Upgradation of Micro and Small Enterprises.",
+      "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+      "last_verified_date": "2026-09-30"
+    }
+  ],
+  "effective_date": "2024-04-01",
+  "effective_until": null,
+  "last_verified_date": "2026-09-30",
+  "is_synthetic_benchmark": false
+}

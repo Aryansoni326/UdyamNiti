@@ -1,0 +1,209 @@
+{
+  "metadata": {
+    "template_version": "1.0.0",
+    "curator_name": "Aarav Mehta",
+    "curator_email": "aarav.mehta@udyamniti.gov.in",
+    "curation_date": "2026-09-28",
+    "reviewer_name": "Pooja Sharma (Senior Legal Counsel)",
+    "reviewer_email": "pooja.sharma@udyamniti.gov.in",
+    "review_date": "2026-09-29",
+    "review_status": "approved",
+    "review_notes": "Curated from Gujarat Industries and Mines Department Resolution SSI-102020-Gujarat. Verified state top-up rules."
+  },
+  "scheme_id": "IN-GUJARAT-MSME-CAPITAL-2020",
+  "scheme_name": "Gujarat Industrial Policy 2020 - Scheme for Financial Assistance to MSMEs (Capital Investment Subsidy)",
+  "short_name": "Gujarat MSME Capital Subsidy",
+  "authority": "Industries and Mines Department, Government of Gujarat",
+  "central_or_state": "state",
+  "applicable_state": "Gujarat",
+  "version": 1,
+  "status": "active",
+  "objective": "To provide financial incentives for manufacturing MSMEs in Gujarat to undertake technology modernization, capacity expansion, and high-value industrial production.",
+  "support_categories": [
+    "capital_subsidy",
+    "technology_adoption",
+    "infrastructure_grant"
+  ],
+  "benefit_type": "capital_subsidy",
+  "target_enterprise_types": [
+    "micro",
+    "small",
+    "medium"
+  ],
+  "target_sectors": [
+    "Manufacturing",
+    "Engineering",
+    "Textiles",
+    "Plastics",
+    "Electronics",
+    "Automotive Components"
+  ],
+  "exclusions": [
+    "Trading, warehousing, and commercial service enterprises",
+    "Second-hand or relocated plant & machinery",
+    "Enterprises defaulting on state taxes or electricity dues",
+    "Statutory negative list under Appendix-A of Resolution"
+  ],
+  "eligibility_rules": [
+    {
+      "rule_id": "R-GJ-LOC-01",
+      "rule_name": "Gujarat State Geographic Location",
+      "field_path": "business_profile.state",
+      "operator": "eq",
+      "expected_value": "Gujarat",
+      "importance": "mandatory",
+      "display_label": "Unit Location in Gujarat State",
+      "failure_message": "Ineligible: Enterprise manufacturing facility must be physically situated within the state of Gujarat.",
+      "ambiguity_notes": null,
+      "effective_from": "2020-08-07",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Government of Gujarat Industries & Mines Department",
+        "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+        "clause_or_section": "Section 2.1",
+        "page_number": 3,
+        "exact_quote": "This scheme shall apply to micro, small and medium manufacturing enterprises established and operating within the geographical territory of Gujarat State.",
+        "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    },
+    {
+      "rule_id": "R-GJ-MACH-02",
+      "rule_name": "New Plant & Machinery Requirement",
+      "field_path": "goal.parsed_project_type",
+      "operator": "in",
+      "expected_value": [
+        "machinery_purchase",
+        "expansion_new_unit",
+        "technology_modernization"
+      ],
+      "importance": "mandatory",
+      "display_label": "New Plant & Machinery Investment",
+      "failure_message": "Ineligible: Only capital expenditure on new, unused plant and machinery qualifies for state capital subsidy.",
+      "ambiguity_notes": "Imported refurbished machinery requires Chartered Engineer certificate of minimum 10-year residual life.",
+      "effective_from": "2020-08-07",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Government of Gujarat Industries & Mines Department",
+        "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+        "clause_or_section": "Section 4.3",
+        "page_number": 5,
+        "exact_quote": "Only new plant and machinery purchased from recognized manufacturers or authorized distributors shall be eligible for subsidy computation.",
+        "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "financial_conditions": [
+    {
+      "condition_id": "FC-GJ-01",
+      "parameter_name": "Maximum Assistance Cap in Category-1/2 Talukas",
+      "field_path": "business_profile.investment_in_plant_machinery_lakhs",
+      "operator": "lte",
+      "threshold_value": 1000.0,
+      "currency_unit": "INR_LAKHS",
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Government of Gujarat Industries & Mines Department",
+        "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+        "clause_or_section": "Section 5.1 Table-A",
+        "page_number": 6,
+        "exact_quote": "For Small and Micro enterprises in Category-1 and Category-2 talukas, capital subsidy is 25% of eligible fixed capital investment up to a maximum of ₹25 Lakhs.",
+        "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "registration_requirements": [
+    {
+      "portal_name": "Gujarat Investor Facilitation Portal (IFP)",
+      "registration_type": "State Single Window Clearance",
+      "mandatory": true,
+      "timing": "Within 1 year of commercial production / installation",
+      "verification_method": "Online IFP Investor Login & DIC scrutiny",
+      "portal_url": "https://ifp.gujarat.gov.in"
+    }
+  ],
+  "prerequisites": [
+    "Valid Udyam Registration showing Gujarat factory address.",
+    "Provisional intent registration filed with District Industries Centre (DIC) prior to commercial production.",
+    "First-hand machinery invoices with GST proof of payment."
+  ],
+  "required_documents": [
+    "Udyam Registration Certificate",
+    "Approved Project Report submitted to Bank / Financial Institution",
+    "Bank Term Loan Sanction Letter and Disbursement Certificate",
+    "Original OEM Invoices, Delivery Challans, and Payment Vouchers",
+    "Chartered Accountant Fixed Capital Investment Certificate",
+    "GPCB Consent to Establish / Operate (where applicable)"
+  ],
+  "benefit_calculation": {
+    "formula_type": "percentage_of_capex",
+    "base_field": "plant_machinery_cost_lakhs",
+    "base_percentage": 25.0,
+    "maximum_cap_lakhs": 25.0,
+    "priority_multipliers": {
+      "women_owned": 5.0,
+      "sc_st_owned": 5.0,
+      "young_entrepreneur": 2.0
+    },
+    "formula_expression": "min(plant_machinery_cost_lakhs * (0.25 + bonus_pct), 25.0)",
+    "evidence": {
+      "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+      "source_tier": "tier_1_gazette",
+      "issuing_authority": "Government of Gujarat Industries & Mines Department",
+      "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+      "clause_or_section": "Section 5.2",
+      "page_number": 7,
+      "exact_quote": "Enterprises owned by women entrepreneurs or SC/ST entrepreneurs shall be entitled to an additional 5% capital subsidy within the overall ceiling of ₹25 Lakhs.",
+      "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "possible_relationships": [
+    {
+      "target_scheme_id": "IN-CENTRAL-MSME-CLCSS-2024",
+      "target_scheme_name": "Credit Linked Capital Subsidy Scheme (CLCSS)",
+      "relationship_type": "stacks_with",
+      "description": "Gujarat State Capital Subsidy explicitly permits stacking on top of Central CLCSS assistance without GFR conflict.",
+      "statutory_non_duplication_clause": "Resolution Section 12.1: 'Assistance under this resolution shall be over and above any central government subsidy received.'",
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Government of Gujarat Industries & Mines Department",
+        "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+        "clause_or_section": "Section 12.1",
+        "page_number": 14,
+        "exact_quote": "Assistance under this resolution shall be over and above any central government subsidy received.",
+        "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "application_process": "1. Enterprise registers on Gujarat Investor Facilitation Portal (ifp.gujarat.gov.in).\n2. Files Common Application Form (CAF) with District Industries Centre (DIC).\n3. Installs machinery and commences commercial production within approved timeline.\n4. Submits final claim with CA investment certificate and bank verification within 1 year.\n5. State Level Committee (SLC) approves and disburses subsidy via DBT into bank loan account.",
+  "official_application_url": "https://ifp.gujarat.gov.in",
+  "source_documents": [
+    {
+      "document_title": "Gujarat Industrial Policy 2020 Scheme GR",
+      "source_tier": "tier_1_gazette",
+      "issuing_authority": "Government of Gujarat Industries & Mines Department",
+      "notification_or_doc_number": "Resolution No. SSI-102020-Gujarat",
+      "clause_or_section": "Complete Resolution",
+      "page_number": 1,
+      "exact_quote": "Scheme for financial assistance to Micro, Small and Medium Enterprises under Gujarat Industrial Policy 2020.",
+      "document_url": "https://industries.gujarat.gov.in/gr-msme-2020.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "effective_date": "2020-08-07",
+  "effective_until": "2025-08-06",
+  "last_verified_date": "2026-09-28",
+  "is_synthetic_benchmark": false
+}

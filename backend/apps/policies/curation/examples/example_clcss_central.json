@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "template_version": "1.0.0",
+    "curator_name": "Aarav Mehta",
+    "curator_email": "aarav.mehta@udyamniti.gov.in",
+    "curation_date": "2026-09-28",
+    "reviewer_name": "Pooja Sharma (Senior Legal Counsel)",
+    "reviewer_email": "pooja.sharma@udyamniti.gov.in",
+    "review_date": "2026-09-29",
+    "review_status": "approved",
+    "review_notes": "Verified against official DC-MSME Gazette Guidelines 2024. All 4 rules and capex formulas validated."
+  },
+  "scheme_id": "IN-CENTRAL-MSME-CLCSS-2024",
+  "scheme_name": "Credit Linked Capital Subsidy Scheme for Technology Upgradation (CLCSS)",
+  "short_name": "CLCSS",
+  "authority": "Ministry of Micro, Small and Medium Enterprises, Government of India",
+  "central_or_state": "central",
+  "applicable_state": null,
+  "version": 1,
+  "status": "active",
+  "objective": "Aims at facilitating technology up-gradation by providing 15% upfront capital subsidy to MSEs on institutional finance availed for induction of well-established and approved technologies in specified sub-sectors.",
+  "support_categories": [
+    "capital_subsidy",
+    "technology_adoption"
+  ],
+  "benefit_type": "capital_subsidy",
+  "target_enterprise_types": [
+    "micro",
+    "small"
+  ],
+  "target_sectors": [
+    "Manufacturing",
+    "Precision Engineering",
+    "Auto Components",
+    "Textiles",
+    "Plastics",
+    "Food Processing"
+  ],
+  "exclusions": [
+    "Medium enterprises having investment in plant & machinery exceeding ₹10 Crore",
+    "Trading, services, and non-manufacturing activities",
+    "Units purchasing second-hand or refurbished machinery",
+    "Activities included in statutory negative list"
+  ],
+  "eligibility_rules": [
+    {
+      "rule_id": "R-CLCSS-SIZE-01",
+      "rule_name": "Micro or Small Enterprise Status",
+      "field_path": "business_profile.msme_category",
+      "operator": "in",
+      "expected_value": [
+        "micro",
+        "small"
+      ],
+      "importance": "mandatory",
+      "display_label": "Micro or Small Enterprise Status",
+      "failure_message": "Ineligible: Medium enterprises are barred from CLCSS assistance. The scheme is statutory restricted to Micro and Small units.",
+      "ambiguity_notes": null,
+      "effective_from": "2024-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "Office of the Development Commissioner (MSME)",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 3.1(a)",
+        "page_number": 4,
+        "exact_quote": "The scheme covers Micro and Small Enterprises having valid Udyam Registration engaged in manufacturing.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    },
+    {
+      "rule_id": "R-CLCSS-MFG-02",
+      "rule_name": "Manufacturing Sub-Sector Requirement",
+      "field_path": "business_profile.industry_sector",
+      "operator": "ne",
+      "expected_value": "trading_or_services",
+      "importance": "mandatory",
+      "display_label": "Manufacturing Activity Verification",
+      "failure_message": "Ineligible: Enterprise must be engaged in tangible manufacturing with identifiable technology induction.",
+      "ambiguity_notes": null,
+      "effective_from": "2024-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "DC-MSME",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 4.2",
+        "page_number": 5,
+        "exact_quote": "Assistance is available for approved manufacturing sub-sectors only. Pure commercial trading and services are strictly ineligible.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    },
+    {
+      "rule_id": "R-CLCSS-NPA-03",
+      "rule_name": "Standard Banking Asset (Non-NPA)",
+      "field_path": "business_profile.is_npa",
+      "operator": "bool_false",
+      "expected_value": false,
+      "importance": "mandatory",
+      "display_label": "Non-NPA Good Credit Standing",
+      "failure_message": "Ineligible: Enterprise accounts classified as Non-Performing Assets (NPA) cannot receive central interest or capital subsidies.",
+      "ambiguity_notes": null,
+      "effective_from": "2024-04-01",
+      "effective_until": null,
+      "is_active": true,
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "DC-MSME",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 5.1",
+        "page_number": 9,
+        "exact_quote": "Term loans sanctioned by Primary Lending Institutions must be standard assets with no overdue NPA history.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "financial_conditions": [
+    {
+      "condition_id": "FC-CLCSS-01",
+      "parameter_name": "Maximum Loan Calculation Ceiling",
+      "field_path": "business_profile.investment_in_plant_machinery_lakhs",
+      "operator": "lte",
+      "threshold_value": 100.0,
+      "currency_unit": "INR_LAKHS",
+      "evidence": {
+        "document_title": "CLCSS Operational Guidelines 2024",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "DC-MSME",
+        "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+        "clause_or_section": "Clause 4.1",
+        "page_number": 6,
+        "exact_quote": "The ceiling on eligible loan amount for calculation of subsidy is ₹100 Lakh.",
+        "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "registration_requirements": [
+    {
+      "portal_name": "Udyam Registration Portal",
+      "registration_type": "Statutory Prerequisite",
+      "mandatory": true,
+      "timing": "Prior to loan application",
+      "verification_method": "API verification via Udyam Certificate Number",
+      "portal_url": "https://udyamregistration.gov.in"
+    }
+  ],
+  "prerequisites": [
+    "Valid Udyam Registration Certificate under Micro or Small category.",
+    "Institutional term loan sanction from a scheduled commercial bank or approved PLI.",
+    "Pro-forma invoice detailing OEM technical specifications for new machinery."
+  ],
+  "required_documents": [
+    "Udyam Registration Certificate",
+    "Audited Financial Statements for preceding 3 financial years",
+    "GSTR-3B filings for preceding 4 quarters",
+    "Bank Term Loan In-Principle Sanction Letter",
+    "Machine Manufacturer Pro-forma Invoice and Technical Specifications"
+  ],
+  "benefit_calculation": {
+    "formula_type": "percentage_of_capex",
+    "base_field": "plant_machinery_cost_lakhs",
+    "base_percentage": 15.0,
+    "maximum_cap_lakhs": 15.0,
+    "priority_multipliers": {},
+    "formula_expression": "min(plant_machinery_cost_lakhs * 0.15, 15.0)",
+    "evidence": {
+      "document_title": "CLCSS Operational Guidelines 2024",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "DC-MSME",
+      "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+      "clause_or_section": "Clause 4.1",
+      "page_number": 6,
+      "exact_quote": "Upfront capital subsidy of 15% shall be calculated on the eligible investment in plant and machinery up to a ceiling of ₹100 Lakh (Maximum Subsidy ₹15 Lakh).",
+      "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "possible_relationships": [
+    {
+      "target_scheme_id": "IN-CENTRAL-CGTMSE-2024",
+      "target_scheme_name": "Credit Guarantee Scheme for Micro & Small Enterprises",
+      "relationship_type": "stacks_with",
+      "description": "CLCSS subsidy can be combined with CGTMSE credit guarantee on the balance loan component without conflict.",
+      "statutory_non_duplication_clause": "CGTMSE Operational Circular 112/2023: 'Guarantee coverage may be extended to term loans sanctioned under government capital subsidy programs including CLCSS.'",
+      "evidence": {
+        "document_title": "CGTMSE Operational Circular 112/2023",
+        "source_tier": "tier_3_ministry_circular",
+        "issuing_authority": "CGTMSE Trust / SIDBI",
+        "notification_or_doc_number": "CGTMSE/OPS/2023-24/112",
+        "clause_or_section": "Para 3.4",
+        "page_number": 3,
+        "exact_quote": "Guarantee coverage may be extended to term loans sanctioned under government capital subsidy programs including CLCSS.",
+        "document_url": "https://www.cgtmse.in/circulars/ops-112-2023.pdf",
+        "last_verified_date": "2026-09-28"
+      }
+    }
+  ],
+  "application_process": "1. Enterprise prepares project report and approaches Primary Lending Institution (PLI).\n2. Bank appraises project and sanctions term loan.\n3. Bank submits online subsidy claim on official portal (clcss.dcmsme.gov.in) to SIDBI/NABARD.\n4. Nodal agency releases subsidy into beneficiary loan account subject to 3-year asset lock-in.",
+  "official_application_url": "https://clcss.dcmsme.gov.in",
+  "source_documents": [
+    {
+      "document_title": "CLCSS Operational Guidelines 2024",
+      "source_tier": "tier_2_operational_guidelines",
+      "issuing_authority": "Ministry of Micro, Small and Medium Enterprises",
+      "notification_or_doc_number": "F.No. 1(2)/CLCSS/2024",
+      "clause_or_section": "Complete Manual",
+      "page_number": 1,
+      "exact_quote": "Guidelines for Implementation of Credit Linked Capital Subsidy Scheme for Technology Upgradation of Micro and Small Enterprises.",
+      "document_url": "https://clcss.dcmsme.gov.in/guidelines-2024.pdf",
+      "last_verified_date": "2026-09-28"
+    }
+  ],
+  "effective_date": "2024-04-01",
+  "effective_until": "2027-03-31",
+  "last_verified_date": "2026-09-28",
+  "is_synthetic_benchmark": false
+}

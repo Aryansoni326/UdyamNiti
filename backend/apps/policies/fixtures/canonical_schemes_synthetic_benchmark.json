@@ -1,0 +1,543 @@
+[
+  {
+    "scheme_id": "SYNTH-GJ-CAPITAL-2025",
+    "scheme_name": "Synthetic Benchmark: Gujarat Advanced Manufacturing Capital Subsidy Scheme (2025 Revision)",
+    "short_name": "Gujarat Capital Subsidy (Benchmark)",
+    "authority": "Department of Industries and Mines, Government of Gujarat",
+    "central_or_state": "state",
+    "applicable_state": "Gujarat",
+    "version": 2,
+    "status": "active",
+    "is_synthetic_benchmark": true,
+    "objective": "Accelerate modernization and adoption of high-precision CNC machinery and automated tooling for MSMEs in Gujarat manufacturing clusters.",
+    "support_categories": ["capital_subsidy", "technology_adoption"],
+    "benefit_type": "Direct Capital Grant on Plant & Machinery",
+    "target_enterprise_types": ["micro", "small", "medium"],
+    "target_sectors": ["Manufacturing", "Precision Engineering", "Automotive Components", "Textile Machinery", "Plastics"],
+    "exclusions": [
+      "Secondary or reconditioned plant and machinery older than 5 years",
+      "Tobacco, gambling, or liquor processing operations",
+      "Units defaulted on state financial corporation obligations"
+    ],
+    "eligibility_rules": [
+      {
+        "rule_id": "SYNTH-R-GJ-001",
+        "rule_name": "State Manufacturing Jurisdiction",
+        "field_path": "state",
+        "operator": "eq",
+        "expected_value": "Gujarat",
+        "importance": "mandatory",
+        "display_label": "Operating Unit Located in Gujarat",
+        "failure_message": "Enterprise operating unit must be physically located within the State of Gujarat.",
+        "ambiguity_notes": "Corporate headquarters may be registered elsewhere if the manufacturing factory plant is inside Gujarat borders.",
+        "effective_from": "2025-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+          "source_tier": "tier_1_gazette",
+          "issuing_authority": "Industries and Mines Department, Gandhinagar",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 4.1(a)",
+          "page_number": 12,
+          "exact_quote": "Financial assistance by way of Capital Subsidy shall be admissible only to eligible manufacturing enterprises having their manufacturing facility located within the territory of Gujarat.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      },
+      {
+        "rule_id": "SYNTH-R-GJ-002",
+        "rule_name": "Eligible Plant & Machinery Investment Ceiling",
+        "field_path": "investment_in_plant_machinery_lakhs",
+        "operator": "lte",
+        "expected_value": 5000.0,
+        "importance": "mandatory",
+        "display_label": "Plant & Machinery Investment <= ₹50 Crores",
+        "failure_message": "Cumulative investment in plant and machinery must not exceed the MSME Medium enterprise threshold of ₹50 Crores.",
+        "ambiguity_notes": "Calculation strictly excludes land, civil works, pollution control equipment, and electrical substations.",
+        "effective_from": "2025-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+          "source_tier": "tier_1_gazette",
+          "issuing_authority": "Industries and Mines Department, Gandhinagar",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 5.2",
+          "page_number": 14,
+          "exact_quote": "Capital investment in plant and machinery shall be computed in accordance with the notification issued by the Ministry of MSME, Government of India under the MSMED Act, 2006.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      },
+      {
+        "rule_id": "SYNTH-R-GJ-003",
+        "rule_name": "Statutory Non-NPA Clean Credit Standing",
+        "field_path": "is_npa",
+        "operator": "bool_false",
+        "expected_value": false,
+        "importance": "mandatory",
+        "display_label": "Non-NPA Status Across Lending Institutions",
+        "failure_message": "Enterprise or its promoters must not have an unresolved Non-Performing Asset (NPA) account with any bank or financial institution.",
+        "ambiguity_notes": "Restructured standard accounts are permissible upon furnishing a bank clearance certificate.",
+        "effective_from": "2025-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "Industries and Mines Department, Gandhinagar",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 8.4",
+          "page_number": 21,
+          "exact_quote": "Enterprises classified as NPA by scheduled commercial banks or credit institutions at the time of claim disbursement shall be disqualified.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      },
+      {
+        "rule_id": "SYNTH-R-GJ-004",
+        "rule_name": "Priority Demographic Ownership Multiplier",
+        "field_path": "is_women_owned",
+        "operator": "bool_true",
+        "expected_value": true,
+        "importance": "bonus",
+        "display_label": "Women / SC-ST Majority Ownership Bonus (+5%)",
+        "failure_message": "Standard subsidy rate applies (20%) instead of enhanced priority rate (25%).",
+        "ambiguity_notes": "Requires registered shareholding / partnership stake >= 51% held for minimum 3 years.",
+        "effective_from": "2025-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+          "source_tier": "tier_1_gazette",
+          "issuing_authority": "Industries and Mines Department, Gandhinagar",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 6.3",
+          "page_number": 16,
+          "exact_quote": "Enterprises owned by Women Entrepreneurs (holding at least 51% equity) or SC/ST entrepreneurs shall be eligible for an additional capital subsidy of 5% on eligible fixed capital investment.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      }
+    ],
+    "financial_conditions": [
+      {
+        "condition_id": "SYNTH-FC-GJ-01",
+        "parameter_name": "Maximum In-Principle Eligible Capex",
+        "field_path": "investment_in_plant_machinery_lakhs",
+        "operator": "lte",
+        "threshold_value": 1000.0,
+        "currency_unit": "INR_LAKHS",
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+          "source_tier": "tier_1_gazette",
+          "issuing_authority": "Industries and Mines Department",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 4.3",
+          "page_number": 13,
+          "exact_quote": "The maximum eligible investment on which subsidy is calculated for MSME category shall not exceed ₹1000 Lakhs.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      }
+    ],
+    "registration_requirements": [
+      {
+        "portal_name": "Udyam Registration Portal",
+        "registration_type": "Statutory Enterprise Identifier",
+        "mandatory": true,
+        "timing": "Prior to preliminary application",
+        "verification_method": "API verification via Ministry of MSME",
+        "portal_url": "https://udyamregistration.gov.in"
+      },
+      {
+        "portal_name": "Gujarat Investor Portal (Investor Facilitation Portal)",
+        "registration_type": "Intent Registration",
+        "mandatory": true,
+        "timing": "Prior to physical machine invoice/dispatch",
+        "verification_method": "Portal Application Reference ID",
+        "portal_url": "https://invest.gujarat.gov.in"
+      }
+    ],
+    "prerequisites": [
+      "Must file DIC Intent Registration prior to machinery invoice date",
+      "Machinery must be brand new and accompanied by commercial GST e-invoices",
+      "Chartered Engineer certificate of installation and production commissioning"
+    ],
+    "required_documents": [
+      "Udyam Registration Certificate",
+      "GSTIN Registration and latest 3 GSTR-3B filings",
+      "Commercial Machinery Invoices with Serial Numbers & Proof of Payment",
+      "Chartered Engineer Physical Inspection & Valuation Certificate",
+      "Bank Term Loan Sanction Letter (if debt-financed)"
+    ],
+    "benefit_calculation": {
+      "formula_type": "percentage_of_capex",
+      "base_field": "investment_in_plant_machinery_lakhs",
+      "base_percentage": 20.0,
+      "maximum_cap_lakhs": 25.0,
+      "priority_multipliers": {
+        "women_owned": 5.0,
+        "sc_st_owned": 5.0,
+        "taluka_category_3": 5.0
+      },
+      "formula_expression": "min(eligible_capex_lakhs * (0.20 + (0.05 if is_women_owned else 0.0)), 25.0)",
+      "evidence": {
+        "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Industries and Mines Department",
+        "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+        "clause_or_section": "Clause 6.1 - 6.3",
+        "page_number": 15,
+        "exact_quote": "Capital subsidy shall be 20% of eligible fixed capital investment in Category-2 talukas, capped at ₹25 Lakhs, plus 5% additional for women entrepreneurs.",
+        "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+        "last_verified_date": "2026-09-15"
+      }
+    },
+    "possible_relationships": [
+      {
+        "target_scheme_id": "SYNTH-CENTRAL-CGTMSE-2025",
+        "target_scheme_name": "Synthetic Benchmark: Central Credit Guarantee Fund Scheme for Micro & Small Enterprises",
+        "relationship_type": "stacks_with",
+        "description": "Eligible enterprises can finance the remaining 75% machinery cost through a collateral-free bank term loan backed by CGTMSE guarantee without forfeiting Gujarat capital subsidy.",
+        "statutory_non_duplication_clause": "Clause 14.2: Availing credit guarantee through central nodal agencies shall not be construed as duplicate capital subsidy.",
+        "evidence": {
+          "document_title": "Gujarat Industrial Policy 2020 Guidelines (Synthetic Benchmark)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "Industries and Mines Department",
+          "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+          "clause_or_section": "Clause 14.2",
+          "page_number": 28,
+          "exact_quote": "Enterprises securing term debt under Central Credit Guarantee schemes are entitled to state capital subsidies provided asset verification is preserved.",
+          "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+          "last_verified_date": "2026-09-15"
+        }
+      }
+    ],
+    "application_process": "1. Submit Intent Registration online on Gujarat Investor Portal before purchasing machinery.\n2. Execute machine purchase with valid GST e-invoices and bank transfer payment proof.\n3. Commission machine and acquire Chartered Engineer Certificate.\n4. File formal subsidy claim dossier at District Industries Centre (DIC) within 180 days of commissioning.\n5. Undergo joint physical verification by DIC team.\n6. Subsidy released directly into enterprise loan/escrow bank account.",
+    "official_application_url": "https://invest.gujarat.gov.in",
+    "source_documents": [
+      {
+        "document_title": "Gujarat Industrial Policy 2020 Operational Guidelines (Synthetic Benchmark Copy)",
+        "source_tier": "tier_1_gazette",
+        "issuing_authority": "Industries and Mines Department, Gandhinagar",
+        "notification_or_doc_number": "GZ-SYNTH-GJ-2025-09",
+        "clause_or_section": "Full Notification",
+        "page_number": 1,
+        "exact_quote": "Government Resolution on Scheme for Assistance to MSMEs (Manufacturing Modernization).",
+        "document_url": "https://synthetic.gujarat.gov.in/policies/guidelines_2025.pdf",
+        "last_verified_date": "2026-09-15"
+      }
+    ],
+    "effective_date": "2025-01-01",
+    "effective_until": "2027-12-31",
+    "last_verified_date": "2026-09-15"
+  },
+  {
+    "scheme_id": "SYNTH-CENTRAL-CGTMSE-2025",
+    "scheme_name": "Synthetic Benchmark: Credit Guarantee Fund Scheme for Micro and Small Enterprises (CGTMSE)",
+    "short_name": "CGTMSE Guarantee (Benchmark)",
+    "authority": "Credit Guarantee Fund Trust for Micro and Small Enterprises & Ministry of MSME",
+    "central_or_state": "central",
+    "applicable_state": null,
+    "version": 4,
+    "status": "active",
+    "is_synthetic_benchmark": true,
+    "objective": "Enable collateral-free credit delivery from commercial banks to viable micro and small enterprises for capital expenditure and working capital requirements.",
+    "support_categories": ["credit_guarantee", "collateral_free_credit"],
+    "benefit_type": "Institutional Credit Guarantee Coverage",
+    "target_enterprise_types": ["micro", "small"],
+    "target_sectors": ["Manufacturing", "Services", "Retail Trade"],
+    "exclusions": [
+      "Educational institutions and agriculture sector lending",
+      "Self Help Groups (SHGs)",
+      "Borrowers with active default or wilful default tag on CIBIL/RBI registry"
+    ],
+    "eligibility_rules": [
+      {
+        "rule_id": "SYNTH-R-CGT-001",
+        "rule_name": "Micro or Small MSME Category Requirement",
+        "field_path": "msme_category",
+        "operator": "in",
+        "expected_value": ["micro", "small"],
+        "importance": "mandatory",
+        "display_label": "Classified as Micro or Small MSME",
+        "failure_message": "Medium enterprises are statutory excluded from CGTMSE credit guarantee coverage.",
+        "ambiguity_notes": "Turnover must remain <= ₹50 Crores and plant investment <= ₹10 Crores.",
+        "effective_from": "2024-04-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "CGTMSE Scheme Operational Guidelines - Revision XII (Synthetic Benchmark)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "CGTMSE Board of Trustees, Mumbai",
+          "notification_or_doc_number": "CGTMSE-SYNTH-CIRC-2024-11",
+          "clause_or_section": "Section 2(v)",
+          "page_number": 8,
+          "exact_quote": "Guarantees under this scheme are confined strictly to Micro and Small enterprises as defined under section 7 of the MSMED Act, 2006.",
+          "document_url": "https://synthetic.cgtmse.in/guidelines_rev12.pdf",
+          "last_verified_date": "2026-09-10"
+        }
+      },
+      {
+        "rule_id": "SYNTH-R-CGT-002",
+        "rule_name": "Credit Facility Upper Ceiling",
+        "field_path": "credit_facility_amount_lakhs",
+        "operator": "lte",
+        "expected_value": 500.0,
+        "importance": "mandatory",
+        "display_label": "Total Credit Facility <= ₹500 Lakhs (₹5 Crores)",
+        "failure_message": "Guarantee coverage is restricted to aggregate credit facilities up to ₹500 Lakhs per borrower.",
+        "ambiguity_notes": "Borrower can hold facilities across multiple Member Lending Institutions provided aggregate does not exceed ₹500 Lakhs.",
+        "effective_from": "2024-04-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "CGTMSE Scheme Operational Guidelines - Revision XII (Synthetic Benchmark)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "CGTMSE Board of Trustees, Mumbai",
+          "notification_or_doc_number": "CGTMSE-SYNTH-CIRC-2024-11",
+          "clause_or_section": "Section 3.1",
+          "page_number": 11,
+          "exact_quote": "The Trust shall guarantee credit facilities sanctioned by Member Lending Institutions up to ₹500 Lakhs without collateral security or third-party guarantee.",
+          "document_url": "https://synthetic.cgtmse.in/guidelines_rev12.pdf",
+          "last_verified_date": "2026-09-10"
+        }
+      }
+    ],
+    "financial_conditions": [],
+    "registration_requirements": [
+      {
+        "portal_name": "Udyam Registration Portal",
+        "registration_type": "Statutory Identifier",
+        "mandatory": true,
+        "timing": "At time of loan appraisal",
+        "verification_method": "Udyam Certificate API verification",
+        "portal_url": "https://udyamregistration.gov.in"
+      }
+    ],
+    "prerequisites": [
+      "Viable project proposal evaluated by Member Lending Institution (Public/Private Bank)",
+      "Nil third-party collateral or personal asset mortgage required"
+    ],
+    "required_documents": [
+      "Detailed Project Report (DPR) with cash-flow projections",
+      "Audited Financials / IT Returns for last 2 years",
+      "Udyam Registration Certificate",
+      "Promoter KYC and bank account statements"
+    ],
+    "benefit_calculation": {
+      "formula_type": "credit_guarantee",
+      "base_field": "term_loan_amount_lakhs",
+      "base_percentage": 75.0,
+      "maximum_cap_lakhs": 500.0,
+      "priority_multipliers": {
+        "women_owned": 10.0,
+        "aspirational_district": 10.0
+      },
+      "formula_expression": "loan_amount_lakhs * (0.85 if is_women_owned else 0.75)",
+      "evidence": {
+        "document_title": "CGTMSE Scheme Guidelines (Synthetic Benchmark)",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Board of Trustees",
+        "notification_or_doc_number": "CGTMSE-SYNTH-CIRC-2024-11",
+        "clause_or_section": "Section 4.2",
+        "page_number": 15,
+        "exact_quote": "Guarantee cover shall be 85% for loans up to ₹50 Lakhs provided to Women Enterprises, and 75% for other standard category borrowers.",
+        "document_url": "https://synthetic.cgtmse.in/guidelines_rev12.pdf",
+        "last_verified_date": "2026-09-10"
+      }
+    },
+    "possible_relationships": [
+      {
+        "target_scheme_id": "SYNTH-GJ-CAPITAL-2025",
+        "target_scheme_name": "Synthetic Benchmark: Gujarat Advanced Manufacturing Capital Subsidy Scheme (2025 Revision)",
+        "relationship_type": "stacks_with",
+        "description": "Borrowers can draw term loans secured by CGTMSE guarantee and apply the state capital subsidy directly to the principal loan repayment.",
+        "statutory_non_duplication_clause": "Compatible asset-financing stack without conflict.",
+        "evidence": {
+          "document_title": "CGTMSE Circular 2024 (Synthetic Benchmark)",
+          "source_tier": "tier_3_ministry_circular",
+          "issuing_authority": "Ministry of MSME",
+          "notification_or_doc_number": "MSME-SYNTH-CIRC-88",
+          "clause_or_section": "Para 4",
+          "page_number": 3,
+          "exact_quote": "Receipt of state government back-ended capital subsidies by guaranteed borrowers shall be credited directly against the term loan without penalty.",
+          "document_url": "https://synthetic.msme.gov.in/circulars/cgtmse_stacking.pdf",
+          "last_verified_date": "2026-09-10"
+        }
+      }
+    ],
+    "application_process": "1. Approach participating Member Lending Institution (e.g. State Bank of India, Bank of Baroda).\n2. Submit project report for machinery loan requesting CGTMSE collateral-free cover.\n3. Bank appraises project and registers loan on CGTMSE portal.\n4. Guarantee fee paid by enterprise (typically 0.37% to 1.35% p.a.).\n5. Loan disbursed directly to machine manufacturer against commercial invoice.",
+    "official_application_url": "https://www.cgtmse.in",
+    "source_documents": [
+      {
+        "document_title": "CGTMSE Scheme Operational Guidelines - Revision XII (Synthetic Benchmark)",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "CGTMSE Board of Trustees, Mumbai",
+        "notification_or_doc_number": "CGTMSE-SYNTH-CIRC-2024-11",
+        "clause_or_section": "Entire Compendium",
+        "page_number": 1,
+        "exact_quote": "Statutory rules governing credit guarantee support to MSMEs.",
+        "document_url": "https://synthetic.cgtmse.in/guidelines_rev12.pdf",
+        "last_verified_date": "2026-09-10"
+      }
+    ],
+    "effective_date": "2024-04-01",
+    "effective_until": "2028-03-31",
+    "last_verified_date": "2026-09-10"
+  },
+  {
+    "scheme_id": "SYNTH-CENTRAL-ZED-2025",
+    "scheme_name": "Synthetic Benchmark: MSME Sustainable (ZED) Certification & Technology Assistance Scheme",
+    "short_name": "MSME ZED Grant (Benchmark)",
+    "authority": "Quality Council of India (QCI) & Ministry of MSME",
+    "central_or_state": "central",
+    "applicable_state": null,
+    "version": 3,
+    "status": "active",
+    "is_synthetic_benchmark": true,
+    "objective": "Support manufacturing MSMEs in eliminating manufacturing defects, adopting environmental sustainability, and achieving global ISO and defense vendor standards.",
+    "support_categories": ["quality_certification", "technology_adoption"],
+    "benefit_type": "Direct Certification & Test Lab Subsidy",
+    "target_enterprise_types": ["micro", "small", "medium"],
+    "target_sectors": ["Manufacturing", "Engineering", "Automotive", "Electronics", "Chemicals"],
+    "exclusions": [
+      "Pure service or retail enterprises without manufacturing activity",
+      "Enterprises debarred from government procurement tenders"
+    ],
+    "eligibility_rules": [
+      {
+        "rule_id": "SYNTH-R-ZED-001",
+        "rule_name": "Active Udyam Registration & Manufacturing Status",
+        "field_path": "is_manufacturing",
+        "operator": "bool_true",
+        "expected_value": true,
+        "importance": "mandatory",
+        "display_label": "Must Be a Registered Manufacturing MSME",
+        "failure_message": "ZED Certification is strictly limited to manufacturing enterprises.",
+        "ambiguity_notes": "Service MSMEs are ineligible even if they hold valid Udyam registration.",
+        "effective_from": "2024-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "MSME Sustainable (ZED) Certification Scheme Guidelines (Synthetic Benchmark)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "Ministry of MSME, New Delhi",
+          "notification_or_doc_number": "ZED-SYNTH-GUIDE-2024-02",
+          "clause_or_section": "Clause 3.1",
+          "page_number": 6,
+          "exact_quote": "All manufacturing MSMEs registered with the Udyam Registration portal are eligible to participate in the MSME Sustainable (ZED) Certification Scheme.",
+          "document_url": "https://synthetic.zed.msme.gov.in/guidelines_2024.pdf",
+          "last_verified_date": "2026-09-12"
+        }
+      },
+      {
+        "rule_id": "SYNTH-R-ZED-002",
+        "rule_name": "Self-Assessment Desktop Audit Completion",
+        "field_path": "has_completed_zed_self_assessment",
+        "operator": "bool_true",
+        "expected_value": true,
+        "importance": "mandatory",
+        "display_label": "Completed Online ZED Self-Assessment Audit",
+        "failure_message": "Enterprise must complete the preliminary desktop audit on the ZED portal before availing certification reimbursements.",
+        "ambiguity_notes": "Self-assessment takes approximately 45 minutes and is 100% free of charge.",
+        "effective_from": "2024-01-01",
+        "effective_until": null,
+        "is_active": true,
+        "evidence": {
+          "document_title": "MSME Sustainable (ZED) Certification Scheme Guidelines (Synthetic Benchmark)",
+          "source_tier": "tier_2_operational_guidelines",
+          "issuing_authority": "Ministry of MSME, New Delhi",
+          "notification_or_doc_number": "ZED-SYNTH-GUIDE-2024-02",
+          "clause_or_section": "Clause 4.3",
+          "page_number": 9,
+          "exact_quote": "The first step for an MSME is to take the free online self-assessment on the ZED portal against designated technical and environmental parameters.",
+          "document_url": "https://synthetic.zed.msme.gov.in/guidelines_2024.pdf",
+          "last_verified_date": "2026-09-12"
+        }
+      }
+    ],
+    "financial_conditions": [],
+    "registration_requirements": [
+      {
+        "portal_name": "ZED Implementation Portal",
+        "registration_type": "Program Registration",
+        "mandatory": true,
+        "timing": "Prior to certification assessment",
+        "verification_method": "ZED Registration Number & Login",
+        "portal_url": "https://zed.msme.gov.in"
+      }
+    ],
+    "prerequisites": [
+      "Valid Udyam Registration Certificate",
+      "Completion of online ZED pledge and desktop questionnaire"
+    ],
+    "required_documents": [
+      "Udyam Certificate",
+      "Quality manual or factory process flow diagram",
+      "Invoices from accredited testing laboratories / certification bodies"
+    ],
+    "benefit_calculation": {
+      "formula_type": "percentage_of_capex",
+      "base_field": "certification_and_testing_cost_lakhs",
+      "base_percentage": 80.0,
+      "maximum_cap_lakhs": 5.0,
+      "priority_multipliers": {
+        "women_owned": 10.0,
+        "sc_st_owned": 10.0
+      },
+      "formula_expression": "min(certification_cost_lakhs * 0.80, 5.0)",
+      "evidence": {
+        "document_title": "ZED Scheme Financial Guidelines (Synthetic Benchmark)",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "Quality Council of India",
+        "notification_or_doc_number": "ZED-SYNTH-GUIDE-2024-02",
+        "clause_or_section": "Clause 7.2",
+        "page_number": 18,
+        "exact_quote": "The Ministry shall provide 80% subsidy on certification fees up to ₹5 Lakhs for Small manufacturing units achieving Gold level certification.",
+        "document_url": "https://synthetic.zed.msme.gov.in/guidelines_2024.pdf",
+        "last_verified_date": "2026-09-12"
+      }
+    ],
+    "possible_relationships": [
+      {
+        "target_scheme_id": "SYNTH-GJ-CAPITAL-2025",
+        "target_scheme_name": "Synthetic Benchmark: Gujarat Advanced Manufacturing Capital Subsidy Scheme (2025 Revision)",
+        "relationship_type": "sequential",
+        "description": "Commissioning modern CNC machinery first enables manufacturing precision, which in turn satisfies ZED Gold audit standards for maximum certification payout.",
+        "statutory_non_duplication_clause": "Completely distinct expenditure categories; machinery capex vs testing fees.",
+        "evidence": {
+          "document_title": "ZED Operational Guidelines (Synthetic Benchmark)",
+          "source_tier": "tier_3_ministry_circular",
+          "issuing_authority": "Ministry of MSME",
+          "notification_or_doc_number": "ZED-SYNTH-CIRC-44",
+          "clause_or_section": "Para 6",
+          "page_number": 4,
+          "exact_quote": "Reimbursement of ZED audit and testing expenditure may be availed concurrently with state capital subsidies on production assets.",
+          "document_url": "https://synthetic.zed.msme.gov.in/circulars/stacking.pdf",
+          "last_verified_date": "2026-09-12"
+        }
+      }
+    ],
+    "application_process": "1. Log in with Udyam number on zed.msme.gov.in.\n2. Complete online self-assessment.\n3. Request site assessment by designated QCI assessment agency.\n4. Pass audit criteria for Bronze, Silver, or Gold tier.\n5. Subsidy directly reimbursed to bank account within 30 days of certificate issuance.",
+    "official_application_url": "https://zed.msme.gov.in",
+    "source_documents": [
+      {
+        "document_title": "MSME Sustainable (ZED) Certification Scheme Guidelines (Synthetic Benchmark)",
+        "source_tier": "tier_2_operational_guidelines",
+        "issuing_authority": "Ministry of MSME, New Delhi",
+        "notification_or_doc_number": "ZED-SYNTH-GUIDE-2024-02",
+        "clause_or_section": "Full Compendium",
+        "page_number": 1,
+        "exact_quote": "Guidelines for MSME Sustainable Certification.",
+        "document_url": "https://synthetic.zed.msme.gov.in/guidelines_2024.pdf",
+        "last_verified_date": "2026-09-12"
+      }
+    ],
+    "effective_date": "2024-01-01",
+    "effective_until": "2027-03-31",
+    "last_verified_date": "2026-09-12"
+  }
+]

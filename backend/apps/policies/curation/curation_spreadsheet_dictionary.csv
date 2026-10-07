@@ -1,0 +1,37 @@
+Column Name,Field Key,Data Type,Mandatory,Allowed Values / Enum,Description,Example Entry
+Scheme Identifier,scheme_id,String,Yes,Alphanumeric + hyphens,Unique immutable code for policy tracking,IN-CENTRAL-MSME-CLCSS-2024
+Official Scheme Name,scheme_name,String,Yes,Free text,Complete legal title as published in the gazette notification,"Credit Linked Capital Subsidy Scheme for Technology Upgradation"
+Short Name,short_name,String,Yes,Short acronym,Common industry or portal abbreviation,CLCSS
+Administering Authority,authority,String,Yes,Free text,Full ministry / directorate name,"Ministry of Micro, Small and Medium Enterprises, Government of India"
+Jurisdiction Level,central_or_state,Enum,Yes,central | state,Central Government vs State Government program,central
+Applicable State,applicable_state,String,No (Yes if state),Gujarat | Maharashtra | All,Target state name if state-level program,All
+Policy Version,version,Integer,Yes,>= 1,Sequential policy revision number,1
+Status,status,Enum,Yes,active | suspended | expired | draft | superseded,Current operational status,active
+Statutory Objective,objective,String,Yes,Free text,Preamble or statement of intent from guideline,"Facilitate technology modernization of MSEs by providing 15% upfront capital subsidy."
+Support Categories,support_categories,List[Enum],Yes,"capital_subsidy, interest_subvention, collateral_free_credit, quality_certification, technology_adoption, infrastructure_grant, export_incentive",Standardized categories of assistance separated by semicolon,"capital_subsidy; technology_adoption"
+Primary Benefit Type,benefit_type,String,Yes,Free text,Main mechanism of financial or non-financial delivery,capital_subsidy
+Target Enterprise Categories,target_enterprise_types,List[Enum],Yes,micro; small; medium,Eligible MSME categories,"micro; small"
+Target Industry Sectors,target_sectors,List[String],Yes,Manufacturing; Engineering; Textiles; All,Eligible industrial sectors,"Manufacturing; Engineering"
+Statutory Exclusions,exclusions,List[String],No,Free text separated by semicolon,Negative list or ineligible business activities,"Tobacco; Alcohol; Units not undertaking technological modernization"
+Eligibility Conditions,eligibility_rules_json,JSON Array,Yes,List of DeterministicRule objects,Array of deterministic rules with field_path, operator, expected_value, and evidence,"[{""rule_id"": ""R-01"", ""field_path"": ""business_profile.msme_category"", ""operator"": ""in"", ""expected_value"": [""micro"", ""small""]}]"
+Financial Conditions,financial_conditions_json,JSON Array,No,List of FinancialCondition objects,Discrete financial thresholds (turnover, capex ceiling),"[{""condition_id"": ""FC-01"", ""parameter_name"": ""Plant & Machinery Ceiling"", ""operator"": ""lte"", ""threshold_value"": 100.0}]"
+Registration Requirements,registration_requirements_json,JSON Array,Yes,List of RegistrationRequirement objects,Required portal accounts prior to filing,"[{""portal_name"": ""Udyam Registration"", ""mandatory"": true, ""portal_url"": ""https://udyamregistration.gov.in""}]"
+Filing Prerequisites,prerequisites,List[String],Yes,Free text separated by semicolon,Mandatory milestones before filing,"Active Udyam Registration; In-principle bank term loan sanction; New machinery quotation"
+Required Documents,required_documents,List[String],Yes,Free text separated by semicolon,Checklist of documents required for verification,"Udyam Certificate; Audited Balance Sheets (3 yrs); GSTR-3B filings; Bank Loan Sanction Letter"
+Benefit Calculation Formula,benefit_calculation_json,JSON Object,No,BenefitCalculationFormula object,Mathematical formula for deterministic simulation,"{""formula_type"": ""percentage_of_capex"", ""base_percentage"": 15.0, ""maximum_cap_lakhs"": 15.0, ""formula_expression"": ""min(capex * 0.15, 15.0)""}"
+Cross-Scheme Relationships,possible_relationships_json,JSON Array,No,List of PossibleRelationship objects,Stacking, prerequisites, and GFR 230(1) interactions,"[{""target_scheme_id"": ""GJ-MSME-CAPITAL-2020"", ""relationship_type"": ""stacks_with"", ""description"": ""Stacks with Gujarat State top-up""}]"
+Application Process,application_process,String,Yes,Numbered steps in text,Statutory submission workflow,"1. Apply through primary lending institution (PLI). 2. PLI forwards to SIDBI. 3. Disbursement to loan account."
+Official Application Portal URL,official_application_url,URL,Yes,Must be .gov.in or .nic.in,Direct link to statutory application filing portal,https://clcss.dcmsme.gov.in
+Primary Source Document URL,primary_source_url,URL,Yes,Must be .gov.in or .nic.in,Direct link to official PDF notification,https://clcss.dcmsme.gov.in/guidelines-2024.pdf
+Source Document Tier,source_tier,Enum,Yes,tier_1_gazette | tier_2_operational_guidelines | tier_3_ministry_circular | tier_4_portal_faq,Authority level of source document,tier_2_operational_guidelines
+Notification Reference Number,notification_or_doc_number,String,Yes,Official file number,Government reference / circular number,F.No. 1(2)/CLCSS/2024
+Source Clause / Section,clause_or_section,String,Yes,Clause / Section / Rule reference,Specific clause number in source document,Clause 4.1
+PDF Page Number,page_number,Integer,Yes,>= 1,Exact page number in original PDF,6
+Verbatim Evidence Excerpt,exact_quote,String,Yes,Exact text (min 10 chars),Verbatim statutory excerpt without alterations,"Upfront capital subsidy of 15% shall be calculated on the eligible investment in plant and machinery up to a ceiling of ₹100 Lakh."
+Effective Policy Date,effective_date,Date (YYYY-MM-DD),Yes,Valid ISO-8601 date,Date policy came into force,2024-04-01
+Sunset / Expiry Date,effective_until,Date (YYYY-MM-DD),No,Valid ISO-8601 date,Date policy expires or superseded,2027-03-31
+Last Verified Date,last_verified_date,Date (YYYY-MM-DD),Yes,Valid ISO-8601 date,Date curator checked live government portal,2026-09-30
+Curator Identity,curator_name,String,Yes,Researcher name,Analyst responsible for data entry,Aarav Mehta
+Second-Eye Reviewer,reviewer_name,String,Yes,Senior reviewer name,Legal / data quality reviewer who verified evidence,Pooja Sharma
+Review Status,review_status,Enum,Yes,draft | under_review | approved | rejected,Current status in curation pipeline,approved
+Ambiguity Flags & Notes,ambiguity_notes,String,No,Free text,Flagged edge cases or discretionary clauses,Requires verified technology upgrade invoice; second-hand machinery strictly ineligible

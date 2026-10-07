@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UdyamNitiCuratedScheme",
+  "description": "Validation schema for curated official Central and Gujarat MSME programs",
+  "type": "object",
+  "required": [
+    "scheme_id",
+    "scheme_name",
+    "short_name",
+    "authority",
+    "central_or_state",
+    "objective",
+    "support_categories",
+    "benefit_type",
+    "target_enterprise_types",
+    "target_sectors",
+    "eligibility_rules",
+    "required_documents",
+    "application_process",
+    "official_application_url",
+    "source_documents",
+    "effective_date",
+    "last_verified_date"
+  ],
+  "properties": {
+    "scheme_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_-]+$",
+      "description": "Unique immutable scheme identifier e.g. IN-CENTRAL-MSME-CLCSS-2024"
+    },
+    "scheme_name": {
+      "type": "string",
+      "minLength": 5
+    },
+    "short_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "authority": {
+      "type": "string"
+    },
+    "central_or_state": {
+      "type": "string",
+      "enum": ["central", "state"]
+    },
+    "applicable_state": {
+      "type": ["string", "null"]
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "suspended", "expired", "draft", "superseded"]
+    },
+    "objective": {
+      "type": "string"
+    },
+    "support_categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "capital_subsidy",
+          "interest_subvention",
+          "collateral_free_credit",
+          "market_development",
+          "technology_adoption",
+          "infrastructure_grant",
+          "quality_certification",
+          "export_incentive"
+        ]
+      }
+    },
+    "benefit_type": {
+      "type": "string"
+    },
+    "target_enterprise_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["micro", "small", "medium"]
+      }
+    },
+    "target_sectors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "eligibility_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "rule_name",
+          "field_path",
+          "operator",
+          "expected_value",
+          "importance",
+          "display_label",
+          "failure_message",
+          "evidence",
+          "effective_from"
+        ],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "rule_name": { "type": "string" },
+          "field_path": { "type": "string" },
+          "operator": {
+            "type": "string",
+            "enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not_in", "bool_true", "bool_false", "contains", "between"]
+          },
+          "expected_value": {},
+          "importance": {
+            "type": "string",
+            "enum": ["mandatory", "preferred", "bonus", "info"]
+          },
+          "display_label": { "type": "string" },
+          "failure_message": { "type": "string" },
+          "ambiguity_notes": { "type": ["string", "null"] },
+          "effective_from": { "type": "string", "format": "date" },
+          "effective_until": { "type": ["string", "null"], "format": "date" },
+          "is_active": { "type": "boolean" },
+          "evidence": { "$ref": "#/definitions/EvidencePointer" }
+        }
+      }
+    },
+    "required_documents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "application_process": {
+      "type": "string"
+    },
+    "official_application_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "https://.*\\.(gov\\.in|nic\\.in)(/.*)?"
+    },
+    "source_documents": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/EvidencePointer" },
+      "minItems": 1
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "effective_until": {
+      "type": ["string", "null"],
+      "format": "date"
+    },
+    "last_verified_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_synthetic_benchmark": {
+      "type": "boolean"
+    }
+  },
+  "definitions": {
+    "EvidencePointer": {
+      "type": "object",
+      "required": [
+        "document_title",
+        "source_tier",
+        "issuing_authority",
+        "notification_or_doc_number",
+        "clause_or_section",
+        "exact_quote",
+        "document_url",
+        "last_verified_date"
+      ],
+      "properties": {
+        "document_title": { "type": "string" },
+        "source_tier": {
+          "type": "string",
+          "enum": [
+            "tier_1_gazette",
+            "tier_2_operational_guidelines",
+            "tier_3_ministry_circular",
+            "tier_4_portal_faq"
+          ]
+        },
+        "issuing_authority": { "type": "string" },
+        "notification_or_doc_number": { "type": "string" },
+        "clause_or_section": { "type": "string" },
+        "page_number": { "type": ["integer", "null"] },
+        "exact_quote": { "type": "string", "minLength": 10 },
+        "document_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "https://.*\\.(gov\\.in|nic\\.in)(/.*)?"
+        },
+        "last_verified_date": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

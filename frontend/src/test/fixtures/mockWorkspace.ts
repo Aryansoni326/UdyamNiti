@@ -1,0 +1,97 @@
+export const mockApplicationWorkspaceData = {
+  id: 'ws-guj-001',
+  scheme_code: 'GUJ_MSME_SCHEME_2020',
+  scheme_name: 'Gujarat Industrial Policy - Assistance to MSMEs (Capital & Interest Subsidy)',
+  business_name: 'ABC Engineering Works LLP',
+  status: 'preparation_in_progress',
+  official_portal_name: 'Gujarat Investor Facilitation Portal (IFP)',
+  official_portal_url: 'https://ifp.gujarat.gov.in',
+  application_mode: 'Online State Single Window Filing',
+  documents_ready_count: 3,
+  documents_total_count: 4,
+  info_ready_count: 3,
+  info_total_count: 3,
+  tasks_completed_count: 1,
+  tasks_total_count: 3,
+  unknowns_count: 1,
+  workspace_data: {
+    known_conditions: [
+      {
+        name: 'Operational Location in Gujarat State',
+        label: 'Operational Location in Gujarat State',
+        status: 'PASS',
+        explanation: 'Verified Ahmedabad address on Udyam Registration',
+      },
+      {
+        name: 'Enterprise Size within Small Category',
+        label: 'Enterprise Size within Small Category',
+        status: 'PASS',
+        explanation: 'Declared Turnover ₹2.40 Cr, Plant Investment ₹50L',
+      },
+    ],
+    unknown_conditions: [
+      {
+        name: 'Financial Institution Term Loan Sanction',
+        label: 'Financial Institution Term Loan Sanction',
+        status: 'UNKNOWN',
+        explanation: 'Awaiting Bank of Baroda sanction letter upload',
+      },
+    ],
+    disqualifiers: [],
+    required_documents: [
+      {
+        id: 'doc-01',
+        name: 'Udyam Registration Certificate',
+        is_uploaded: true,
+        uploaded_filename: 'UDYAM_GJ_ABC_ENG_2024.pdf',
+        last_verified_at: '2026-09-28',
+      },
+      {
+        id: 'doc-02',
+        name: 'GST 3B Returns (Latest 4 Quarters)',
+        is_uploaded: true,
+        uploaded_filename: 'GSTR3B_FY25_Q1_Q4.pdf',
+        last_verified_at: '2026-09-28',
+      },
+      {
+        id: 'doc-03',
+        name: 'Pro-forma Invoice / Machinery Quotation',
+        is_uploaded: true,
+        uploaded_filename: 'JYOTI_CNC_QUOTATION_50L.pdf',
+        last_verified_at: '2026-09-29',
+      },
+      {
+        id: 'doc-04',
+        name: 'Bank Sanction Letter for Term Loan',
+        is_uploaded: false,
+        uploaded_filename: null,
+        last_verified_at: null,
+      },
+    ],
+    required_information: [
+      { label: 'Bank Account IFSC & Account Number', value: 'BARB0AHMEDA / 001298765432', verified: true },
+      { label: 'Electricity Consumer Number (PGVCL/UGVCL)', value: '02891234567', verified: true },
+      { label: 'Proposed Commercial Production Date', value: '15-Dec-2026', verified: false },
+    ],
+    tasks: [
+      {
+        id: 'task-01',
+        title: 'Obtain OEM Machinery Delivery Schedule',
+        description: 'Ensure quotation specifies delivery lead-time not exceeding 60 days.',
+        is_completed: true,
+      },
+      {
+        id: 'task-02',
+        title: 'Upload Bank Term Loan In-Principle Sanction',
+        description: 'Upload signed sanction letter from commercial bank.',
+        is_completed: false,
+      },
+      {
+        id: 'task-03',
+        title: 'Log in to IFP Gujarat and Paste Prepared Dossier',
+        description: 'Access https://ifp.gujarat.gov.in using Investor Single Sign-On credentials.',
+        is_completed: false,
+      },
+    ],
+  },
+}
