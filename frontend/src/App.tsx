@@ -18,6 +18,10 @@ import StrategyDashboard from './pages/StrategyDashboard'
 import PolicyMonitor from './pages/PolicyMonitor'
 import ApplicationWorkspace from './pages/ApplicationWorkspace'
 import PrototypeEvaluationDashboard from './pages/PrototypeEvaluationDashboard'
+import MinistryPage from './pages/MinistryPage'
+import ResourcesPage from './pages/ResourcesPage'
+import UpdatesPage from './pages/UpdatesPage'
+import SupportPage from './pages/SupportPage'
 import AppShell from './components/AppShell'
 import { LanguageProvider } from './i18n'
 
@@ -93,6 +97,10 @@ function App() {
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/ministry" element={<MinistryPage />} />
+                  <Route path="/resources" element={<ResourcesPage />} />
+                  <Route path="/updates" element={<UpdatesPage />} />
+                  <Route path="/support" element={<SupportPage />} />
                   <Route path="/dashboard" element={<SchemesDashboard />} />
                   <Route path="/schemes" element={<SchemesDashboard />} />
                   <Route path="/scheme/:id" element={<SchemeDetailPage />} />

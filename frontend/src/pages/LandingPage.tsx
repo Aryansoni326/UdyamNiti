@@ -129,22 +129,20 @@ export const LandingPage: React.FC = () => {
     },
   ]
 
-  // Slideshow State (3.5-second automatic rotation)
+  // Slideshow State (3-second continuous automatic rotation)
   const [currentSlide, setCurrentSlide] = useState<number>(0)
-  const [isSlidePaused, setIsSlidePaused] = useState<boolean>(false)
 
   useEffect(() => {
-    if (isSlidePaused) return
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % SCHEME_SLIDES.length)
-    }, 3500)
+    }, 3000)
     return () => clearInterval(timer)
-  }, [isSlidePaused, SCHEME_SLIDES.length])
+  }, [SCHEME_SLIDES.length])
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % SCHEME_SLIDES.length)
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + SCHEME_SLIDES.length) % SCHEME_SLIDES.length)
 
-  // ─── 2. ALL 11 VERIFIED SCHEMES DERIVED FROM UPLOADED PDFS ───
+  // ─── 2. ALL 11 VERIFIED SCHEMES DERIVED FROM UPLOADED PDFS (REUSABLE DATA) ───
   const ALL_OFFICIAL_SCHEMES = [
     {
       code: 'CGTMSE_EPM_EXPORT_2026',
@@ -335,82 +333,8 @@ export const LandingPage: React.FC = () => {
     },
   ]
 
-  // Catalog Filter State (Used when user hasn't searched a profile)
-  const [catalogFilter, setCatalogFilter] = useState<string>('all')
-
-  // Profiler State (Section 3)
-  const [industry, setIndustry] = useState('manufacturing')
-  const [state, setState] = useState('Gujarat')
-  const [enterpriseSize, setEnterpriseSize] = useState('micro')
-  const [businessAge, setBusinessAge] = useState('3')
-  const [turnover, setTurnover] = useState('1_to_5_cr')
-  const [profileSubmitted, setProfileSubmitted] = useState<boolean>(false)
-
   // AI Assistant Query State
   const [aiQuestion, setAiQuestion] = useState('')
-
-  // Handle Profile Form Submission -> Reveals the accurately calculated matches!
-  const handleProfileSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setProfileSubmitted(true)
-    toast.success(`Profile verified! Displaying schemes accurately matched for ${enterpriseSize.toUpperCase()} Enterprise in ${state}.`)
-    setTimeout(() => {
-      const el = document.getElementById('matched-results-section')
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
-    }, 100)
-  }
-
-  // Calculate Accurate Results based on user selections
-  const accuratelyMatchedSchemes = useMemo(() => {
-    return ALL_OFFICIAL_SCHEMES.map((scheme) => {
-      let score = scheme.baseMatch
-      const reasons: string[] = []
-
-      // Location match
-      if (scheme.level === 'state_gujarat') {
-        if (state === 'Gujarat') {
-          score += 10
-          reasons.push('✓ Unit based in Gujarat (eligible for State Industrial Policy GR)')
-        } else {
-          score -= 40
-          reasons.push('✗ Scheme limited exclusively to Gujarat State boundaries')
-        }
-      } else {
-        reasons.push('✓ Central Ministry program valid across all States/UTs')
-      }
-
-      // Sector match
-      if (scheme.targetSectors.includes(industry)) {
-        score += 5
-        reasons.push(`✓ Industry sector (${industry.toUpperCase()}) officially notified in guidelines`)
-      }
-
-      // Enterprise Size match
-      if (scheme.targetSizes.includes(enterpriseSize)) {
-        score += 4
-        reasons.push(`✓ Composite category (${enterpriseSize.toUpperCase()}) fits statutory turnover criteria`)
-      }
-
-      // Cap score between 35% and 98%
-      const finalScore = Math.min(Math.max(score, 38), 98)
-
-      return {
-        ...scheme,
-        calculatedMatch: finalScore,
-        calculatedReasons: reasons,
-      }
-    }).sort((a, b) => b.calculatedMatch - a.calculatedMatch)
-  }, [state, industry, enterpriseSize])
-
-  // Filter for the Official Schemes Catalog (Initial state)
-  const filteredCatalogSchemes = useMemo(() => {
-    return ALL_OFFICIAL_SCHEMES.filter((s) => {
-      if (catalogFilter === 'all') return true
-      if (catalogFilter === 'central') return s.level === 'central'
-      if (catalogFilter === 'gujarat') return s.level === 'state_gujarat'
-      return s.category === catalogFilter
-    })
-  }, [catalogFilter])
 
   const handleAskAI = (sampleQuery?: string) => {
     const q = sampleQuery || aiQuestion
@@ -678,28 +602,25 @@ export const LandingPage: React.FC = () => {
                 icon: <SearchIcon sx={{ fontSize: 30, color: '#0F2E59' }} />,
                 title: 'Find Schemes',
                 desc: 'Explore 11 official schemes across credit, subsidies, technology, clusters & export promotion.',
-                action: () => navigate('/dashboard'),
+                action: () => navigate('/login'),
               },
               {
                 icon: <FactCheckOutlinedIcon sx={{ fontSize: 30, color: '#059669' }} />,
                 title: 'Check Eligibility',
-                desc: 'Enter your business profile below to score eligibility against official Gazette provisions.',
-                action: () => {
-                  const el = document.getElementById('business-profiler')
-                  if (el) el.scrollIntoView({ behavior: 'smooth' })
-                },
+                desc: 'Sign in to assess your business profile against official Gazette provisions with verified percentages.',
+                action: () => navigate('/login'),
               },
               {
                 icon: <DescriptionOutlinedIcon sx={{ fontSize: 30, color: '#2563EB' }} />,
                 title: 'Check Documents',
                 desc: 'Review required certificates, project reports, and statutory checklists before filing.',
-                action: () => navigate('/dashboard?mode=documents'),
+                action: () => navigate('/resources'),
               },
               {
                 icon: <TrackChangesOutlinedIcon sx={{ fontSize: 30, color: '#7C3AED' }} />,
                 title: 'Track Applications',
                 desc: 'Monitor application milestones, bank appraisals, and PFMS margin money sanction status.',
-                action: () => navigate('/dashboard?mode=tracking'),
+                action: () => navigate('/login'),
               },
             ].map((card, i) => (
               <Grid item xs={12} sm={6} md={3} key={i}>
@@ -734,502 +655,110 @@ export const LandingPage: React.FC = () => {
           </Grid>
         </Container>
       </Box>
-
-      {/* ─── 3. TELL US ABOUT YOUR BUSINESS (ONBOARDING FUNNEL) ─── */}
-      <Box id="business-profiler" sx={{ py: 7, bgcolor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+      {/* ─── 3. ENTERPRISE GATEWAY PORTAL ACCESS (LOGIN REQUIRED TO SEARCH & SCORE SCHEMES) ─── */}
+      <Box sx={{ py: 7, bgcolor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
         <Container maxWidth="lg">
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 3, md: 4.5 },
+              p: { xs: 3.5, md: 5 },
               bgcolor: '#FFFFFF',
               border: '2px solid #E2E8F0',
-              borderRadius: '16px',
-              boxShadow: '0 4px 20px rgba(15, 23, 42, 0.04)',
+              borderRadius: '20px',
+              boxShadow: '0 8px 30px rgba(15, 23, 42, 0.06)',
+              background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
+              textAlign: 'center',
             }}
           >
-            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1 }}>
-              <AutoAwesomeIcon sx={{ color: '#E65100', fontSize: 24 }} />
-              <Typography variant="h4" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: { xs: '1.45rem', md: '1.85rem' } }}>
-                Tell Us About Your Business
-              </Typography>
-            </Stack>
-            <Typography variant="body1" sx={{ color: '#64748B', mb: 3.5, fontSize: '0.96rem' }}>
-              Enter your enterprise parameters to find accurately matched government schemes and subsidies with verified percentage scores.
+            <Chip
+              icon={<VerifiedUserIcon sx={{ fontSize: '15px !important', color: '#0F2E59 !important' }} />}
+              label="Secured Enterprise Gateway • Official MSME Corpus"
+              sx={{ bgcolor: '#EFF6FF', color: '#0F2E59', fontWeight: 800, mb: 2, border: '1px solid #BFDBFE' }}
+            />
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#0F2E59', fontSize: { xs: '1.65rem', md: '2.3rem' }, mb: 1.5 }}>
+              Personalized Scheme Discovery & Application Tracking
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#475569', maxWidth: 780, mx: 'auto', mb: 4, fontSize: { xs: '0.94rem', md: '1.05rem' }, lineHeight: 1.6 }}>
+              To ensure 100% statutory precision and safeguard enterprise data, customized scheme discovery, verified eligibility percentage scoring, and detailed scheme searches are enabled within your authenticated enterprise workspace.
             </Typography>
 
-            <form onSubmit={handleProfileSubmit}>
-              <Grid container spacing={2.5}>
-                {/* 1. Industry */}
-                <Grid item xs={12} sm={6} md={2.4}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.8, display: 'block' }}>
-                    Industry Sector
+            <Grid container spacing={3} sx={{ mb: 4, textAlign: 'left', maxWidth: 900, mx: 'auto' }}>
+              <Grid item xs={12} sm={4}>
+                <Paper sx={{ p: 2.5, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', height: '100%' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 0.5 }}>
+                    🎯 Accurate Percentage Scoring
                   </Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                    sx={{ bgcolor: '#F8FAFC', borderRadius: '8px' }}
-                  >
-                    <MenuItem value="manufacturing">Manufacturing</MenuItem>
-                    <MenuItem value="textiles">Textiles & Apparel</MenuItem>
-                    <MenuItem value="food">Agro & Food Processing</MenuItem>
-                    <MenuItem value="chemicals">Chemicals & Allied</MenuItem>
-                    <MenuItem value="services">Services & IT Solutions</MenuItem>
-                    <MenuItem value="coir">Coir & Natural Fibres</MenuItem>
-                  </TextField>
-                </Grid>
-
-                {/* 2. State */}
-                <Grid item xs={12} sm={6} md={2.4}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.8, display: 'block' }}>
-                    Operational State
+                  <Typography variant="caption" sx={{ color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                    Evaluates turnover, investment, caste/gender category, and state location against official Gazette rules.
                   </Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    sx={{ bgcolor: '#F8FAFC', borderRadius: '8px' }}
-                  >
-                    <MenuItem value="Gujarat">Gujarat (SER / GIDC)</MenuItem>
-                    <MenuItem value="Maharashtra">Maharashtra</MenuItem>
-                    <MenuItem value="Tamil Nadu">Tamil Nadu</MenuItem>
-                    <MenuItem value="Karnataka">Karnataka</MenuItem>
-                    <MenuItem value="Uttar Pradesh">Uttar Pradesh</MenuItem>
-                    <MenuItem value="All India">All-India / Central</MenuItem>
-                  </TextField>
-                </Grid>
-
-                {/* 3. Enterprise Size */}
-                <Grid item xs={12} sm={6} md={2.4}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.8, display: 'block' }}>
-                    Enterprise Size
-                  </Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    value={enterpriseSize}
-                    onChange={(e) => setEnterpriseSize(e.target.value)}
-                    sx={{ bgcolor: '#F8FAFC', borderRadius: '8px' }}
-                  >
-                    <MenuItem value="micro">Micro (&le; ₹5 Cr Turn)</MenuItem>
-                    <MenuItem value="small">Small (&le; ₹50 Cr Turn)</MenuItem>
-                    <MenuItem value="medium">Medium (&le; ₹250 Cr Turn)</MenuItem>
-                  </TextField>
-                </Grid>
-
-                {/* 4. Business Age */}
-                <Grid item xs={12} sm={6} md={2.4}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.8, display: 'block' }}>
-                    Business Age
-                  </Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    value={businessAge}
-                    onChange={(e) => setBusinessAge(e.target.value)}
-                    sx={{ bgcolor: '#F8FAFC', borderRadius: '8px' }}
-                  >
-                    <MenuItem value="0">New / Startup (&lt;1 Yr)</MenuItem>
-                    <MenuItem value="1">1 to 2 Years</MenuItem>
-                    <MenuItem value="3">3 Years (Eligible)</MenuItem>
-                    <MenuItem value="5">5+ Years</MenuItem>
-                  </TextField>
-                </Grid>
-
-                {/* 5. Submit Button */}
-                <Grid item xs={12} md={2.4} sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    endIcon={<ArrowForwardIcon />}
-                    sx={{
-                      bgcolor: '#0F2E59',
-                      color: '#FFFFFF',
-                      fontWeight: 800,
-                      py: 1.15,
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      fontSize: '0.92rem',
-                      boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
-                      '&:hover': { bgcolor: '#0A1E3A' },
-                    }}
-                  >
-                    Find My Benefits
-                  </Button>
-                </Grid>
+                </Paper>
               </Grid>
-            </form>
-          </Paper>
-        </Container>
-      </Box>
+              <Grid item xs={12} sm={4}>
+                <Paper sx={{ p: 2.5, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', height: '100%' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#059669', mb: 0.5 }}>
+                    🔍 Targeted Scheme Search
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                    Filter across 11 official Central & Gujarat guidelines by credit guarantees, capital subsidies, and quality.
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Paper sx={{ p: 2.5, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', height: '100%' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#E65100', mb: 0.5 }}>
+                    📋 Pre-Application Checklists
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                    Download bank-ready DPR formats, verify statutory certificates, and track DBT margin money status.
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
 
-      {/* ─── 4. DYNAMIC RESULTS DISPLAY (ONLY WHEN USER ENTERS DETAILS) OR INITIAL CATALOG ─── */}
-      {profileSubmitted ? (
-        /* ─── 4A: ACCURATELY FOUND MATCHES (APPEARS ONLY AFTER SUBMISSION) ─── */
-        <Box id="matched-results-section" sx={{ py: 8, bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
-          <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
-            <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} sx={{ mb: 4 }}>
-              <Box>
-                <Chip
-                  icon={<CheckCircleIcon sx={{ fontSize: '15px !important', color: '#059669 !important' }} />}
-                  label="Accurately Found Schemes"
-                  size="small"
-                  sx={{ bgcolor: '#ECFDF5', color: '#065F46', fontWeight: 800, mb: 1, border: '1px solid #A7F3D0' }}
-                />
-                <Typography variant="h3" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: { xs: '1.75rem', md: '2.2rem' } }}>
-                  Matched Results for Your Business Profile
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#64748B', mt: 0.5 }}>
-                  Evaluated criteria for: <strong>{enterpriseSize.toUpperCase()}</strong> Enterprise in <strong>{state}</strong> ({industry.toUpperCase()} sector)
-                </Typography>
-              </Box>
-
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" alignItems="center">
               <Button
-                variant="outlined"
-                startIcon={<RestartAltIcon />}
-                onClick={() => {
-                  setProfileSubmitted(false)
-                  toast.info('Returned to full official schemes catalog.')
-                }}
-                sx={{ mt: { xs: 2, md: 0 }, borderColor: '#CBD5E1', color: '#0F2E59', fontWeight: 700, textTransform: 'none' }}
-              >
-                Clear Profile / View All Schemes
-              </Button>
-            </Stack>
-
-            <Grid container spacing={3}>
-              {accuratelyMatchedSchemes.slice(0, 4).map((scheme) => (
-                <Grid item xs={12} md={6} key={scheme.code}>
-                  <Card
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      bgcolor: '#FFFFFF',
-                      border: '1.5px solid #E2E8F0',
-                      borderRadius: '14px',
-                      p: 1,
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        borderColor: '#0F2E59',
-                        boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)',
-                        transform: 'translateY(-3px)',
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 2.5 }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                        <Chip
-                          label={`${scheme.calculatedMatch}% MATCH`}
-                          size="small"
-                          sx={{
-                            bgcolor: scheme.calculatedMatch >= 85 ? '#ECFDF5' : '#EFF6FF',
-                            color: scheme.calculatedMatch >= 85 ? '#065F46' : '#1D4ED8',
-                            fontWeight: 900,
-                            fontSize: '0.8rem',
-                            border: '1px solid',
-                            borderColor: scheme.calculatedMatch >= 85 ? '#A7F3D0' : '#BFDBFE',
-                          }}
-                        />
-                        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
-                          {scheme.ministry}
-                        </Typography>
-                      </Stack>
-
-                      <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '1.08rem', lineHeight: 1.35, mb: 1 }}>
-                        {scheme.name}
-                      </Typography>
-
-                      <Paper sx={{ p: 1.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', mb: 2 }}>
-                        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block' }}>
-                          Maximum Financial Assistance
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 900, color: scheme.categoryColor }}>
-                          {scheme.maxBenefit}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 500, display: 'block', mt: 0.5 }}>
-                          {scheme.highlight}
-                        </Typography>
-                      </Paper>
-
-                      <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 1 }}>
-                        Accurate Eligibility Reasoning:
-                      </Typography>
-
-                      <Stack spacing={0.6}>
-                        {scheme.calculatedReasons.map((r, idx) => (
-                          <Typography
-                            key={idx}
-                            variant="caption"
-                            sx={{
-                              color: r.startsWith('✓') ? '#059669' : '#DC2626',
-                              fontWeight: 600,
-                              lineHeight: 1.4,
-                              display: 'block',
-                            }}
-                          >
-                            {r}
-                          </Typography>
-                        ))}
-                      </Stack>
-                    </CardContent>
-
-                    <Box sx={{ p: 2, pt: 0 }}>
-                      <Stack direction="row" spacing={1.5}>
-                        <Button
-                          fullWidth
-                          variant="contained"
-                          onClick={() => navigate(`/scheme/${scheme.code}`)}
-                          sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 700, textTransform: 'none', borderRadius: '6px' }}
-                        >
-                          Check Eligibility & Apply
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          onClick={() => navigate(`/scheme/${scheme.code}`)}
-                          sx={{ borderColor: '#CBD5E1', color: '#0F2E59', fontWeight: 700, textTransform: 'none', borderRadius: '6px' }}
-                        >
-                          Details
-                        </Button>
-                      </Stack>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </Box>
-      ) : (
-        /* ─── 4B: OFFICIAL SCHEMES CATALOG (DEFAULT STATE - NO PREMATURE "RECOMMENDED" WORD) ─── */
-        <Box sx={{ py: 8, bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
-          <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
-            <Box sx={{ textAlign: 'center', maxWidth: 860, mx: 'auto', mb: 4.5 }}>
-              <Chip
-                icon={<PictureAsPdfIcon sx={{ fontSize: '15px !important', color: '#DC2626 !important' }} />}
-                label="Official Schemes Catalog • 11 Verified Guidelines"
+                variant="contained"
+                size="large"
+                onClick={() => navigate('/login')}
+                endIcon={<ArrowForwardIcon />}
                 sx={{
-                  mb: 1.5,
-                  bgcolor: '#FEF2F2',
-                  color: '#991B1B',
+                  bgcolor: '#0F2E59',
+                  color: '#FFFFFF',
                   fontWeight: 800,
-                  fontSize: '0.8rem',
-                  border: '1px solid #FECACA',
-                  py: 1.8,
-                  px: 1,
+                  fontSize: '0.96rem',
+                  px: 4,
+                  py: 1.3,
+                  borderRadius: '10px',
+                  boxShadow: '0 6px 20px rgba(15, 46, 89, 0.25)',
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: '#0A1E3A' },
                 }}
-              />
-              <Typography
-                variant="h3"
-                sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.3rem' }, mb: 1, color: '#0F2E59' }}
               >
-                Explore Government Schemes & Benefits
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#475569', fontSize: '1.02rem', lineHeight: 1.6 }}>
-                Every scheme is verified against official Central Ministry and Gujarat State Gazette documents archived in our corpus.
-              </Typography>
-
-              {/* Filter Chips Bar */}
-              <Stack
-                direction="row"
-                spacing={1}
-                justifyContent="center"
-                flexWrap="wrap"
-                sx={{ mt: 3, gap: 1 }}
-              >
-                {[
-                  { id: 'all', label: 'All Schemes (11)' },
-                  { id: 'central', label: 'Central Ministry (10)' },
-                  { id: 'gujarat', label: 'Gujarat State (1)' },
-                  { id: 'credit_guarantee', label: 'Credit & Finance' },
-                  { id: 'capital_subsidy', label: 'Capital Subsidies' },
-                  { id: 'infrastructure', label: 'Infrastructure & Clusters' },
-                  { id: 'quality_certification', label: 'Quality & ZED' },
-                ].map((filter) => (
-                  <Chip
-                    key={filter.id}
-                    label={filter.label}
-                    clickable
-                    onClick={() => setCatalogFilter(filter.id)}
-                    sx={{
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
-                      bgcolor: catalogFilter === filter.id ? '#0F2E59' : '#F1F5F9',
-                      color: catalogFilter === filter.id ? '#FFFFFF' : '#334155',
-                      border: '1px solid',
-                      borderColor: catalogFilter === filter.id ? '#0F2E59' : '#CBD5E1',
-                      '&:hover': {
-                        bgcolor: catalogFilter === filter.id ? '#0A1E3A' : '#E2E8F0',
-                      },
-                    }}
-                  />
-                ))}
-              </Stack>
-            </Box>
-
-            {/* Schemes Grid */}
-            <Grid container spacing={3}>
-              {filteredCatalogSchemes.map((scheme) => (
-                <Grid item xs={12} sm={6} lg={4} key={scheme.code}>
-                  <Card
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      bgcolor: '#FFFFFF',
-                      border: '1px solid #E2E8F0',
-                      borderRadius: '12px',
-                      boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        borderColor: '#0F2E59',
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 10px 24px rgba(15, 23, 42, 0.08)',
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 3, flexGrow: 1 }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
-                        <Chip
-                          label={scheme.level === 'state_gujarat' ? 'Gujarat State' : 'Central Ministry'}
-                          size="small"
-                          sx={{
-                            bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#F0FDF4',
-                            color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#15803D',
-                            fontWeight: 700,
-                            fontSize: '0.72rem',
-                            border: '1px solid',
-                            borderColor: scheme.level === 'state_gujarat' ? '#BFDBFE' : '#BBF7D0',
-                          }}
-                        />
-                        <Chip
-                          label={scheme.category.replace('_', ' ').toUpperCase()}
-                          size="small"
-                          sx={{
-                            bgcolor: '#F8FAFC',
-                            color: '#475569',
-                            fontWeight: 700,
-                            fontSize: '0.68rem',
-                            border: '1px solid #E2E8F0',
-                          }}
-                        />
-                      </Stack>
-
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 800,
-                          color: '#0F2E59',
-                          fontSize: '1.05rem',
-                          lineHeight: 1.35,
-                          mb: 1,
-                          minHeight: 46,
-                        }}
-                      >
-                        {scheme.shortName}
-                      </Typography>
-
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: '#64748B',
-                          display: 'block',
-                          fontWeight: 600,
-                          mb: 1.5,
-                          fontSize: '0.76rem',
-                        }}
-                      >
-                        {scheme.ministry}
-                      </Typography>
-
-                      <Box
-                        sx={{
-                          bgcolor: '#F8FAFC',
-                          p: 1.5,
-                          borderRadius: '8px',
-                          border: '1px solid #E2E8F0',
-                          mb: 2,
-                        }}
-                      >
-                        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block', fontSize: '0.72rem' }}>
-                          Maximum Government Benefit
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 800, color: scheme.categoryColor, fontSize: '1.15rem' }}>
-                          {scheme.maxBenefit}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 500, display: 'block', mt: 0.5 }}>
-                          {scheme.highlight}
-                        </Typography>
-                      </Box>
-
-                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
-                        <PictureAsPdfIcon sx={{ fontSize: 16, color: '#DC2626' }} />
-                        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.74rem' }} noWrap>
-                          {scheme.gazette}
-                        </Typography>
-                      </Stack>
-                    </CardContent>
-
-                    <Box sx={{ p: 2, pt: 0 }}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important' }} />}
-                        onClick={() => navigate(`/scheme/${scheme.code}`)}
-                        sx={{
-                          bgcolor: '#0F2E59',
-                          color: '#FFFFFF',
-                          fontWeight: 700,
-                          fontSize: '0.84rem',
-                          py: 0.9,
-                          borderRadius: '6px',
-                          textTransform: 'none',
-                          boxShadow: 'none',
-                          '&:hover': { bgcolor: '#0A1E3A' },
-                        }}
-                      >
-                        View Guidelines & Eligibility
-                      </Button>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-
-            <Box sx={{ textAlign: 'center', mt: 5 }}>
+                Sign In to Search & View Schemes
+              </Button>
               <Button
                 variant="outlined"
                 size="large"
-                endIcon={<OpenInNewIcon />}
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/register')}
                 sx={{
-                  borderColor: '#0F2E59',
+                  borderColor: '#CBD5E1',
                   color: '#0F2E59',
                   fontWeight: 700,
-                  fontSize: '0.95rem',
+                  fontSize: '0.96rem',
                   px: 3.5,
-                  py: 1.2,
-                  borderRadius: '8px',
+                  py: 1.3,
+                  borderRadius: '10px',
+                  bgcolor: '#FFFFFF',
                   textTransform: 'none',
-                  '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0A1E3A' },
+                  '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
                 }}
               >
-                Access Schemes Dashboard & Full Database
+                Register Enterprise Account
               </Button>
-            </Box>
-          </Container>
-        </Box>
-      )}
-
+            </Stack>
+          </Paper>
+        </Container>
+      </Box>
       {/* ─── 5. EXPLORE BY BUSINESS NEED (8 TASK TILES) ─── */}
       <Box sx={{ py: 8, bgcolor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>

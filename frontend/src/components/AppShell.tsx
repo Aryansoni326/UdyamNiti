@@ -97,9 +97,6 @@ export const AppShell: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Interactive Content Modals
-  const [modalOpen, setModalOpen] = useState<string | null>(null)
-
   useEffect(() => {
     const stored = localStorage.getItem('udyamniti_user')
     if (stored) {
@@ -131,11 +128,6 @@ export const AppShell: React.FC = () => {
     setUpdatesAnchor(null)
     setSupportAnchor(null)
     setMobileOpen(false)
-  }
-
-  const openModal = (id: string) => {
-    closeAllMenus()
-    setModalOpen(id)
   }
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -216,47 +208,46 @@ export const AppShell: React.FC = () => {
 
             {/* Top Right: Language Selector & Auth Buttons */}
             <Stack direction="row" spacing={1.5} alignItems="center">
-              {/* Language Selector (EN / HI / GU) with Official GoI Bilingual Icon */}
-              <Button
-                id="language-selector-button"
-                onClick={(e) => setLangMenuAnchor(e.currentTarget)}
-                variant="outlined"
-                size="small"
-                startIcon={
+              {/* Language Selector (EN / HI / GU) with Official GoI Bilingual Icon Only */}
+              <Tooltip title="Language Preference / भाषा का चयन / ભાષા પસંદ કરો">
+                <Button
+                  id="language-selector-button"
+                  onClick={(e) => setLangMenuAnchor(e.currentTarget)}
+                  variant="outlined"
+                  size="small"
+                  aria-label="Change Language Preference"
+                  sx={{
+                    minWidth: 'auto',
+                    px: 1.2,
+                    py: 0.6,
+                    height: 36,
+                    borderColor: '#CBD5E1',
+                    bgcolor: '#FFFFFF',
+                    borderRadius: '8px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    transition: 'all 0.15s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '&:hover': {
+                      borderColor: '#0F2E59',
+                      bgcolor: '#F8FAFC',
+                    },
+                  }}
+                >
                   <Box
                     component="img"
                     src={langIconImg}
                     alt="Language Preference"
                     sx={{
-                      height: 22,
+                      height: 24,
                       width: 'auto',
-                      display: 'inline-block',
+                      display: 'block',
                       objectFit: 'contain',
-                      mr: 0.3,
                     }}
                   />
-                }
-                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16, color: '#64748B' }} />}
-                sx={{
-                  color: '#0F2E59',
-                  borderColor: '#CBD5E1',
-                  bgcolor: '#FFFFFF',
-                  fontWeight: 700,
-                  fontSize: '0.84rem',
-                  textTransform: 'none',
-                  px: 1.5,
-                  py: 0.6,
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                  transition: 'all 0.15s ease',
-                  '&:hover': {
-                    borderColor: '#0F2E59',
-                    bgcolor: '#F8FAFC',
-                  },
-                }}
-              >
-                {LANGUAGE_LABELS[lang]}
-              </Button>
+                </Button>
+              </Tooltip>
               <Menu
                 id="language-menu"
                 anchorEl={langMenuAnchor}
@@ -561,17 +552,33 @@ export const AppShell: React.FC = () => {
                   },
                 }}
               >
+                <MenuItem
+                  onClick={() => { closeAllMenus(); navigate('/ministry'); }}
+                  sx={{ py: 1.2, px: 2, bgcolor: '#F8FAFC' }}
+                >
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
+                    <AccountBalanceIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                    {t('ministry')} Overview & Portal
+                  </Typography>
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
                 {[
-                  { id: 'ministry_about', label: t('aboutMinistry'), icon: <InfoOutlinedIcon fontSize="small" sx={{ color: '#0F2E59' }} /> },
-                  { id: 'ministry_vision', label: t('visionMission'), icon: <TrendingUpIcon fontSize="small" sx={{ color: '#059669' }} /> },
-                  { id: 'ministry_leadership', label: t('leadership'), icon: <GroupIcon fontSize="small" sx={{ color: '#2563EB' }} /> },
-                  { id: 'ministry_divisions', label: t('divisions'), icon: <BusinessCenterIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
-                  { id: 'ministry_organisations', label: t('organisations'), icon: <AccountBalanceIcon fontSize="small" sx={{ color: '#D97706' }} /> },
-                  { id: 'ministry_roles', label: t('rolesAndResponsibilities'), icon: <AssessmentIcon fontSize="small" sx={{ color: '#0891B2' }} /> },
-                  { id: 'ministry_overview', label: t('msmeOverview'), icon: <ArticleIcon fontSize="small" sx={{ color: '#DC2626' }} /> },
-                  { id: 'ministry_directory', label: t('ministryDirectory'), icon: <ContactPhoneIcon fontSize="small" sx={{ color: '#4B5563' }} /> },
+                  { tab: 'about', label: t('aboutMinistry'), icon: <InfoOutlinedIcon fontSize="small" sx={{ color: '#0F2E59' }} /> },
+                  { tab: 'vision', label: t('visionMission'), icon: <TrendingUpIcon fontSize="small" sx={{ color: '#059669' }} /> },
+                  { tab: 'leadership', label: t('leadership'), icon: <GroupIcon fontSize="small" sx={{ color: '#2563EB' }} /> },
+                  { tab: 'divisions', label: t('divisions'), icon: <BusinessCenterIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
+                  { tab: 'bodies', label: t('organisations'), icon: <AccountBalanceIcon fontSize="small" sx={{ color: '#D97706' }} /> },
+                  { tab: 'about', label: t('rolesAndResponsibilities'), icon: <AssessmentIcon fontSize="small" sx={{ color: '#0891B2' }} /> },
+                  { tab: 'stats', label: t('msmeOverview'), icon: <ArticleIcon fontSize="small" sx={{ color: '#DC2626' }} /> },
+                  { tab: 'directory', label: t('ministryDirectory'), icon: <ContactPhoneIcon fontSize="small" sx={{ color: '#4B5563' }} /> },
                 ].map((item, idx) => (
-                  <MenuItem key={item.id} onClick={() => openModal(item.id)} sx={{ py: 1.1, px: 2 }}>
+                  <MenuItem
+                    key={idx}
+                    onClick={() => { closeAllMenus(); navigate(`/ministry?tab=${item.tab}`); }}
+                    sx={{ py: 1.1, px: 2 }}
+                  >
                     <ListItemIcon sx={{ minWidth: 32 }}>{item.icon}</ListItemIcon>
                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#1E293B' }}>
                       {item.label}
@@ -690,7 +697,7 @@ export const AppShell: React.FC = () => {
                 PaperProps={{
                   sx: {
                     mt: 1,
-                    minWidth: 280,
+                    minWidth: 290,
                     borderRadius: '10px',
                     boxShadow: '0 10px 30px rgba(15, 23, 42, 0.14)',
                     border: '1px solid #E2E8F0',
@@ -698,7 +705,22 @@ export const AppShell: React.FC = () => {
                   },
                 }}
               >
-                <MenuItem onClick={() => openModal('resources_guidelines')} sx={{ py: 1.2, px: 2, bgcolor: '#FEF2F2' }}>
+                <MenuItem
+                  onClick={() => { closeAllMenus(); navigate('/resources'); }}
+                  sx={{ py: 1.2, px: 2, bgcolor: '#F8FAFC' }}
+                >
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
+                    <ArticleIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                    {t('resources')} Portal
+                  </Typography>
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem
+                  onClick={() => { closeAllMenus(); navigate('/resources?tab=guidelines'); }}
+                  sx={{ py: 1.2, px: 2, bgcolor: '#FEF2F2' }}
+                >
                   <ListItemIcon sx={{ minWidth: 32, color: '#DC2626' }}>
                     <PictureAsPdfOutlinedIcon fontSize="small" />
                   </ListItemIcon>
@@ -713,16 +735,24 @@ export const AppShell: React.FC = () => {
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 {[
-                  { id: 'resources_acts', label: t('actsAndRules') },
-                  { id: 'resources_policies', label: t('policies') },
-                  { id: 'resources_notifications', label: t('notifications') },
-                  { id: 'resources_circulars', label: t('circularsAndOrders') },
-                  { id: 'resources_reports', label: t('reports') },
-                  { id: 'resources_publications', label: t('publications') },
-                  { id: 'resources_forms', label: t('formsAndTemplates') },
-                  { id: 'resources_faqs', label: t('faqs') },
-                ].map((item) => (
-                  <MenuItem key={item.id} onClick={() => openModal(item.id)} sx={{ py: 0.9, px: 2 }}>
+                  { tab: 'acts', label: t('actsAndRules') },
+                  { tab: 'guidelines', label: t('policies') },
+                  { tab: 'acts', label: t('notifications') },
+                  { route: '/updates?tab=circulars', label: t('circularsAndOrders') },
+                  { route: '/ministry?tab=stats', label: t('reports') },
+                  { tab: 'guidelines', label: t('publications') },
+                  { tab: 'dpr', label: t('formsAndTemplates') },
+                  { tab: 'udyam', label: t('faqs') },
+                ].map((item, idx) => (
+                  <MenuItem
+                    key={idx}
+                    onClick={() => {
+                      closeAllMenus()
+                      if (item.route) navigate(item.route)
+                      else navigate(`/resources?tab=${item.tab}`)
+                    }}
+                    sx={{ py: 0.9, px: 2 }}
+                  >
                     <ListItemIcon sx={{ minWidth: 32, color: '#64748B' }}>
                       <ArticleIcon fontSize="small" />
                     </ListItemIcon>
@@ -766,17 +796,33 @@ export const AppShell: React.FC = () => {
                   },
                 }}
               >
+                <MenuItem
+                  onClick={() => { closeAllMenus(); navigate('/updates'); }}
+                  sx={{ py: 1.2, px: 2, bgcolor: '#F8FAFC' }}
+                >
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
+                    <NotificationsNoneIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                    {t('updates')} Portal
+                  </Typography>
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
                 {[
-                  { id: 'updates_whats_new', label: t('whatsNew') },
-                  { id: 'updates_announcements', label: t('announcements') },
-                  { id: 'updates_scheme_updates', label: t('schemeUpdates') },
-                  { id: 'updates_events', label: t('events') },
-                  { id: 'updates_press', label: t('pressReleases') },
-                  { id: 'updates_success', label: t('successStories') },
-                  { id: 'updates_photos', label: t('photoGallery') },
-                  { id: 'updates_videos', label: t('videoGallery') },
-                ].map((item) => (
-                  <MenuItem key={item.id} onClick={() => openModal(item.id)} sx={{ py: 0.9, px: 2 }}>
+                  { tab: 'circulars', label: t('whatsNew') },
+                  { tab: 'press', label: t('announcements') },
+                  { tab: 'circulars', label: t('schemeUpdates') },
+                  { tab: 'events', label: t('events') },
+                  { tab: 'press', label: t('pressReleases') },
+                  { tab: 'press', label: t('successStories') },
+                  { tab: 'events', label: t('photoGallery') },
+                  { tab: 'events', label: t('videoGallery') },
+                ].map((item, idx) => (
+                  <MenuItem
+                    key={idx}
+                    onClick={() => { closeAllMenus(); navigate(`/updates?tab=${item.tab}`); }}
+                    sx={{ py: 0.9, px: 2 }}
+                  >
                     <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
                       <NotificationsNoneIcon fontSize="small" />
                     </ListItemIcon>
@@ -812,7 +858,7 @@ export const AppShell: React.FC = () => {
                 PaperProps={{
                   sx: {
                     mt: 1,
-                    minWidth: 260,
+                    minWidth: 280,
                     borderRadius: '10px',
                     boxShadow: '0 10px 30px rgba(15, 23, 42, 0.14)',
                     border: '1px solid #E2E8F0',
@@ -820,16 +866,32 @@ export const AppShell: React.FC = () => {
                   },
                 }}
               >
+                <MenuItem
+                  onClick={() => { closeAllMenus(); navigate('/support'); }}
+                  sx={{ py: 1.2, px: 2, bgcolor: '#F8FAFC' }}
+                >
+                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
+                    <SupportAgentIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                    {t('support')} & Grievance Portal
+                  </Typography>
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
                 {[
-                  { id: 'support_help_centre', label: t('helpCentre'), icon: <HelpOutlineIcon fontSize="small" sx={{ color: '#0284C7' }} /> },
-                  { id: 'support_contact', label: t('contactMinistry'), icon: <PhoneInTalkOutlinedIcon fontSize="small" sx={{ color: '#059669' }} /> },
-                  { id: 'ministry_directory', label: t('ministryDirectory'), icon: <ContactPhoneIcon fontSize="small" sx={{ color: '#4B5563' }} /> },
-                  { id: 'support_grievance', label: t('grievanceSupport'), icon: <GavelOutlinedIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
-                  { id: 'resources_faqs', label: t('frequentlyAskedQuestions'), icon: <ArticleIcon fontSize="small" sx={{ color: '#D97706' }} /> },
-                  { id: 'support_application_help', label: t('applicationHelp'), icon: <SupportAgentIcon fontSize="small" sx={{ color: '#2563EB' }} /> },
-                  { id: 'support_feedback', label: t('feedback'), icon: <InfoOutlinedIcon fontSize="small" sx={{ color: '#64748B' }} /> },
-                ].map((item) => (
-                  <MenuItem key={item.id} onClick={() => openModal(item.id)} sx={{ py: 0.9, px: 2 }}>
+                  { route: '/support?tab=helpdesk', label: t('helpCentre'), icon: <HelpOutlineIcon fontSize="small" sx={{ color: '#0284C7' }} /> },
+                  { route: '/support?tab=helpdesk', label: t('contactMinistry'), icon: <PhoneInTalkOutlinedIcon fontSize="small" sx={{ color: '#059669' }} /> },
+                  { route: '/ministry?tab=directory', label: t('ministryDirectory'), icon: <ContactPhoneIcon fontSize="small" sx={{ color: '#4B5563' }} /> },
+                  { route: '/support?tab=samadhaan', label: t('grievanceSupport'), icon: <GavelOutlinedIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
+                  { route: '/resources?tab=udyam', label: t('frequentlyAskedQuestions'), icon: <ArticleIcon fontSize="small" sx={{ color: '#D97706' }} /> },
+                  { route: '/support?tab=champions', label: t('applicationHelp'), icon: <SupportAgentIcon fontSize="small" sx={{ color: '#2563EB' }} /> },
+                  { route: '/support?tab=helpdesk', label: t('feedback'), icon: <InfoOutlinedIcon fontSize="small" sx={{ color: '#64748B' }} /> },
+                ].map((item, idx) => (
+                  <MenuItem
+                    key={idx}
+                    onClick={() => { closeAllMenus(); navigate(item.route); }}
+                    sx={{ py: 0.9, px: 2 }}
+                  >
                     <ListItemIcon sx={{ minWidth: 32 }}>{item.icon}</ListItemIcon>
                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
                       {item.label}
@@ -996,7 +1058,7 @@ export const AppShell: React.FC = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => openModal('ministry_about')}>
+            <ListItemButton onClick={() => { navigate('/ministry'); closeAllMenus(); }}>
               <ListItemText primary={t('ministry')} primaryTypographyProps={{ fontWeight: 700, color: '#1E293B' }} />
             </ListItemButton>
           </ListItem>
@@ -1006,414 +1068,23 @@ export const AppShell: React.FC = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => openModal('resources_guidelines')}>
+            <ListItemButton onClick={() => { navigate('/resources'); closeAllMenus(); }}>
               <ListItemText primary={t('resources')} primaryTypographyProps={{ fontWeight: 700, color: '#1E293B' }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => openModal('updates_whats_new')}>
+            <ListItemButton onClick={() => { navigate('/updates'); closeAllMenus(); }}>
               <ListItemText primary={t('updates')} primaryTypographyProps={{ fontWeight: 700, color: '#1E293B' }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => openModal('support_contact')}>
+            <ListItemButton onClick={() => { navigate('/support'); closeAllMenus(); }}>
               <ListItemText primary={t('support')} primaryTypographyProps={{ fontWeight: 700, color: '#1E293B' }} />
             </ListItemButton>
           </ListItem>
         </List>
       </Drawer>
 
-      {/* ─── 5. RICH INTERACTIVE MODALS FOR GOVERNMENT INFORMATION ARCHITECTURE ─── */}
-
-      {/* MODAL: About Ministry */}
-      <Dialog open={modalOpen === 'ministry_about'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          About the Ministry of Micro, Small & Medium Enterprises (M/o MSME)
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Typography variant="body1" sx={{ color: '#1E293B', mb: 2, lineHeight: 1.7, fontWeight: 500 }}>
-            The Ministry of Micro, Small and Medium Enterprises develops policies, programmes and support systems that help Indian MSMEs start, grow, access finance, adopt technology, develop skills and reach markets.
-          </Typography>
-          <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 0.5 }}>
-              Institutional Evolution & History
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#475569', lineHeight: 1.6 }}>
-              The Ministry was established in 2007 through the historic merger of the erstwhile Ministry of Small Scale Industries and the Ministry of Agro and Rural Industries. Under the MSMED Act, 2006, it functions as the apex central body coordinating with State Governments, financial institutions, and autonomous statutory boards.
-            </Typography>
-          </Paper>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#059669', mb: 0.5 }}>
-                  Role & Core Functions
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
-                  • Facilitating institutional credit & collateral guarantees<br />
-                  • Fostering technology upgrades & zero-defect manufacturing (ZED)<br />
-                  • Developing industrial infrastructure & common facility centers<br />
-                  • Skill training and entrepreneurship incubation
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#2563EB', mb: 0.5 }}>
-                  State Government Co-operation
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
-                  The Ministry actively partners with State Directorates of Industries (such as Gujarat Industries and Mines Dept) to co-fund state industrial parks, cluster infrastructure, and export facilitation corridors.
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: Vision, Mission & Objectives */}
-      <Dialog open={modalOpen === 'ministry_vision'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#059669', color: '#FFFFFF', fontWeight: 800 }}>
-          Vision, Mission & National Objectives
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Grid container spacing={2.5}>
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2.5, bgcolor: '#ECFDF5', border: '1px solid #A7F3D0' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#065F46', mb: 0.5 }}>
-                  VISION
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#047857', fontWeight: 600 }}>
-                  Empowered, globally competitive, resilient, and sustainable Micro, Small and Medium Enterprises across India.
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2.5, bgcolor: '#EFF6FF', border: '1px solid #BFDBFE' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#1D4ED8', mb: 0.5 }}>
-                  MISSION
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#1E40AF' }}>
-                  Help MSMEs seamlessly access real-time information, statutory schemes, collateral-free credit, modern infrastructure, and government support systems.
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
-                  CORE STRATEGIC OBJECTIVES
-                </Typography>
-                <Grid container spacing={1.5}>
-                  {[
-                    'Credit access & collateral guarantees (CGTMSE)',
-                    'Technology adoption & modernization (ZED / CITUS)',
-                    'Skill development & entrepreneurship (ESDP)',
-                    'Domestic & international market access (PMS / IC)',
-                    'Cluster infrastructure & common facility centres (CDP / SFURTI)',
-                    'Quality improvement, testing & green manufacturing',
-                    'Employment generation through margin money (PMEGP)',
-                  ].map((obj, i) => (
-                    <Grid item xs={12} sm={6} key={i}>
-                      <Typography variant="body2" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CheckCircleIcon sx={{ color: '#059669', fontSize: 16 }} />
-                        {obj}
-                      </Typography>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#059669' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: Leadership */}
-      <Dialog open={modalOpen === 'ministry_leadership'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          Ministry Leadership • Political & Administrative
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 2 }}>
-            Information maintained dynamically from official Government of India records:
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
-              <Card sx={{ border: '1px solid #E2E8F0', height: '100%' }}>
-                <Box sx={{ p: 2.5, bgcolor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                  <Chip label="Union Cabinet Minister" size="small" sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 700, mb: 1 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59' }}>
-                    Shri Jitan Ram Manjhi
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
-                    Hon'ble Minister of Micro, Small and Medium Enterprises
-                  </Typography>
-                </Box>
-                <CardContent sx={{ p: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#475569' }}>
-                    Oversees national MSME policy directives, budget appropriations, and high-level inter-ministerial harmonization.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Card sx={{ border: '1px solid #E2E8F0', height: '100%' }}>
-                <Box sx={{ p: 2.5, bgcolor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                  <Chip label="Minister of State" size="small" sx={{ bgcolor: '#059669', color: '#FFFFFF', fontWeight: 700, mb: 1 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59' }}>
-                    Sushri Shobha Karandlaje
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
-                    Hon'ble Minister of State for MSME
-                  </Typography>
-                </Box>
-                <CardContent sx={{ p: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#475569' }}>
-                    Assists in operational program delivery, cluster outreach, women & SC/ST entrepreneur initiatives.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
-                  ADMINISTRATIVE LEADERSHIP
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#1E293B' }}>Secretary (MSME)</Typography>
-                    <Typography variant="caption" sx={{ color: '#64748B' }}>Administrative Head of the Ministry</Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#1E293B' }}>Development Commissioner</Typography>
-                    <Typography variant="caption" sx={{ color: '#64748B' }}>Head of Office of DC-MSME</Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#1E293B' }}>Joint Secretaries & Directors</Typography>
-                    <Typography variant="caption" sx={{ color: '#64748B' }}>Heading Scheme & Policy Desks</Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: Organisations */}
-      <Dialog open={modalOpen === 'ministry_organisations'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          Organisations in the Ministry Ecosystem
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Typography variant="body2" sx={{ color: '#475569', mb: 2.5 }}>
-            The Ministry functions through a coordinated network of specialized statutory boards, public sector undertakings, and autonomous training institutes:
-          </Typography>
-          <Grid container spacing={2}>
-            {[
-              { name: 'Office of Development Commissioner (DC-MSME)', role: 'Apex field organisation implementing CDP, ESDP, and technology center networks across states.', website: 'dcmsme.gov.in' },
-              { name: 'National Small Industries Corporation (NSIC)', role: 'Facilitates raw material distribution, credit facilitation, and marketing support under NSSH.', website: 'nsic.co.in' },
-              { name: 'Khadi & Village Industries Commission (KVIC)', role: 'National implementing agency for PMEGP margin money subsidy, rural employment & khadi development.', website: 'kvic.gov.in' },
-              { name: 'Coir Board', role: 'Statutory body administering Coir Vikas Yojana (CVY), export trade fairs, and modernized coir fiber spinning.', website: 'coirboard.gov.in' },
-              { name: 'National Institute for MSME (ni-msme)', role: 'Premier training institute delivering capacity building, research, and cluster mentoring for enterprises.', website: 'nimsme.org' },
-              { name: 'Mahatma Gandhi Institute for Rural Industrialization (MGIRI)', role: 'R&D organization accelerating rural technology, solar pottery, and bio-processing equipment.', website: 'mgiri.org' },
-            ].map((org, i) => (
-              <Grid item xs={12} sm={6} key={i}>
-                <Paper sx={{ p: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', height: '100%' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 0.5 }}>
-                    {org.name}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.84rem', mb: 1 }}>
-                    {org.role}
-                  </Typography>
-                  <Chip label={org.website} size="small" variant="outlined" sx={{ fontSize: '0.72rem', color: '#2563EB', borderColor: '#BFDBFE' }} />
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: MSME Overview */}
-      <Dialog open={modalOpen === 'ministry_overview'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          MSME Classification Criteria & Statutory Overview
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Typography variant="body1" sx={{ color: '#1E293B', mb: 2, lineHeight: 1.6 }}>
-            Under the revised composite criteria effective from 1st July 2020, enterprises are classified based on both Investment in Plant & Machinery AND Annual Turnover:
-          </Typography>
-          <Grid container spacing={2}>
-            {[
-              { type: 'Micro Enterprise', inv: 'Investment &le; ₹1 Crore', turn: 'Turnover &le; ₹5 Crore', color: '#059669', badge: 'Tier 1' },
-              { type: 'Small Enterprise', inv: 'Investment &le; ₹10 Crore', turn: 'Turnover &le; ₹50 Crore', color: '#2563EB', badge: 'Tier 2' },
-              { type: 'Medium Enterprise', inv: 'Investment &le; ₹50 Crore', turn: 'Turnover &le; ₹250 Crore', color: '#7C3AED', badge: 'Tier 3' },
-            ].map((cls, i) => (
-              <Grid item xs={12} md={4} key={i}>
-                <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', textAlign: 'center' }}>
-                  <Chip label={cls.badge} size="small" sx={{ bgcolor: cls.color, color: '#FFFFFF', fontWeight: 700, mb: 1 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
-                    {cls.type}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#1E293B', fontWeight: 600 }}>
-                    {cls.inv}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#64748B', mt: 0.5 }}>
-                    {cls.turn}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-          <Paper sx={{ p: 2, bgcolor: '#FEF3C7', border: '1px solid #FDE68A', mt: 2.5 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400E', mb: 0.5 }}>
-              Udyam Registration Note
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#78350F' }}>
-              Udyam Registration is a completely paperless, free online registration process based on self-declaration linked with Aadhaar, PAN, and GSTIN.
-            </Typography>
-          </Paper>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: Scheme Guidelines (Official Uploaded PDFs) with "Ask AI About This Document" */}
-      <Dialog open={modalOpen === 'resources_guidelines'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          Official Scheme Guidelines & Verified PDF Documents
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
-            These 11 statutory guideline documents form the authoritative foundation of UdyamNiti's reasoning engine. You can view each PDF or use the AI Assistant to interpret rules.
-          </Typography>
-          <Grid container spacing={1.5}>
-            {[
-              { name: 'Prime Minister Employment Generation Programme (PMEGP)', file: 'pmegp scheme.pdf', ministry: 'M/o MSME / KVIC' },
-              { name: 'Special Credit Guarantee Scheme – Export Credit (EPM)', file: 'Circular 257 - CGS for Export credit merged.pdf', ministry: 'CGTMSE & DGFT' },
-              { name: 'Assistance for Developing SER Textile and MSME Park 2025-26', file: '1.msme.pdf', ministry: 'Govt of Gujarat (IMD)' },
-              { name: 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)', file: 'SFURTI_NEW_GUIDELINES.pdf', ministry: 'M/o MSME' },
-              { name: 'MSME Sustainable (ZED) Certification Scheme (Phase-II)', file: 'ZED_Guidance_Document_NIC_Division_24 & 27.pdf', ministry: 'QCI / MSME' },
-              { name: 'Credit Guarantee Scheme for Factoring on TReDS (Circular 262)', file: 'TReDS Cicular 262.pdf', ministry: 'RBI / CGTMSE' },
-              { name: 'International Cooperation (IC) Scheme Guidelines (MDA & CBFTE)', file: 'Final and approved IC Scheme Guidelines-2021.pdf', ministry: 'M/o MSME' },
-              { name: 'Micro and Small Enterprises Cluster Development (MSE-CDP)', file: 'msme-cdp.pdf', ministry: 'O/o DC MSME' },
-              { name: 'Coir Vikas Yojana (CVY) Assistance Guidelines', file: 'cvy.schemes.pdf', ministry: 'Coir Board' },
-              { name: 'National SC-ST Hub (NSSH) Special Capital Subsidy (SCLCSS)', file: 'NSSH_Guidelines_Sub_scheme_0 & 1.pdf', ministry: 'NSIC / MSME' },
-              { name: 'Procurement and Marketing Support (PMS) Scheme', file: 'OM & PMS Scheme Guidelines.pdf', ministry: 'O/o DC MSME' },
-            ].map((b, i) => (
-              <Grid item xs={12} key={i}>
-                <Paper sx={{ p: 1.8, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Stack direction="row" spacing={1.5} alignItems="center">
-                    <PictureAsPdfOutlinedIcon sx={{ color: '#DC2626', fontSize: 24 }} />
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '0.88rem' }}>
-                        {b.name}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#64748B' }}>
-                        Source: {b.file} • Authority: {b.ministry}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<AutoAwesomeIcon sx={{ fontSize: 14, color: '#D97706' }} />}
-                      onClick={() => {
-                        setModalOpen(null)
-                        navigate(`/dashboard?mode=ai&doc=${encodeURIComponent(b.file)}`)
-                      }}
-                      sx={{ textTransform: 'none', borderColor: '#CBD5E1', color: '#0F2E59', fontWeight: 700 }}
-                    >
-                      Ask AI
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
-                      onClick={() => {
-                        toast.success(`Accessing official copy: ${b.file}`)
-                      }}
-                      sx={{ textTransform: 'none', bgcolor: '#0F2E59', fontWeight: 700 }}
-                    >
-                      PDF
-                    </Button>
-                  </Stack>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* MODAL: Contact Ministry / Directory */}
-      <Dialog open={modalOpen === 'support_contact' || modalOpen === 'ministry_directory'} onClose={() => setModalOpen(null)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          Ministry Contacts & Support Directory
-        </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PhoneInTalkOutlinedIcon sx={{ color: '#059669' }} /> Central MSME Helpdesk
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#1E293B', mb: 1 }}>
-                  <strong>Toll-Free Helpline:</strong> 1800 11 7800 (9:00 AM - 6:00 PM)
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#1E293B', mb: 1 }}>
-                  <strong>Alternative Line:</strong> 1800 180 6763
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#1E293B' }}>
-                  <strong>Email:</strong> champion-msme@gov.in / support@udyamniti.gov.in
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Paper sx={{ p: 2.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocationOnOutlinedIcon sx={{ color: '#DC2626' }} /> Head Office
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#475569', lineHeight: 1.6 }}>
-                  Ministry of Micro, Small and Medium Enterprises<br />
-                  Udyog Bhawan, Rafi Marg, New Delhi - 110011<br />
-                  Government of India
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setModalOpen(null)} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       {/* ─── MAIN CONTENT ─── */}
       <Box component="main" sx={{ flex: 1 }}>
@@ -1443,21 +1114,21 @@ export const AppShell: React.FC = () => {
               <Stack direction="row" spacing={3}>
                 <Typography
                   component="a"
-                  onClick={() => openModal('ministry_about')}
+                  onClick={() => navigate('/ministry')}
                   sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
                 >
                   {t('aboutMinistry')}
                 </Typography>
                 <Typography
                   component="a"
-                  onClick={() => openModal('support_contact')}
+                  onClick={() => navigate('/support?tab=helpdesk')}
                   sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
                 >
                   {t('contactMinistry')}
                 </Typography>
                 <Typography
                   component="a"
-                  onClick={() => openModal('resources_guidelines')}
+                  onClick={() => navigate('/resources?tab=guidelines')}
                   sx={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', cursor: 'pointer', '&:hover': { color: '#0F2E59' } }}
                 >
                   {t('schemeGuidelines')}
