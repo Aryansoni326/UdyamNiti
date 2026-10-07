@@ -209,7 +209,7 @@ export const AppShell: React.FC = () => {
 
             {/* Top Right: Language Selector & Auth Buttons */}
             <Stack direction="row" spacing={1.5} alignItems="center">
-              {/* Language Selector (EN / HI / GU) with Official GoI Bilingual Icon Only */}
+              {/* Language Selector (EN / HI / GU) with Big, Prominent Bilingual Mark (अ / A) */}
               <Tooltip title="Language Preference / भाषा का चयन / ભાષા પસંદ કરો">
                 <Button
                   id="language-selector-button"
@@ -219,34 +219,59 @@ export const AppShell: React.FC = () => {
                   aria-label="Change Language Preference"
                   sx={{
                     minWidth: 'auto',
-                    px: 1.2,
+                    px: 1.8,
                     py: 0.6,
-                    height: 36,
+                    height: 40,
                     borderColor: '#CBD5E1',
                     bgcolor: '#FFFFFF',
                     borderRadius: '8px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
                     transition: 'all 0.15s ease',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    gap: 0.8,
                     '&:hover': {
-                      borderColor: '#0F2E59',
-                      bgcolor: '#F8FAFC',
+                      borderColor: '#8B0000',
+                      bgcolor: '#FEF2F2',
                     },
                   }}
                 >
                   <Box
-                    component="img"
-                    src={langIconImg}
-                    alt="Language Preference"
                     sx={{
-                      height: 24,
-                      width: 'auto',
-                      display: 'block',
-                      objectFit: 'contain',
+                      display: 'inline-flex',
+                      alignItems: 'baseline',
+                      lineHeight: 1,
+                      userSelect: 'none',
                     }}
-                  />
+                  >
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontSize: '1.45rem',
+                        fontWeight: 900,
+                        color: '#8B0000',
+                        fontFamily: "'Noto Sans Devanagari', 'Mukta', 'Segoe UI', sans-serif",
+                        lineHeight: 1,
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      अ
+                    </Typography>
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontSize: '1.05rem',
+                        fontWeight: 900,
+                        color: '#8B0000',
+                        lineHeight: 1,
+                        ml: 0.2,
+                        transform: 'translateY(1px)',
+                      }}
+                    >
+                      A
+                    </Typography>
+                  </Box>
+                  <KeyboardArrowDownIcon sx={{ fontSize: 18, color: '#64748B' }} />
                 </Button>
               </Tooltip>
               <Menu

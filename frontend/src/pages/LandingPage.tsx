@@ -46,6 +46,10 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { tokens } from '../theme/tokens'
 import { useLanguage } from '../i18n'
 import { toast } from 'sonner'
+import pmegpBanner from '../assets/pmegp_banner.jpg'
+import exportCreditBanner from '../assets/export_credit_banner.jpg'
+import gujaratTextileBanner from '../assets/gujarat_textile_banner.jpg'
+import zedBanner from '../assets/zed_banner.jpg'
 
 interface SchemeSlide {
   id: number
@@ -78,8 +82,7 @@ export const LandingPage: React.FC = () => {
       officialGazette: 'Source: pmegp scheme.pdf (Ministry of MSME / KVIC)',
       schemeCode: 'PMEGP_MSME_SCHEME',
       ctaText: 'Check PMEGP Eligibility',
-      imageUrl:
-        'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: pmegpBanner,
       gradientBg: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 45%, #FEF3C7 100%)',
     },
     {
@@ -93,8 +96,7 @@ export const LandingPage: React.FC = () => {
       officialGazette: 'Source: Circular 257 - CGS for Export credit merged.pdf',
       schemeCode: 'CGTMSE_EPM_EXPORT_2026',
       ctaText: 'View Export Credit Cover',
-      imageUrl:
-        'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: exportCreditBanner,
       gradientBg: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 45%, #E0E7FF 100%)',
     },
     {
@@ -108,8 +110,7 @@ export const LandingPage: React.FC = () => {
       officialGazette: 'Source: 1.msme.pdf (GR No. IMD/MRT/0597/G, Gandhinagar)',
       schemeCode: 'GUJ_SER_TEXTILE_2025',
       ctaText: 'Explore Gujarat SER Assistance',
-      imageUrl:
-        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: gujaratTextileBanner,
       gradientBg: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 45%, #CCFBF1 100%)',
     },
     {
@@ -123,8 +124,7 @@ export const LandingPage: React.FC = () => {
       officialGazette: 'Source: ZED_Guidance_Document_NIC_Division_24 & 27.pdf',
       schemeCode: 'MSME_ZED_CERTIFICATION',
       ctaText: 'Get ZED Certification Assistance',
-      imageUrl:
-        'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: zedBanner,
       gradientBg: 'linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 45%, #EDE9FE 100%)',
     },
   ]
@@ -525,10 +525,15 @@ export const LandingPage: React.FC = () => {
                     component="img"
                     src={activeSlide.imageUrl}
                     alt={activeSlide.title}
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement
+                      target.src = pmegpBanner
+                    }}
                     sx={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
+                      display: 'block',
                       transition: 'transform 0.4s ease',
                       '&:hover': { transform: 'scale(1.03)' },
                     }}
