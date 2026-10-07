@@ -73,6 +73,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 import { useLanguage, Language, LANGUAGE_LABELS } from '../i18n'
+import langIconImg from '../assets/lang_icon.png'
 
 export const AppShell: React.FC = () => {
   const navigate = useNavigate()
@@ -121,6 +122,7 @@ export const AppShell: React.FC = () => {
   }
 
   const isLandingPage = location.pathname === '/'
+  const isAuthPage = location.pathname === '/register' || location.pathname === '/login'
 
   const closeAllMenus = () => {
     setMinistryAnchor(null)
@@ -214,13 +216,26 @@ export const AppShell: React.FC = () => {
 
             {/* Top Right: Language Selector & Auth Buttons */}
             <Stack direction="row" spacing={1.5} alignItems="center">
-              {/* Language Selector (EN / HI / GU) */}
+              {/* Language Selector (EN / HI / GU) with Official GoI Bilingual Icon */}
               <Button
                 id="language-selector-button"
                 onClick={(e) => setLangMenuAnchor(e.currentTarget)}
                 variant="outlined"
                 size="small"
-                startIcon={<LanguageIcon sx={{ fontSize: 18, color: '#0F2E59' }} />}
+                startIcon={
+                  <Box
+                    component="img"
+                    src={langIconImg}
+                    alt="Language Preference"
+                    sx={{
+                      height: 22,
+                      width: 'auto',
+                      display: 'inline-block',
+                      objectFit: 'contain',
+                      mr: 0.3,
+                    }}
+                  />
+                }
                 endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16, color: '#64748B' }} />}
                 sx={{
                   color: '#0F2E59',
@@ -285,7 +300,46 @@ export const AppShell: React.FC = () => {
                 ))}
               </Menu>
 
-              {currentUser ? (
+              {isAuthPage ? (
+                location.pathname === '/register' ? (
+                  <Button
+                    onClick={() => navigate('/login')}
+                    sx={{
+                      color: '#0F2E59',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      textTransform: 'none',
+                      px: 2.2,
+                      py: 0.7,
+                      borderRadius: '8px',
+                      border: '1.5px solid #CBD5E1',
+                      bgcolor: '#FFFFFF',
+                      '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
+                    }}
+                  >
+                    {t('signIn')}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate('/register')}
+                    sx={{
+                      bgcolor: '#0F2E59',
+                      color: '#FFFFFF',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      textTransform: 'none',
+                      px: 2.4,
+                      py: 0.7,
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                      '&:hover': { bgcolor: '#0A1E3A' },
+                    }}
+                  >
+                    {t('register')}
+                  </Button>
+                )
+              ) : currentUser ? (
                 <Stack direction="row" spacing={1.5} alignItems="center">
                   <Button
                     onClick={() => navigate('/dashboard')}
@@ -396,30 +450,33 @@ export const AppShell: React.FC = () => {
               )}
 
               {/* Mobile Menu Hamburger */}
-              <IconButton
-                onClick={() => setMobileOpen(!mobileOpen)}
-                sx={{ display: { md: 'none' }, color: '#0F2E59' }}
-              >
-                {mobileOpen ? <CloseIcon /> : <MenuIcon />}
-              </IconButton>
+              {!isAuthPage && (
+                <IconButton
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  sx={{ display: { md: 'none' }, color: '#0F2E59' }}
+                >
+                  {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+                </IconButton>
+              )}
             </Stack>
           </Stack>
         </Container>
       </Box>
 
       {/* ─── 2. RECOMMENDED NAVBAR: HOME | MINISTRY | SCHEMES & BENEFITS | RESOURCES | UPDATES | SUPPORT | 🔍 SEARCH | ✨ FIND BENEFITS ─── */}
-      <Box
-        component="nav"
-        sx={{
-          bgcolor: '#FFFFFF',
-          borderBottom: '2px solid #E2E8F0',
-          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1200,
-        }}
-      >
-        <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2, md: 3 } }}>
+      {!isAuthPage && (
+        <Box
+          component="nav"
+          sx={{
+            bgcolor: '#FFFFFF',
+            borderBottom: '2px solid #E2E8F0',
+            boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)',
+            position: 'sticky',
+            top: 0,
+            zIndex: 1200,
+          }}
+        >
+          <Container maxWidth="xl" disableGutters sx={{ px: { xs: 2, md: 3 } }}>
           <Toolbar
             disableGutters
             sx={{
@@ -853,6 +910,7 @@ export const AppShell: React.FC = () => {
           </Toolbar>
         </Container>
       </Box>
+      )}
 
       {/* ─── 3. SEARCH MODAL ─── */}
       <Dialog open={searchOpen} onClose={() => setSearchOpen(false)} maxWidth="sm" fullWidth>

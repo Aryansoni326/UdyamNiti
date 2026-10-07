@@ -665,51 +665,6 @@ export const LandingPage: React.FC = () => {
               <NavigateNextIcon sx={{ fontSize: 28 }} />
             </IconButton>
 
-            {/* Pagination Dots & Play/Pause Controller */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 14,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.2,
-                bgcolor: 'rgba(255, 255, 255, 0.88)',
-                backdropFilter: 'blur(6px)',
-                px: 2,
-                py: 0.6,
-                borderRadius: '9999px',
-                border: '1px solid #CBD5E1',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-              }}
-            >
-              {SCHEME_SLIDES.map((slide, idx) => (
-                <Box
-                  key={slide.id}
-                  onClick={() => setCurrentSlide(idx)}
-                  sx={{
-                    width: currentSlide === idx ? 24 : 9,
-                    height: 9,
-                    borderRadius: '9999px',
-                    bgcolor: currentSlide === idx ? '#8B0000' : '#CBD5E1',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                  }}
-                />
-              ))}
-
-              <Divider orientation="vertical" flexItem sx={{ mx: 0.5, borderColor: '#CBD5E1', height: 16 }} />
-
-              <IconButton
-                size="small"
-                onClick={() => setIsSlidePaused(!isSlidePaused)}
-                aria-label={isSlidePaused ? 'Resume slide show' : 'Pause slide show'}
-                sx={{ p: 0.2, color: '#0F2E59' }}
-              >
-                {isSlidePaused ? <PlayArrowIcon sx={{ fontSize: 16 }} /> : <PauseIcon sx={{ fontSize: 16 }} />}
-              </IconButton>
-            </Box>
           </Box>
         </Container>
       </Box>
