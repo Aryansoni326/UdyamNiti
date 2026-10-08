@@ -18,6 +18,14 @@ import {
   Tooltip,
   Tabs,
   Tab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Checkbox,
+  LinearProgress,
+  Divider,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterListIcon from '@mui/icons-material/FilterList'
@@ -45,10 +53,25 @@ import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined'
 import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined'
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
+import EditNoteIcon from '@mui/icons-material/EditNote'
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
+import TaskAltIcon from '@mui/icons-material/TaskAlt'
+import CloseIcon from '@mui/icons-material/Close'
 import { tokens } from '../theme/tokens'
 import { apiClient } from '../api/client'
 import type { SchemeResult } from '../types'
 import { toast } from 'sonner'
+import {
+  getUserHeldDocuments,
+  saveUserHeldDocuments,
+  analyzeSchemeDocuments,
+  STATUTORY_BUSINESS_DOCUMENTS,
+  type SchemeDocAnalysis,
+} from '../utils/documentChecklist'
 
 const BUSINESS_NEEDS_LIST = [
   { id: 'all', label: 'All Business Needs', shortDesc: 'Complete 52+ Scheme Catalog', color: '#0F2E59' },
@@ -286,13 +309,21 @@ interface SchemeCardItemProps {
   showMatchTags: boolean
   matchScore: number
   isRecommended: boolean
+  userHeldDocs: string[]
+  onOpenGapReport: (scheme: SchemeResult) => void
   onNavigate: (idOrCode: string) => void
 }
 
 const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
-  ({ scheme, showMatchTags, matchScore, isRecommended, onNavigate }) => {
+  ({ scheme, showMatchTags, matchScore, isRecommended, userHeldDocs, onOpenGapReport, onNavigate }) => {
     const docCount = scheme.document_count || (scheme.required_documents ? scheme.required_documents.length : 4)
     const divStyle = getDivisionBadgeColor(scheme.division)
+
+    // Evaluate Document Possession vs Scheme Requirements
+    const docAnalysis = useMemo(
+      () => analyzeSchemeDocuments(scheme.required_documents, userHeldDocs),
+      [scheme.required_documents, userHeldDocs]
+    )
 
     return (
       <Card
@@ -464,6 +495,88 @@ const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
             {scheme.benefit_description}
           </Typography>
 
+          {/* Dynamic Document Readiness & Gap Analysis Pill */}
+          <Box
+            sx={{
+              p: 1.25,
+              borderRadius: '8px',
+              mb: 1.5,
+              bgcolor:
+                docAnalysis.readinessPercentage === 100
+                  ? '#F0FDF4'
+                  : docAnalysis.readinessPercentage >= 50
+                  ? '#FFFBEB'
+                  : '#FEF2F2',
+              border: `1px solid ${
+                docAnalysis.readinessPercentage === 100
+                  ? '#BBF7D0'
+                  : docAnalysis.readinessPercentage >= 50
+                  ? '#FDE68A'
+                  : '#FECDD3'
+              }`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+            }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
+              {docAnalysis.readinessPercentage === 100 ? (
+                <TaskAltIcon sx={{ fontSize: 16, color: '#166534', flexShrink: 0 }} />
+              ) : (
+                <WarningAmberOutlinedIcon sx={{ fontSize: 16, color: docAnalysis.readinessPercentage >= 50 ? '#B45309' : '#DC2626', flexShrink: 0 }} />
+              )}
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 800,
+                    fontSize: '0.74rem',
+                    color:
+                      docAnalysis.readinessPercentage === 100
+                        ? '#166534'
+                        : docAnalysis.readinessPercentage >= 50
+                        ? '#B45309'
+                        : '#991B1B',
+                    display: 'block',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {docAnalysis.readinessPercentage === 100
+                    ? `100% Document Ready (${docAnalysis.totalCount}/${docAnalysis.totalCount})`
+                    : `${docAnalysis.heldCount}/${docAnalysis.totalCount} Documents Ready (${docAnalysis.readinessPercentage}%)`}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.68rem', display: 'block' }} noWrap>
+                  {docAnalysis.missingDocs.length === 0
+                    ? 'All required documents in firm dossier'
+                    : `Missing ${docAnalysis.missingDocs.length} required: ${docAnalysis.missingDocs.map((d) => d.name).slice(0, 2).join(', ')}`}
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Button
+              size="small"
+              onClick={() => onOpenGapReport(scheme)}
+              sx={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                textTransform: 'none',
+                color:
+                  docAnalysis.readinessPercentage === 100
+                    ? '#166534'
+                    : docAnalysis.readinessPercentage >= 50
+                    ? '#B45309'
+                    : '#DC2626',
+                p: '2px 8px',
+                minWidth: 'auto',
+                whiteSpace: 'nowrap',
+                '&:hover': { bgcolor: 'rgba(0,0,0,0.04)', textDecoration: 'underline' },
+              }}
+            >
+              Analyze Gap →
+            </Button>
+          </Box>
+
           {/* Source PDF File Pill */}
           {scheme.pdf_filename && (
             <Paper
@@ -525,11 +638,11 @@ const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
           )}
         </CardContent>
 
-        {/* Card Actions */}
+        {/* Card Actions: Document Gap Report & View Guidelines */}
         <Box
           sx={{
-            p: 2,
-            pt: 1.5,
+            p: 1.75,
+            pt: 1.25,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -537,14 +650,29 @@ const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
             bgcolor: '#FAFAFA',
             borderBottomLeftRadius: '14px',
             borderBottomRightRadius: '14px',
+            gap: 1,
           }}
         >
-          <Stack direction="row" spacing={0.6} alignItems="center">
-            <DescriptionOutlinedIcon sx={{ fontSize: 14, color: '#64748B' }} />
-            <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.74rem', fontWeight: 600 }}>
-              {docCount} Required Documents
-            </Typography>
-          </Stack>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => onOpenGapReport(scheme)}
+            startIcon={<FactCheckOutlinedIcon sx={{ fontSize: 15, color: '#0F2E59' }} />}
+            sx={{
+              color: '#0F2E59',
+              borderColor: '#CBD5E1',
+              fontWeight: 700,
+              fontSize: '0.74rem',
+              borderRadius: '6px',
+              py: 0.6,
+              px: 1.4,
+              textTransform: 'none',
+              bgcolor: '#FFFFFF',
+              '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
+            }}
+          >
+            Document Gap Report
+          </Button>
 
           <Button
             size="small"
@@ -590,6 +718,36 @@ export const SchemesDashboard: React.FC = () => {
   const [schemes, setSchemes] = useState<SchemeResult[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
+
+  // Firm Statutory Document Inventory (stored in profile / local storage)
+  const [userHeldDocs, setUserHeldDocs] = useState<string[]>(() => getUserHeldDocuments())
+  const [selectedSchemeForGapReport, setSelectedSchemeForGapReport] = useState<SchemeResult | null>(null)
+  const [gapReportModalOpen, setGapReportModalOpen] = useState(false)
+  const [documentVaultModalOpen, setDocumentVaultModalOpen] = useState(false)
+
+  // Real-time synchronization of document checklist
+  useEffect(() => {
+    const syncDocs = () => setUserHeldDocs(getUserHeldDocuments())
+    window.addEventListener('udyamniti_documents_updated', syncDocs)
+    window.addEventListener('storage', syncDocs)
+    return () => {
+      window.removeEventListener('udyamniti_documents_updated', syncDocs)
+      window.removeEventListener('storage', syncDocs)
+    }
+  }, [])
+
+  const handleToggleHeldDoc = (docId: string) => {
+    const next = userHeldDocs.includes(docId)
+      ? userHeldDocs.filter((id) => id !== docId)
+      : [...userHeldDocs, docId]
+    setUserHeldDocs(next)
+    saveUserHeldDocuments(next)
+  }
+
+  const handleOpenGapReport = (scheme: SchemeResult) => {
+    setSelectedSchemeForGapReport(scheme)
+    setGapReportModalOpen(true)
+  }
 
   // Sync state and immediately fetch if URL query params change (e.g. navigation from navbar search or Home categories)
   useEffect(() => {
@@ -984,6 +1142,7 @@ export const SchemesDashboard: React.FC = () => {
             Quick searches:
           </Typography>
           {[
+            { label: 'Surat SER Textile Park', q: 'I want to start my business in textile industry in surat' },
             { label: 'Gujarat Industrial Policy (₹3.5 Cr)', q: 'Gujarat Industrial Policy' },
             { label: 'Foreign Study Loan 4%', q: 'Foreign Study Loan' },
             { label: 'Food Processing (PMFME)', q: 'food processing' },
@@ -1014,6 +1173,81 @@ export const SchemesDashboard: React.FC = () => {
             />
           ))}
         </Stack>
+
+        {/* ─── ENTERPRISE DOCUMENT PORTFOLIO & LIVE GAP ANALYZER BAR ─── */}
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 3,
+            p: 2.2,
+            bgcolor: '#FFFFFF',
+            border: '1.5px solid #CBD5E1',
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+          }}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            justifyContent="space-between"
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            spacing={2}
+          >
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Box
+                sx={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: '10px',
+                  bgcolor: '#059669',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
+                }}
+              >
+                <FactCheckOutlinedIcon sx={{ fontSize: 24 }} />
+              </Box>
+              <Box>
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '0.96rem' }}>
+                    Firm Document Portfolio & Live Statutory Gap Engine
+                  </Typography>
+                  <Chip
+                    icon={<TaskAltIcon sx={{ fontSize: '13px !important', color: '#059669 !important' }} />}
+                    label={`${userHeldDocs.length} Active Documents`}
+                    size="small"
+                    sx={{ bgcolor: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0', fontWeight: 800, fontSize: '0.72rem' }}
+                  />
+                </Stack>
+                <Typography variant="caption" sx={{ color: '#475569', fontSize: '0.78rem' }}>
+                  Every scheme below is dynamically analyzed against your firm's held documents. Click "Document Gap Report" on any card for an AI gap summary.
+                </Typography>
+              </Box>
+            </Stack>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<EditNoteIcon sx={{ fontSize: 18 }} />}
+              onClick={() => setDocumentVaultModalOpen(true)}
+              sx={{
+                color: '#0F2E59',
+                borderColor: '#0F2E59',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                textTransform: 'none',
+                bgcolor: '#FFFFFF',
+                borderRadius: '8px',
+                px: 2,
+                whiteSpace: 'nowrap',
+                '&:hover': { bgcolor: '#F8FAFC' },
+              }}
+            >
+              Manage Document Checklist ({userHeldDocs.length})
+            </Button>
+          </Stack>
+        </Paper>
       </Box>
 
       {/* ─── 2.5 BUSINESS NEED REQUIREMENT FILTER TABS (FROM HOME PAGE TILES) ─── */}
@@ -1511,12 +1745,357 @@ export const SchemesDashboard: React.FC = () => {
                 showMatchTags={hasActiveFilterOrSearch}
                 matchScore={matchScore}
                 isRecommended={isRecommended}
+                userHeldDocs={userHeldDocs}
+                onOpenGapReport={handleOpenGapReport}
                 onNavigate={handleNavigateScheme}
               />
             </Grid>
           ))}
         </Grid>
       )}
+
+      {/* ─── MODAL 1: AI SCHEME DOCUMENT GAP & READINESS REPORT ─── */}
+      {selectedSchemeForGapReport && (() => {
+        const analysis = analyzeSchemeDocuments(selectedSchemeForGapReport.required_documents, userHeldDocs)
+        return (
+          <Dialog
+            open={gapReportModalOpen}
+            onClose={() => setGapReportModalOpen(false)}
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '16px',
+                boxShadow: '0 20px 60px rgba(15, 23, 42, 0.25)',
+                border: '1px solid #CBD5E1',
+                overflow: 'hidden',
+              },
+            }}
+          >
+            <DialogTitle
+              sx={{
+                bgcolor: '#0F2E59',
+                color: '#FFFFFF',
+                py: 2.2,
+                px: 3,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                  <AutoAwesomeIcon sx={{ color: '#FEF08A', fontSize: 20 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.08rem', color: '#FFFFFF' }}>
+                    AI Document Readiness & Gap Analysis Report
+                  </Typography>
+                </Stack>
+                <Typography variant="caption" sx={{ color: '#CBD5E1', display: 'block' }}>
+                  Scheme: {selectedSchemeForGapReport.name} ({selectedSchemeForGapReport.scheme_code})
+                </Typography>
+              </Box>
+              <IconButton onClick={() => setGapReportModalOpen(false)} size="small" sx={{ color: '#94A3B8', '&:hover': { color: '#FFFFFF' } }}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </DialogTitle>
+
+            <DialogContent sx={{ p: 3, bgcolor: '#F8FAFC' }}>
+              {/* Readiness Meter Gauge */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2.5,
+                  mb: 3,
+                  borderRadius: '12px',
+                  bgcolor: '#FFFFFF',
+                  border: '1.5px solid #E2E8F0',
+                  boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+                }}
+              >
+                <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={2} sx={{ mb: 1.5 }}>
+                  <Box>
+                    <Typography variant="overline" sx={{ color: '#64748B', fontWeight: 800, letterSpacing: '0.06em' }}>
+                      STATUTORY COMPLIANCE READINESS
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: analysis.readinessPercentage === 100 ? '#059669' : analysis.readinessPercentage >= 50 ? '#D97706' : '#DC2626' }}>
+                      {analysis.readinessPercentage}% Ready
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600 }}>
+                      Firm possesses {analysis.heldCount} of {analysis.totalCount} required documents
+                    </Typography>
+                  </Box>
+                  <Chip
+                    icon={analysis.readinessPercentage === 100 ? <TaskAltIcon sx={{ color: '#059669 !important' }} /> : <WarningAmberOutlinedIcon sx={{ color: '#D97706 !important' }} />}
+                    label={analysis.readinessPercentage === 100 ? 'Complete Compliance: Ready to Apply' : analysis.readinessPercentage >= 50 ? `${analysis.missingDocs.length} Action Items Pending` : `${analysis.missingDocs.length} Critical Blockers`}
+                    sx={{
+                      bgcolor: analysis.readinessPercentage === 100 ? '#ECFDF5' : analysis.readinessPercentage >= 50 ? '#FFFBEB' : '#FEF2F2',
+                      color: analysis.readinessPercentage === 100 ? '#047857' : analysis.readinessPercentage >= 50 ? '#B45309' : '#B91C1C',
+                      border: `1px solid ${analysis.readinessPercentage === 100 ? '#A7F3D0' : analysis.readinessPercentage >= 50 ? '#FDE68A' : '#FECDD3'}`,
+                      fontWeight: 800,
+                      fontSize: '0.8rem',
+                      py: 2,
+                      px: 1,
+                    }}
+                  />
+                </Stack>
+                <LinearProgress
+                  variant="determinate"
+                  value={analysis.readinessPercentage}
+                  sx={{
+                    height: 10,
+                    borderRadius: 5,
+                    bgcolor: '#E2E8F0',
+                    '& .MuiLinearProgress-bar': {
+                      bgcolor: analysis.readinessPercentage === 100 ? '#059669' : analysis.readinessPercentage >= 50 ? '#F59E0B' : '#EF4444',
+                      borderRadius: 5,
+                    },
+                  }}
+                />
+              </Paper>
+
+              {/* AI Synthesis Executive Summary Box */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2.5,
+                  mb: 3,
+                  borderRadius: '12px',
+                  bgcolor: '#EFF6FF',
+                  border: '1.5px solid #93C5FD',
+                }}
+              >
+                <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 1 }}>
+                  <AutoAwesomeIcon sx={{ color: '#1D4ED8', fontSize: 20 }} />
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#1E3A8A', fontSize: '0.94rem' }}>
+                    AI Analysis & Executive Summary
+                  </Typography>
+                </Stack>
+                <Typography variant="body2" sx={{ color: '#1E293B', lineHeight: 1.6, fontSize: '0.88rem' }}>
+                  {analysis.aiSummary}
+                </Typography>
+              </Paper>
+
+              {/* Two Structured Side-by-Side Breakdown Columns */}
+              <Grid container spacing={2.5}>
+                {/* Documents You Have */}
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', bgcolor: '#FFFFFF', border: '1.5px solid #BBF7D0', height: '100%' }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                      <CheckCircleOutlineIcon sx={{ color: '#059669', fontSize: 20 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#065F46' }}>
+                        Documents Your Firm Has ({analysis.matchingDocs.length})
+                      </Typography>
+                    </Stack>
+                    {analysis.matchingDocs.length === 0 ? (
+                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', py: 2 }}>
+                        None of the mandatory documents for this scheme are currently registered in your profile checklist.
+                      </Typography>
+                    ) : (
+                      <Stack spacing={1.2}>
+                        {analysis.matchingDocs.map((doc) => (
+                          <Box key={doc.id} sx={{ p: 1.5, borderRadius: '8px', bgcolor: '#F0FDF4', border: '1px solid #DCFCE7' }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 800, color: '#166534', fontSize: '0.84rem' }}>
+                                ✓ {doc.name}
+                              </Typography>
+                              <Chip label={doc.category} size="small" sx={{ fontSize: '0.62rem', height: 18, bgcolor: '#DCFCE7', color: '#166534', fontWeight: 700 }} />
+                            </Stack>
+                            {doc.desc && (
+                              <Typography variant="caption" sx={{ color: '#475569', display: 'block', fontSize: '0.74rem' }}>
+                                {doc.desc}
+                              </Typography>
+                            )}
+                            <Typography variant="caption" sx={{ color: '#059669', display: 'block', mt: 0.5, fontWeight: 700, fontSize: '0.7rem' }}>
+                              Authority: {doc.issuingAuthority}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                  </Paper>
+                </Grid>
+
+                {/* Missing Required Documents */}
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', bgcolor: '#FFFFFF', border: '1.5px solid #FECDD3', height: '100%' }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                      <WarningAmberOutlinedIcon sx={{ color: '#DC2626', fontSize: 20 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#991B1B' }}>
+                        Missing Required Documents ({analysis.missingDocs.length})
+                      </Typography>
+                    </Stack>
+                    {analysis.missingDocs.length === 0 ? (
+                      <Box sx={{ p: 2, textAlign: 'center', bgcolor: '#F0FDF4', borderRadius: '8px', border: '1px solid #BBF7D0' }}>
+                        <Typography variant="body2" sx={{ color: '#166534', fontWeight: 700 }}>
+                          🎉 No missing documents! All scheme prerequisites are satisfied.
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Stack spacing={1.2}>
+                        {analysis.missingDocs.map((doc) => (
+                          <Box key={doc.id} sx={{ p: 1.5, borderRadius: '8px', bgcolor: '#FEF2F2', border: '1px solid #FEE2E2' }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 800, color: '#991B1B', fontSize: '0.84rem' }}>
+                                ✕ {doc.name}
+                              </Typography>
+                              <Chip
+                                label={doc.mandatory ? 'Required Blocker' : 'Supporting'}
+                                size="small"
+                                sx={{
+                                  fontSize: '0.62rem',
+                                  height: 18,
+                                  bgcolor: doc.mandatory ? '#FEE2E2' : '#F1F5F9',
+                                  color: doc.mandatory ? '#B91C1C' : '#475569',
+                                  fontWeight: 800,
+                                }}
+                              />
+                            </Stack>
+                            {doc.desc && (
+                              <Typography variant="caption" sx={{ color: '#475569', display: 'block', fontSize: '0.74rem' }}>
+                                {doc.desc}
+                              </Typography>
+                            )}
+                            <Typography variant="caption" sx={{ color: '#DC2626', display: 'block', mt: 0.5, fontWeight: 700, fontSize: '0.72rem' }}>
+                              How to acquire: {doc.guidance}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                  </Paper>
+                </Grid>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions sx={{ p: 2, px: 3, bgcolor: '#F8FAFC', borderTop: '1px solid #E2E8F0', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<EditNoteIcon />}
+                onClick={() => {
+                  setGapReportModalOpen(false)
+                  setDocumentVaultModalOpen(true)
+                }}
+                sx={{ color: '#0F2E59', borderColor: '#0F2E59', fontWeight: 700, textTransform: 'none' }}
+              >
+                Update Firm Document Checklist
+              </Button>
+              <Stack direction="row" spacing={1.5}>
+                <Button onClick={() => setGapReportModalOpen(false)} sx={{ color: '#64748B', fontWeight: 600, textTransform: 'none' }}>
+                  Close Report
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setGapReportModalOpen(false)
+                    handleNavigateScheme(selectedSchemeForGapReport.id || selectedSchemeForGapReport.scheme_code)
+                  }}
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 700, textTransform: 'none', px: 2.5 }}
+                >
+                  View Scheme Guidelines
+                </Button>
+              </Stack>
+            </DialogActions>
+          </Dialog>
+        )
+      })()}
+
+      {/* ─── MODAL 2: FIRM STATUTORY DOCUMENT CHECKLIST VAULT ─── */}
+      <Dialog
+        open={documentVaultModalOpen}
+        onClose={() => setDocumentVaultModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(15, 23, 42, 0.25)',
+            border: '1px solid #CBD5E1',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', py: 2, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Stack direction="row" spacing={1.2} alignItems="center">
+            <PlaylistAddCheckIcon sx={{ color: '#FEF08A', fontSize: 22 }} />
+            <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.08rem', color: '#FFFFFF' }}>
+              Firm Statutory Document Checklist Vault
+            </Typography>
+          </Stack>
+          <IconButton onClick={() => setDocumentVaultModalOpen(false)} size="small" sx={{ color: '#94A3B8', '&:hover': { color: '#FFFFFF' } }}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, bgcolor: '#F8FAFC' }}>
+          <Typography variant="body2" sx={{ color: '#475569', mb: 2 }}>
+            Toggle documents your enterprise currently possesses. Updates synchronize immediately across all scheme readiness meters and AI gap reports.
+          </Typography>
+          <Grid container spacing={1.5}>
+            {STATUTORY_BUSINESS_DOCUMENTS.map((doc) => {
+              const isSelected = userHeldDocs.includes(doc.id)
+              return (
+                <Grid item xs={12} sm={6} key={doc.id}>
+                  <Paper
+                    onClick={() => handleToggleHeldDoc(doc.id)}
+                    elevation={0}
+                    sx={{
+                      p: 1.5,
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1.2,
+                      cursor: 'pointer',
+                      borderRadius: '10px',
+                      border: isSelected ? '1.5px solid #059669' : '1px solid #CBD5E1',
+                      bgcolor: isSelected ? '#F0FDF4' : '#FFFFFF',
+                      transition: 'all 0.15s ease',
+                      '&:hover': {
+                        borderColor: isSelected ? '#047857' : '#0F2E59',
+                        transform: 'translateY(-1px)',
+                      },
+                    }}
+                  >
+                    <Checkbox
+                      checked={isSelected}
+                      onChange={() => handleToggleHeldDoc(doc.id)}
+                      size="small"
+                      sx={{ p: 0, mt: 0.2, color: '#94A3B8', '&.Mui-checked': { color: '#059669' } }}
+                    />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.3 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, fontSize: '0.82rem', color: isSelected ? '#065F46' : '#1E293B' }}>
+                          {doc.name}
+                        </Typography>
+                        <Chip
+                          label={doc.category}
+                          size="small"
+                          sx={{ fontSize: '0.62rem', height: 18, bgcolor: isSelected ? '#DCFCE7' : '#F1F5F9', color: isSelected ? '#166534' : '#475569', fontWeight: 700 }}
+                        />
+                      </Stack>
+                      <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem', display: 'block', lineHeight: 1.35 }}>
+                        {doc.shortDesc}
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Grid>
+              )
+            })}
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, px: 3, bgcolor: '#FFFFFF', borderTop: '1px solid #E2E8F0' }}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setDocumentVaultModalOpen(false)
+              toast.success(`Document checklist updated (${userHeldDocs.length} documents active).`)
+            }}
+            sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 700, px: 3 }}
+          >
+            Done & Apply Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

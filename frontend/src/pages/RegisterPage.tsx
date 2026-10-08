@@ -20,6 +20,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material'
 import BusinessIcon from '@mui/icons-material/Business'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
@@ -36,10 +38,14 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 import { initiateGoogleSignIn, getGoogleClientId } from '../utils/googleAuth'
 import { apiClient } from '../api/client'
+import { STATUTORY_BUSINESS_DOCUMENTS, DEFAULT_HELD_DOCUMENTS } from '../utils/documentChecklist'
 
 // Official Google Logo SVG
 const GoogleIcon = () => (
@@ -87,6 +93,28 @@ export const RegisterPage: React.FC = () => {
   // Special Beneficiary Criteria
   const [beneficiaryCategory, setBeneficiaryCategory] = useState('General')
   const [exportStatus, setExportStatus] = useState('IEC Holder / Active Exporter')
+
+  // Statutory Business Documents Checklist
+  const [heldDocuments, setHeldDocuments] = useState<string[]>(DEFAULT_HELD_DOCUMENTS)
+
+  const toggleDocument = (docId: string) => {
+    setHeldDocuments((prev) =>
+      prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
+    )
+  }
+
+  const selectPresetDocuments = (type: 'essentials' | 'all' | 'clear') => {
+    if (type === 'essentials') {
+      setHeldDocuments(['udyam', 'pan_gst', 'bank_statements', 'audited_balance_sheet'])
+      toast.info('Selected MSME core essential documents.')
+    } else if (type === 'all') {
+      setHeldDocuments(STATUTORY_BUSINESS_DOCUMENTS.map((d) => d.id))
+      toast.info('Selected all statutory enterprise documents.')
+    } else {
+      setHeldDocuments([])
+      toast.info('Cleared document checklist.')
+    }
+  }
 
   // Director Credentials
   const [directorName, setDirectorName] = useState('')
@@ -153,6 +181,7 @@ export const RegisterPage: React.FC = () => {
         beneficiaryCategory,
         exportStatus,
         udyam: udyam || 'UDYAM-GJ-01-0023456',
+        held_documents: heldDocuments,
         isLoggedIn: true,
         loginMethod: 'registered_form',
       }
@@ -201,6 +230,7 @@ export const RegisterPage: React.FC = () => {
         beneficiaryCategory: 'General',
         exportStatus: 'IEC Holder / Active Exporter',
         udyam: 'UDYAM-GJ-01-0023456',
+        held_documents: heldDocuments.length > 0 ? heldDocuments : DEFAULT_HELD_DOCUMENTS,
         isLoggedIn: true,
         loginMethod: 'google_oauth',
         picture: profile.picture,
@@ -601,10 +631,162 @@ export const RegisterPage: React.FC = () => {
                     </Grid>
                   </Box>
 
-                  {/* PART 5: Director Login Credentials */}
+                  {/* PART 5: Statutory Business Document Checklist */}
+                  <Box sx={{ p: 2.5, borderRadius: '12px', bgcolor: '#F8FAFC', border: '1.5px solid #E2E8F0' }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1, flexWrap: 'wrap', gap: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <PlaylistAddCheckIcon sx={{ fontSize: 20, color: '#059669' }} /> 5. Business Document Checklist (Documents Firm Currently Possesses)
+                      </Typography>
+                      <Chip
+                        icon={<CheckCircleIcon sx={{ fontSize: '14px !important', color: '#059669 !important' }} />}
+                        label={`${heldDocuments.length} Documents Selected`}
+                        size="small"
+                        sx={{ bgcolor: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0', fontWeight: 800, fontSize: '0.72rem' }}
+                      />
+                    </Stack>
+                    <Typography variant="caption" sx={{ color: '#475569', display: 'block', mb: 2, lineHeight: 1.45 }}>
+                      Select the statutory certificates and commercial records your firm currently possesses. Our AI comparison engine automatically evaluates these against the mandatory requirements of each scheme on your dashboard, generating an executive Document Readiness & Gap Analysis report.
+                    </Typography>
+
+                    {/* Quick Selection Shortcuts */}
+                    <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => selectPresetDocuments('essentials')}
+                        sx={{
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          color: '#0F2E59',
+                          borderColor: '#CBD5E1',
+                          textTransform: 'none',
+                          bgcolor: '#FFFFFF',
+                          '&:hover': { bgcolor: '#F1F5F9', borderColor: '#0F2E59' },
+                        }}
+                      >
+                        ⚡ Common MSME Core (Udyam, GST, Bank, P&L)
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => selectPresetDocuments('all')}
+                        sx={{
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          color: '#059669',
+                          borderColor: '#A7F3D0',
+                          textTransform: 'none',
+                          bgcolor: '#FFFFFF',
+                          '&:hover': { bgcolor: '#ECFDF5', borderColor: '#059669' },
+                        }}
+                      >
+                        ✓ Select All Documents
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="text"
+                        onClick={() => selectPresetDocuments('clear')}
+                        sx={{
+                          fontSize: '0.74rem',
+                          fontWeight: 600,
+                          color: '#64748B',
+                          textTransform: 'none',
+                          '&:hover': { color: '#DC2626' },
+                        }}
+                      >
+                        Clear Selection
+                      </Button>
+                    </Stack>
+
+                    {/* Interactive Document Checklist Grid */}
+                    <Grid container spacing={1.5}>
+                      {STATUTORY_BUSINESS_DOCUMENTS.map((doc) => {
+                        const isSelected = heldDocuments.includes(doc.id)
+                        return (
+                          <Grid item xs={12} sm={6} key={doc.id}>
+                            <Paper
+                              onClick={() => toggleDocument(doc.id)}
+                              elevation={0}
+                              sx={{
+                                p: 1.5,
+                                height: '100%',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 1.2,
+                                cursor: 'pointer',
+                                borderRadius: '10px',
+                                border: isSelected ? '1.5px solid #059669' : '1px solid #CBD5E1',
+                                bgcolor: isSelected ? '#F0FDF4' : '#FFFFFF',
+                                transition: 'all 0.18s ease',
+                                '&:hover': {
+                                  borderColor: isSelected ? '#047857' : '#94A3B8',
+                                  boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
+                                  transform: 'translateY(-1px)',
+                                },
+                              }}
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onChange={() => toggleDocument(doc.id)}
+                                size="small"
+                                sx={{
+                                  p: 0,
+                                  mt: 0.2,
+                                  color: '#94A3B8',
+                                  '&.Mui-checked': { color: '#059669' },
+                                }}
+                              />
+                              <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.3, gap: 0.5 }}>
+                                  <Typography
+                                    variant="subtitle2"
+                                    sx={{
+                                      fontWeight: 800,
+                                      fontSize: '0.82rem',
+                                      color: isSelected ? '#065F46' : '#1E293B',
+                                      lineHeight: 1.25,
+                                    }}
+                                  >
+                                    {doc.name}
+                                  </Typography>
+                                  <Chip
+                                    label={doc.category}
+                                    size="small"
+                                    sx={{
+                                      fontSize: '0.62rem',
+                                      height: 18,
+                                      fontWeight: 700,
+                                      bgcolor: isSelected ? '#DCFCE7' : '#F1F5F9',
+                                      color: isSelected ? '#166534' : '#475569',
+                                    }}
+                                  />
+                                </Stack>
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: '#64748B',
+                                    fontSize: '0.72rem',
+                                    lineHeight: 1.35,
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                  }}
+                                >
+                                  {doc.shortDesc}
+                                </Typography>
+                              </Box>
+                            </Paper>
+                          </Grid>
+                        )
+                      })}
+                    </Grid>
+                  </Box>
+
+                  {/* PART 6: Director Login Credentials */}
                   <Box>
                     <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <PersonOutlineIcon sx={{ fontSize: 18, color: '#7C3AED' }} /> 5. Director / Authorized Signatory Credentials
+                      <PersonOutlineIcon sx={{ fontSize: 18, color: '#7C3AED' }} /> 6. Director / Authorized Signatory Credentials
                     </Typography>
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={6}>

@@ -471,8 +471,28 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(Q(target_msme_categories__contains=[category]) | Q(target_msme_categories=[]) | Q(target_msme_categories__contains=['all']))
 
         if search:
-            search_terms = search.strip().split()
+            normalized_search = search.strip().lower()
+            corrections = {
+                'startmy': 'start my',
+                'texttile': 'textile',
+                'texttiles': 'textiles',
+                'bussiness': 'business',
+                'benifit': 'benefit',
+                'benifits': 'benefits',
+            }
+            for wrong, right in corrections.items():
+                normalized_search = re.sub(r'\b' + wrong + r'\b', right, normalized_search)
+
+            is_surat = bool(re.search(r'\b(surat|ser)\b', normalized_search))
+            is_textile = bool(re.search(r'\b(textile|textiles|fabric|garment|apparel)\b', normalized_search))
+
+            search_terms = normalized_search.split()
             q_obj = Q()
+            if is_surat:
+                q_obj |= Q(scheme_code='GUJ_SER_TEXTILE_2025') | Q(name__icontains='SER') | Q(description__icontains='Surat') | Q(description__icontains='SER')
+            if is_textile:
+                q_obj |= Q(scheme_code__icontains='TEXTILE') | Q(name__icontains='Textile') | Q(target_sectors__icontains='textile')
+
             for term in search_terms:
                 q_obj |= (
                     Q(name__icontains=term) |
@@ -491,12 +511,50 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
 
         schemes_list = list(qs)
         if search:
-            # Sort by relevance to search term in name/short_name
-            s_lower = search.strip().lower()
-            schemes_list.sort(key=lambda s: (
-                0 if s_lower in s.name.lower() or (s.short_name and s_lower in s.short_name.lower()) else 1,
-                s.name
-            ))
+            # High-fidelity composite relevance scoring
+            def get_relevance_score(s):
+                score = 0
+                s_name = (s.name or '').lower()
+                s_code = (s.scheme_code or '').upper()
+                s_desc = (s.description or '').lower()
+                s_sectors = [str(sec).lower() for sec in (s.target_sectors or [])]
+                s_states = [str(st).lower() for st in (s.target_states or [])]
+
+                raw_s = search.strip().lower()
+                is_surat_term = 'surat' in raw_s or 'ser' in raw_s
+                is_textile_term = any(w in raw_s for w in ['textile', 'texttile', 'fabric', 'apparel', 'garment'])
+                is_start_term = any(w in raw_s for w in ['start', 'startmy', 'new', 'park', 'setup'])
+
+                # Specific Surat / SER match
+                if is_surat_term:
+                    if s_code == 'GUJ_SER_TEXTILE_2025':
+                        score += 800
+                    if 'ser' in s_name or 'surat' in s_desc:
+                        score += 400
+                    if any('gujarat' in st for st in s_states) or s.level == 'state_gujarat':
+                        score += 150
+
+                # Specific Textile match
+                if is_textile_term:
+                    if 'textile' in s_name:
+                        score += 500
+                    if any('textile' in sec or 'apparel' in sec for sec in s_sectors):
+                        score += 350
+                    if 'textile' in s_desc:
+                        score += 200
+
+                # Start new business / cluster match
+                if is_start_term:
+                    if s_code in ['GUJ_SER_TEXTILE_2025', 'MSE_CDP_CLUSTER_DEV', 'PMEGP_MSME_SCHEME', 'GUJ_IND_POLICY_2023']:
+                        score += 150
+
+                # Exact phrase in name or short_name
+                if raw_s in s_name:
+                    score += 250
+
+                return score
+
+            schemes_list.sort(key=lambda s: (-get_relevance_score(s), s.name))
         else:
             schemes_list.sort(key=lambda s: s.name)
 

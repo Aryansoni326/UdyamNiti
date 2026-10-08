@@ -190,6 +190,33 @@ export const GoalOnboarding: React.FC = () => {
     setParsedSupportCategories(preset.supportCategories)
   }
 
+  // Intelligent Natural Language Extraction for Location & Sector Intent
+  useEffect(() => {
+    if (!goalText) return
+    const textLower = goalText.toLowerCase()
+    
+    // Surat / SER Intent
+    if (textLower.includes('surat') || textLower.includes('ser')) {
+      setStateName('Gujarat')
+      setDistrict('Surat')
+      setIsManufacturing(true)
+    }
+    
+    // Textile Intent
+    if (
+      textLower.includes('texttile') ||
+      textLower.includes('textile') ||
+      textLower.includes('garment') ||
+      textLower.includes('apparel') ||
+      textLower.includes('fabric')
+    ) {
+      setIsManufacturing(true)
+      setParsedProjectType('expansion_new_unit')
+      setBusinessName('Surat Textile & MSME Unit')
+      setParsedSupportCategories((prev) => Array.from(new Set([...prev, 'infrastructure_grant', 'capital_subsidy'])))
+    }
+  }, [goalText])
+
   // Pre-fill default benchmark on load if empty
   useEffect(() => {
     if (!goalText) {
@@ -407,7 +434,7 @@ export const GoalOnboarding: React.FC = () => {
               fontSize: { xs: '1.8rem', sm: '2.4rem', md: '2.8rem' },
               lineHeight: 1.2,
               mb: 1.5,
-              background: 'linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%)',
+              background: 'linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #4338CA 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -419,10 +446,11 @@ export const GoalOnboarding: React.FC = () => {
           <Typography
             variant="body1"
             sx={{
-              color: tokens.color.slate[400],
+              color: '#475569',
               maxWidth: 700,
               mx: 'auto',
               fontSize: { xs: '0.95rem', md: '1.05rem' },
+              fontWeight: 500,
             }}
           >
             {lang === 'en'
@@ -574,6 +602,55 @@ export const GoalOnboarding: React.FC = () => {
                     borderRadius: tokens.radius.lg,
                   }}
                 >
+                  {/* Intelligent Intent Prompt for Surat & Textile */}
+                  {(goalText.toLowerCase().includes('surat') ||
+                    goalText.toLowerCase().includes('ser') ||
+                    goalText.toLowerCase().includes('textile') ||
+                    goalText.toLowerCase().includes('texttile')) && (
+                    <Box
+                      sx={{
+                        mb: 2.5,
+                        p: 1.8,
+                        borderRadius: '10px',
+                        bgcolor: '#EFF6FF',
+                        border: '1.5px solid #93C5FD',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
+                      }}
+                    >
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Chip
+                          label="Surat & Textile Match"
+                          size="small"
+                          sx={{ bgcolor: '#1D4ED8', color: '#FFFFFF', fontWeight: 800, fontSize: '0.72rem' }}
+                        />
+                        <Typography variant="body2" sx={{ color: '#1E3A8A', fontWeight: 700, fontSize: '0.86rem' }}>
+                          Target Policy Detected: SER (Surat Economic Region) Textile & MSME Park 2025-26
+                        </Typography>
+                      </Stack>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => navigate('/dashboard?search=' + encodeURIComponent(goalText))}
+                        endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
+                        sx={{
+                          bgcolor: '#1D4ED8',
+                          color: '#FFFFFF',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          textTransform: 'none',
+                          borderRadius: '6px',
+                          '&:hover': { bgcolor: '#1E40AF' },
+                        }}
+                      >
+                        Explore Matching Surat Schemes on Dashboard
+                      </Button>
+                    </Box>
+                  )}
+
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <AutoAwesomeIcon sx={{ color: tokens.color.violet[400], fontSize: 18 }} />
