@@ -279,7 +279,7 @@ export const MinistryPage: React.FC = () => {
                     Official Schemes Corpus
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#7C2D12', lineHeight: 1.6, mb: 2.5 }}>
-                    11 Verified Central & Gujarat State operational guidelines archived with deterministic eligibility reasoning.
+                    33+ Verified Central & Gujarat State operational guidelines (covering 52+ active schemes) archived with deterministic eligibility reasoning.
                   </Typography>
                   <Button
                     fullWidth

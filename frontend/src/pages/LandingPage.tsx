@@ -624,7 +624,7 @@ export const LandingPage: React.FC = () => {
               {
                 icon: <SearchIcon sx={{ fontSize: 30, color: '#0F2E59' }} />,
                 title: 'Find Schemes',
-                desc: 'Explore 11 official schemes across credit, subsidies, technology, clusters & export promotion.',
+                desc: 'Explore 52+ official schemes across credit, subsidies, technology, clusters & export promotion.',
                 action: () => navigate('/login'),
               },
               {
@@ -716,7 +716,7 @@ export const LandingPage: React.FC = () => {
                     🔍 Targeted Scheme Search
                   </Typography>
                   <Typography variant="caption" sx={{ color: '#64748B', display: 'block', lineHeight: 1.5 }}>
-                    Filter across 11 official Central & Gujarat guidelines by credit guarantees, capital subsidies, and quality.
+                    Filter across 52+ official Central & Gujarat schemes from 33+ Gazette guidelines by credit guarantees, capital subsidies, and quality.
                   </Typography>
                 </Paper>
               </Grid>
@@ -1186,7 +1186,7 @@ export const LandingPage: React.FC = () => {
         <Container maxWidth="lg">
           <Grid container spacing={3}>
             {[
-              { stat: '11', label: 'Verified Official Schemes', desc: 'Directly sourced from uploaded Central & State Gazette PDFs' },
+              { stat: '52+', label: 'Verified Official Schemes', desc: 'Directly sourced from 33+ uploaded Central & State Gazette PDFs' },
               { stat: '₹10 Cr', label: 'Max Sovereign Guarantee', desc: 'Collateral-free credit backing delivered under CGTMSE EPM' },
               { stat: '35%', label: 'Max Margin Subsidy', desc: 'Direct capital assistance disbursed under PMEGP' },
               { stat: '100%', label: 'Source-Backed Rules', desc: 'Every requirement citations link directly to official guidelines' },

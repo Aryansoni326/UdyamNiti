@@ -760,7 +760,7 @@ export const AppShell: React.FC = () => {
                       {t('schemeGuidelines')}
                     </Typography>
                     <Typography variant="caption" sx={{ color: '#DC2626', fontSize: '0.72rem' }}>
-                      11 Verified Official Guidelines
+                      33 Verified Official Guidelines
                     </Typography>
                   </Box>
                 </MenuItem>
@@ -1026,7 +1026,7 @@ export const AppShell: React.FC = () => {
               sx={{ my: 1 }}
             />
             <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 1 }}>
-              Search across 11 official guidelines: PMEGP, CGTMSE, Gujarat SER, ZED, TReDS, SFURTI, and more.
+              Search across 52+ official schemes & 33 verified guidelines: PMEGP, CGTMSE, Gujarat SER, ZED, TReDS, SFURTI, and more.
             </Typography>
           </form>
         </DialogContent>
