@@ -77,6 +77,24 @@ def search_schemes(filters: Dict[str, Any]) -> List[Dict[str, Any]]:
             'description': s.description[:200] + "..." if len(s.description) > 200 else s.description,
             'official_portal_url': s.official_portal_url
         })
+
+    if not candidates:
+        fallback_qs = Scheme.objects.filter(status='active')
+        if state and state == 'gujarat':
+            fallback_qs = fallback_qs.filter(Q(level__in=['state_gujarat', 'central']) | Q(target_states__contains='Gujarat') | Q(target_states=[]))
+        for s in fallback_qs[:10]:
+            candidates.append({
+                'scheme_id': str(s.id),
+                'scheme_code': s.scheme_code,
+                'name': s.name,
+                'level': s.level,
+                'support_type': s.support_type,
+                'ministry_department': s.ministry_department,
+                'max_benefit_lakhs': float(s.max_benefit_amount_lakhs) if s.max_benefit_amount_lakhs else None,
+                'benefit_percentage': float(s.benefit_percentage) if s.benefit_percentage else None,
+                'description': s.description[:200] + "..." if len(s.description) > 200 else s.description,
+                'official_portal_url': s.official_portal_url
+            })
     return candidates
 
 

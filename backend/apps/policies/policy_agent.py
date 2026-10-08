@@ -97,6 +97,14 @@ Respond ONLY with a strict JSON object matching:
         else:
             self.model = None
 
+    def research_policy_candidates(
+        self,
+        goal_summary: Dict[str, Any],
+        business_profile_facts: Dict[str, Any]
+    ) -> PolicyResearchBundle:
+        """Alias for research_policy_opportunities to satisfy orchestrator interface."""
+        return self.research_policy_opportunities(goal_summary, business_profile_facts)
+
     def research_policy_opportunities(
         self,
         goal_summary: Dict[str, Any],
@@ -111,7 +119,12 @@ Respond ONLY with a strict JSON object matching:
         # Step 1: Translate goal and profile into discovery filters
         support_categories = goal_summary.get('support_categories', ['capital_subsidy'])
         state = business_profile_facts.get('state', 'Gujarat')
-        ent_cat = business_profile_facts.get('enterprise_category') or business_profile_facts.get('msme_category', 'micro')
+        ent_cat = (
+            business_profile_facts.get('enterprise_category') or
+            business_profile_facts.get('msme_category') or
+            business_profile_facts.get('category') or
+            'micro'
+        )
 
         discovery_filters = {
             'support_categories': support_categories,

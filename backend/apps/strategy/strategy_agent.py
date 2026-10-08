@@ -353,6 +353,51 @@ Respond ONLY with a strict JSON object matching:
         else:
             self.model = None
 
+    def assemble_strategy(
+        self,
+        business_goal: Any,
+        profile_facts: Dict[str, Any],
+        candidate_schemes: List[Any],
+        deterministic_evaluations: List[Dict[str, Any]],
+        relationship_results: List[Dict[str, Any]],
+        evidence_bundles: List[Dict[str, Any]],
+        unlock_candidates: List[Dict[str, Any]]
+    ) -> StrategyAgentOutput:
+        """
+        Adapter method satisfying the AI orchestrator's interface.
+        """
+        schemes_list: List[Scheme] = []
+        for s in candidate_schemes:
+            if isinstance(s, Scheme):
+                schemes_list.append(s)
+            elif isinstance(s, str):
+                scheme_obj = Scheme.objects.filter(scheme_code=s).first()
+                if scheme_obj:
+                    schemes_list.append(scheme_obj)
+
+        deterministic_map = {}
+        for ev in deterministic_evaluations:
+            code = ev.get('code') or ev.get('scheme_code')
+            status = ev.get('status') or ev.get('overall_status') or 'UNKNOWN'
+            if code:
+                deterministic_map[code] = status
+
+        goal_dict = (
+            {"primary_goal": business_goal}
+            if isinstance(business_goal, str)
+            else (business_goal or {})
+        )
+
+        return self.organize_strategy(
+            business_goal=goal_dict,
+            profile_snapshot=profile_facts,
+            candidate_schemes=schemes_list,
+            deterministic_eligibility_results=deterministic_map,
+            relationship_results=relationship_results,
+            evidence_bundles=evidence_bundles,
+            unlock_candidates=unlock_candidates
+        )
+
     def organize_strategy(
         self,
         business_goal: Dict[str, Any],

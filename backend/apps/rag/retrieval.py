@@ -120,7 +120,10 @@ class HybridPolicyRetriever:
         base_qs = PolicyDocumentChunk.objects.filter(is_active=True).select_related('document', 'scheme')
 
         if request.candidate_scheme_ids:
-            base_qs = base_qs.filter(scheme__code__in=request.candidate_scheme_ids)
+            base_qs = base_qs.filter(
+                Q(scheme__scheme_code__in=request.candidate_scheme_ids) |
+                Q(scheme__id__in=[cid for cid in request.candidate_scheme_ids if len(cid) == 36])
+            )
 
         if request.authority_filter:
             base_qs = base_qs.filter(authority__icontains=request.authority_filter)

@@ -207,6 +207,33 @@ class RelationshipEngine:
             is_overlapping_cost=False
         )
 
+    def analyze_multiple_schemes(
+        self,
+        schemes: List[Scheme],
+        context: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Analyzes pairwise relationships for a collection of candidate schemes.
+        Returns a list of relationship dictionaries structured with source_scheme_code,
+        target_scheme_code, relationship_type, tradeoff_note, and evidence_ids.
+        """
+        if len(schemes) < 2:
+            return []
+
+        results = []
+        selected_schemes = schemes[:10]  # Bound complexity to top 10 schemes
+        for i in range(len(selected_schemes)):
+            for j in range(i + 1, len(selected_schemes)):
+                s_a = selected_schemes[i]
+                s_b = selected_schemes[j]
+                res = self.evaluate_pair(s_a, s_b, context)
+                res_dict = asdict(res)
+                res_dict["source_scheme_code"] = res.scheme_a_code
+                res_dict["target_scheme_code"] = res.scheme_b_code
+                res_dict["tradeoff_note"] = res.tradeoff_explanation
+                results.append(res_dict)
+        return results
+
     def can_combine(
         self,
         scheme_codes: List[str],

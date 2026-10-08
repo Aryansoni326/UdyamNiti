@@ -192,6 +192,7 @@ REST_FRAMEWORK = {
         'apps.accounts.permissions.IsOwnerOrAdmin',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'apps.accounts.authentication.CsrfExemptSessionAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_THROTTLE_CLASSES': [

@@ -184,6 +184,7 @@ class BusinessGoalViewSet(viewsets.ModelViewSet):
             'correlation_id': result.trace_id,
             'trace_id': result.trace_id,
             'status': result.status,
+            'error': result.error_message,
             'steps': [
                 {
                     'step_name': s.step_name,

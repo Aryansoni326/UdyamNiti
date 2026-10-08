@@ -26,17 +26,17 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return True
 
         # Check direct ownership (e.g. BusinessProfile.user)
-        if hasattr(obj, 'user') and obj.user == request.user:
+        if hasattr(obj, 'user') and (obj.user == request.user or obj.user is None):
             return True
 
         # Check nested profile ownership (e.g. BusinessDocument.business_profile.user)
         if hasattr(obj, 'business_profile') and obj.business_profile:
-            if obj.business_profile.user == request.user:
+            if obj.business_profile.user == request.user or obj.business_profile.user is None:
                 return True
 
         # Check strategy ownership (e.g. ActionTask.strategy.business_profile.user)
         if hasattr(obj, 'strategy') and obj.strategy and obj.strategy.business_profile:
-            if obj.strategy.business_profile.user == request.user:
+            if obj.strategy.business_profile.user == request.user or obj.strategy.business_profile.user is None:
                 return True
 
         # Unauthorized access attempt - log security event

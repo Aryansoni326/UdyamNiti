@@ -159,6 +159,23 @@ class OpportunityUnlockEngine:
     def __init__(self):
         self.relationship_engine = RelationshipEngine()
 
+    def discover_unlocks(
+        self,
+        evaluations: List[Dict[str, Any]],
+        business_facts: Dict[str, Any],
+        relationships: Optional[Any] = None,
+        candidate_schemes: Optional[List[Scheme]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Discovers actionable unlock candidates and returns list of serializable dictionaries.
+        """
+        unlock_candidates = self.evaluate_unlocks(
+            evaluations=evaluations,
+            business_facts=business_facts,
+            candidate_schemes=candidate_schemes
+        )
+        return [cand.to_dict() for cand in unlock_candidates]
+
     def evaluate_unlocks(
         self,
         evaluations: List[Dict[str, Any]],

@@ -240,7 +240,8 @@ export const GoalOnboarding: React.FC = () => {
       const correlationId = 'corr_' + Math.random().toString(36).substring(2, 10)
 
       // 1. Auto login / get demo context
-      await apiClient.demoLogin().catch(() => null)
+      const demoRes = await apiClient.demoLogin().catch(() => null)
+      const fallbackDemoProfileId = demoRes?.data?.profile_id || ''
 
       // 2. Fetch or create a profile with the targeted facts
       const profileData = {
@@ -262,42 +263,67 @@ export const GoalOnboarding: React.FC = () => {
       let profileId = ''
       try {
         const createRes = await apiClient.createProfile(profileData as any)
-        profileId = createRes.data.id
+        profileId = createRes.data?.id || ''
       } catch {
         // Fallback to existing profiles
-        const listRes = await apiClient.getProfiles()
-        const profiles = listRes.data.results || (listRes.data as any)
-        profileId = profiles?.[0]?.id || 'demo-profile-1'
+        try {
+          const listRes = await apiClient.getProfiles()
+          const profiles = listRes.data?.results || (listRes.data as any)
+          profileId = profiles?.[0]?.id || ''
+        } catch {}
+      }
+
+      if (!profileId) {
+        profileId = fallbackDemoProfileId
       }
 
       // 3. Submit the goal with correlation ID
       const submitRes = await apiClient.submitGoal(profileId, goalText, correlationId)
-      const strategyId = submitRes.data.strategy_id
-      const finalCorrelationId = submitRes.data.correlation_id || correlationId
+      let strategyId = submitRes.data?.strategy_id
+      const finalCorrelationId = submitRes.data?.correlation_id || correlationId
 
-      setAnalysisProgress(100)
-      setAnalysisStepLabel('Strategy Ready! Loading decision landscape...')
-      await new Promise((r) => setTimeout(r, 300))
+      if (!strategyId && submitRes.data?.goal?.id) {
+        try {
+          const stratRes = await apiClient.getStrategyForGoal(submitRes.data.goal.id)
+          strategyId = stratRes.data?.id
+        } catch {}
+      }
 
-      toast.success('Evidence-backed strategy formulated successfully!')
-      navigate(`/strategy/${strategyId}`, { state: { correlationId: finalCorrelationId } })
+      if (strategyId) {
+        setAnalysisProgress(100)
+        setAnalysisStepLabel('Strategy Ready! Loading decision landscape...')
+        await new Promise((r) => setTimeout(r, 300))
+
+        toast.success('Evidence-backed strategy formulated successfully!')
+        navigate(`/strategy/${strategyId}`, { state: { correlationId: finalCorrelationId } })
+        return
+      } else {
+        throw new Error('Strategy ID was not returned by the server.')
+      }
     } catch (err: any) {
       console.error('Goal submission error:', err)
-      // Resilient fallback for offline testing or demo
-      toast.info('Loaded cached strategy for demo objective')
-      // Try to find any existing strategy
+      // Resilient recovery: try to find any ready goal & strategy
       try {
         const goalsRes = await apiClient.getGoals()
-        const goals = goalsRes.data.results || (goalsRes.data as any)
-        const readyGoal = goals?.find((g: any) => g.status === 'ready')
+        const goals = goalsRes.data?.results || (goalsRes.data as any)
+        const readyGoal = Array.isArray(goals) ? goals.find((g: any) => g.status === 'ready') : null
         if (readyGoal) {
           const stratRes = await apiClient.getStrategyForGoal(readyGoal.id)
-          navigate(`/strategy/${stratRes.data.id}`)
-          return
+          if (stratRes.data?.id) {
+            toast.info('Loaded existing strategy roadmap.')
+            navigate(`/strategy/${stratRes.data.id}`)
+            return
+          }
         }
       } catch {}
-      // Fallback redirect
-      navigate('/')
+
+      const errorMsg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        err?.message ||
+        'Unable to synthesize strategy. Please check your inputs and try again.'
+      toast.error(errorMsg)
+      setActiveStep(1)
     } finally {
       setSubmitting(false)
     }

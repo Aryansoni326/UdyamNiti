@@ -204,8 +204,8 @@ class AIOrchestrator:
             # ─────────────────────────────────────────────────────────────
             # STEP 4 & 5: Discover Candidates & Retrieve Evidence (Policy Agent)
             # ─────────────────────────────────────────────────────────────
-            t0 = time.time()
-            cache_key = f"rag_evidence_{profile.state}_{parsed_goal.support_categories}"
+            cats_slug = "_".join(sorted(parsed_goal.support_categories or []))
+            cache_key = f"rag_evidence_{profile.state or 'all'}_{cats_slug}"
             cached_evidence = cache.get(cache_key)
 
             if cached_evidence:

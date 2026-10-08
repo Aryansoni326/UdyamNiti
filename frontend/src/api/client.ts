@@ -1,20 +1,27 @@
 import axios from 'axios'
 
-const api = axios.create({
-  baseURL: '/api/v1',
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-CSRFToken': getCookie('csrftoken') || '',
-  },
-})
-
 function getCookie(name: string): string | null {
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
   if (parts.length === 2) return parts.pop()?.split(';').shift() || null
   return null
 }
+
+const api = axios.create({
+  baseURL: '/api/v1',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+api.interceptors.request.use((config) => {
+  const token = getCookie('csrftoken') || localStorage.getItem('csrftoken')
+  if (token) {
+    config.headers['X-CSRFToken'] = token
+  }
+  return config
+})
 
 // Interfaces
 export interface BusinessProfile {
@@ -151,7 +158,14 @@ export const apiClient = {
   health: () => api.get('/health/'),
 
   // Demo auto-login
-  demoLogin: () => api.get('/auth/demo/'),
+  demoLogin: async () => {
+    const res = await api.get('/auth/demo/')
+    if (res.data?.csrf_token) {
+      localStorage.setItem('csrftoken', res.data.csrf_token)
+      document.cookie = `csrftoken=${res.data.csrf_token}; path=/; SameSite=Lax`
+    }
+    return res
+  },
 
   // Google OAuth Login
   googleLogin: (data: { email: string; name?: string; picture?: string; google_id?: string }) =>

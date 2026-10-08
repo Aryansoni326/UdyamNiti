@@ -773,7 +773,7 @@ class Command(BaseCommand):
         specs = []
         for item in CURATED_POLICY_CORPUS:
             # Match existing Scheme model if present
-            scheme = Scheme.objects.filter(code=item['scheme_code']).first()
+            scheme = Scheme.objects.filter(scheme_code=item['scheme_code']).first()
 
             specs.append({
                 'title': item['title'],
