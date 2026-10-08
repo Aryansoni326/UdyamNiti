@@ -41,11 +41,13 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
+import SearchIcon from '@mui/icons-material/Search'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 import { initiateGoogleSignIn, getGoogleClientId } from '../utils/googleAuth'
 import { apiClient } from '../api/client'
-import { STATUTORY_BUSINESS_DOCUMENTS, DEFAULT_HELD_DOCUMENTS } from '../utils/documentChecklist'
+import { STATUTORY_BUSINESS_DOCUMENTS, DEFAULT_HELD_DOCUMENTS, saveUserHeldDocuments } from '../utils/documentChecklist'
 
 // Official Google Logo SVG
 const GoogleIcon = () => (
@@ -96,24 +98,32 @@ export const RegisterPage: React.FC = () => {
 
   // Statutory Business Documents Checklist
   const [heldDocuments, setHeldDocuments] = useState<string[]>(DEFAULT_HELD_DOCUMENTS)
+  const [docSearchQuery, setDocSearchQuery] = useState('')
+  const [docCategoryFilter, setDocCategoryFilter] = useState('all')
+  const [showDocDropdown, setShowDocDropdown] = useState(false)
 
   const toggleDocument = (docId: string) => {
-    setHeldDocuments((prev) =>
-      prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
-    )
+    setHeldDocuments((prev) => {
+      const next = prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
+      saveUserHeldDocuments(next)
+      return next
+    })
   }
 
   const selectPresetDocuments = (type: 'essentials' | 'all' | 'clear') => {
+    let next: string[] = []
     if (type === 'essentials') {
-      setHeldDocuments(['udyam', 'pan_gst', 'bank_statements', 'audited_balance_sheet'])
+      next = ['udyam', 'pan_gst', 'bank_statements', 'audited_balance_sheet']
       toast.info('Selected MSME core essential documents.')
     } else if (type === 'all') {
-      setHeldDocuments(STATUTORY_BUSINESS_DOCUMENTS.map((d) => d.id))
+      next = STATUTORY_BUSINESS_DOCUMENTS.map((d) => d.id)
       toast.info('Selected all statutory enterprise documents.')
     } else {
-      setHeldDocuments([])
+      next = []
       toast.info('Cleared document checklist.')
     }
+    setHeldDocuments(next)
+    saveUserHeldDocuments(next)
   }
 
   // Director Credentials
@@ -631,22 +641,176 @@ export const RegisterPage: React.FC = () => {
                     </Grid>
                   </Box>
 
-                  {/* PART 5: Statutory Business Document Checklist */}
+                  {/* PART 5: Statutory Business Document Checklist with Live Search & Scheme PDF Data Links */}
                   <Box sx={{ p: 2.5, borderRadius: '12px', bgcolor: '#F8FAFC', border: '1.5px solid #E2E8F0' }}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1, flexWrap: 'wrap', gap: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PlaylistAddCheckIcon sx={{ fontSize: 20, color: '#059669' }} /> 5. Business Document Checklist (Documents Firm Currently Possesses)
+                        <PlaylistAddCheckIcon sx={{ fontSize: 20, color: '#059669' }} /> 5. Required Scheme Documents (Based on Official Scheme PDFs)
                       </Typography>
                       <Chip
                         icon={<CheckCircleIcon sx={{ fontSize: '14px !important', color: '#059669 !important' }} />}
-                        label={`${heldDocuments.length} Documents Selected`}
+                        label={`${heldDocuments.length} of ${STATUTORY_BUSINESS_DOCUMENTS.length} Selected`}
                         size="small"
                         sx={{ bgcolor: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0', fontWeight: 800, fontSize: '0.72rem' }}
                       />
                     </Stack>
+
                     <Typography variant="caption" sx={{ color: '#475569', display: 'block', mb: 2, lineHeight: 1.45 }}>
-                      Select the statutory certificates and commercial records your firm currently possesses. Our AI comparison engine automatically evaluates these against the mandatory requirements of each scheme on your dashboard, generating an executive Document Readiness & Gap Analysis report.
+                      Search and select the statutory documents your business currently holds. Each document is mapped directly to the official Scheme PDFs in the UdyamNiti corpus. Our engine uses these to immediately evaluate which schemes you are eligible for, and which missing documents you need to procure.
                     </Typography>
+
+                    {/* 🔍 Search Input with Live Dropdown Selection */}
+                    <Box sx={{ position: 'relative', mb: 2 }}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={docSearchQuery}
+                        onChange={(e) => {
+                          setDocSearchQuery(e.target.value)
+                          setShowDocDropdown(true)
+                        }}
+                        onFocus={() => setShowDocDropdown(true)}
+                        placeholder="Search document by name, category, or Scheme PDF (e.g. Udyam, DPR, GST, Pollution, Caste, Bank statement)..."
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon sx={{ color: '#0F2E59', fontSize: 20 }} />
+                            </InputAdornment>
+                          ),
+                          sx: {
+                            bgcolor: '#FFFFFF',
+                            borderRadius: '8px',
+                            fontSize: '0.88rem',
+                            '& fieldset': { borderColor: '#CBD5E1' },
+                            '&:hover fieldset': { borderColor: '#0F2E59' },
+                            '&.Mui-focused fieldset': { borderColor: '#059669', borderWidth: '2px' },
+                          },
+                        }}
+                      />
+
+                      {/* Dropdown Suggestions List when user types */}
+                      {showDocDropdown && docSearchQuery.trim().length > 0 && (
+                        <Paper
+                          elevation={4}
+                          sx={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            mt: 0.5,
+                            zIndex: 1200,
+                            maxHeight: 280,
+                            overflowY: 'auto',
+                            borderRadius: '10px',
+                            border: '1.5px solid #059669',
+                            boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)',
+                            bgcolor: '#FFFFFF',
+                            p: 1,
+                          }}
+                        >
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 1, py: 0.5, borderBottom: '1px solid #E2E8F0', mb: 0.5 }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                              Matching Documents from Scheme PDFs:
+                            </Typography>
+                            <Button
+                              size="small"
+                              onClick={() => setShowDocDropdown(false)}
+                              sx={{ fontSize: '0.7rem', color: '#64748B', minWidth: 'auto', p: '1px 6px' }}
+                            >
+                              Close ✕
+                            </Button>
+                          </Stack>
+
+                          {STATUTORY_BUSINESS_DOCUMENTS.filter((doc) => {
+                            const q = docSearchQuery.toLowerCase()
+                            return (
+                              doc.name.toLowerCase().includes(q) ||
+                              doc.shortDesc.toLowerCase().includes(q) ||
+                              doc.category.toLowerCase().includes(q) ||
+                              doc.issuingAuthority.toLowerCase().includes(q) ||
+                              doc.schemePdfSources.some((s) => s.toLowerCase().includes(q)) ||
+                              doc.commonAliases.some((a) => a.toLowerCase().includes(q))
+                            )
+                          }).map((doc) => {
+                            const isSelected = heldDocuments.includes(doc.id)
+                            return (
+                              <Box
+                                key={doc.id}
+                                onClick={() => toggleDocument(doc.id)}
+                                sx={{
+                                  p: 1,
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  bgcolor: isSelected ? '#F0FDF4' : 'transparent',
+                                  '&:hover': { bgcolor: isSelected ? '#DCFCE7' : '#F8FAFC' },
+                                }}
+                              >
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                  <Checkbox
+                                    size="small"
+                                    checked={isSelected}
+                                    sx={{ p: 0, color: '#94A3B8', '&.Mui-checked': { color: '#059669' } }}
+                                  />
+                                  <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.82rem', color: '#0F2E59' }}>
+                                      {doc.name}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.7rem' }}>
+                                      PDF: {doc.schemePdfSources[0] || 'Official Gazette'} • {doc.category}
+                                    </Typography>
+                                  </Box>
+                                </Stack>
+                                <Chip
+                                  label={isSelected ? 'Selected' : '+ Select'}
+                                  size="small"
+                                  sx={{
+                                    height: 20,
+                                    fontSize: '0.66rem',
+                                    fontWeight: 700,
+                                    bgcolor: isSelected ? '#059669' : '#E2E8F0',
+                                    color: isSelected ? '#FFFFFF' : '#475569',
+                                  }}
+                                />
+                              </Box>
+                            )
+                          })}
+                        </Paper>
+                      )}
+                    </Box>
+
+                    {/* Category Filter Pills */}
+                    <Stack direction="row" spacing={0.8} sx={{ mb: 2, flexWrap: 'wrap', gap: 0.6 }}>
+                      {[
+                        { id: 'all', label: `All (${STATUTORY_BUSINESS_DOCUMENTS.length})` },
+                        { id: 'Statutory', label: 'Statutory' },
+                        { id: 'Taxation', label: 'Taxation' },
+                        { id: 'Financial', label: 'Financial' },
+                        { id: 'Technical', label: 'Technical' },
+                        { id: 'Regulatory', label: 'Regulatory' },
+                        { id: 'Infrastructure', label: 'Infrastructure' },
+                        { id: 'Special Category', label: 'Special Category' },
+                      ].map((cat) => (
+                        <Chip
+                          key={cat.id}
+                          label={cat.label}
+                          size="small"
+                          onClick={() => setDocCategoryFilter(cat.id)}
+                          clickable
+                          sx={{
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            bgcolor: docCategoryFilter === cat.id ? '#0F2E59' : '#FFFFFF',
+                            color: docCategoryFilter === cat.id ? '#FFFFFF' : '#475569',
+                            border: '1px solid #CBD5E1',
+                            py: 1.5,
+                            '&:hover': { bgcolor: docCategoryFilter === cat.id ? '#0F2E59' : '#F1F5F9' },
+                          }}
+                        />
+                      ))}
+                    </Stack>
 
                     {/* Quick Selection Shortcuts */}
                     <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}>
@@ -698,9 +862,23 @@ export const RegisterPage: React.FC = () => {
                       </Button>
                     </Stack>
 
-                    {/* Interactive Document Checklist Grid */}
+                    {/* Interactive Document Checklist Grid with Checkbox & Scheme PDF Source */}
                     <Grid container spacing={1.5}>
-                      {STATUTORY_BUSINESS_DOCUMENTS.map((doc) => {
+                      {STATUTORY_BUSINESS_DOCUMENTS.filter((doc) => {
+                        const q = docSearchQuery.trim().toLowerCase()
+                        const matchesSearch =
+                          !q ||
+                          doc.name.toLowerCase().includes(q) ||
+                          doc.shortDesc.toLowerCase().includes(q) ||
+                          doc.category.toLowerCase().includes(q) ||
+                          doc.issuingAuthority.toLowerCase().includes(q) ||
+                          doc.schemePdfSources.some((s) => s.toLowerCase().includes(q)) ||
+                          doc.commonAliases.some((a) => a.toLowerCase().includes(q))
+
+                        const matchesCategory = docCategoryFilter === 'all' || doc.category === docCategoryFilter
+
+                        return matchesSearch && matchesCategory
+                      }).map((doc) => {
                         const isSelected = heldDocuments.includes(doc.id)
                         return (
                           <Grid item xs={12} sm={6} key={doc.id}>
@@ -767,14 +945,40 @@ export const RegisterPage: React.FC = () => {
                                     color: '#64748B',
                                     fontSize: '0.72rem',
                                     lineHeight: 1.35,
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: 'vertical',
-                                    overflow: 'hidden',
+                                    display: 'block',
+                                    mb: 0.8,
                                   }}
                                 >
                                   {doc.shortDesc}
                                 </Typography>
+
+                                {/* Scheme PDF Data Folder Reference */}
+                                <Stack direction="row" spacing={0.6} alignItems="center" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
+                                  <PictureAsPdfIcon sx={{ fontSize: 13, color: '#DC2626' }} />
+                                  <Typography variant="caption" sx={{ fontSize: '0.65rem', color: '#059669', fontWeight: 700 }}>
+                                    Required in PDF:
+                                  </Typography>
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      fontSize: '0.65rem',
+                                      fontFamily: 'monospace',
+                                      color: '#475569',
+                                      bgcolor: '#F1F5F9',
+                                      px: 0.6,
+                                      py: 0.2,
+                                      borderRadius: '4px',
+                                    }}
+                                    noWrap
+                                  >
+                                    {doc.schemePdfSources[0] || 'Official Gazette'}
+                                  </Typography>
+                                  {doc.schemePdfSources.length > 1 && (
+                                    <Typography variant="caption" sx={{ fontSize: '0.62rem', color: '#64748B' }}>
+                                      +{doc.schemePdfSources.length - 1} more
+                                    </Typography>
+                                  )}
+                                </Stack>
                               </Box>
                             </Paper>
                           </Grid>

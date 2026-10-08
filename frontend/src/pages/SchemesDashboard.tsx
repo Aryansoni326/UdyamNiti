@@ -312,10 +312,11 @@ interface SchemeCardItemProps {
   userHeldDocs: string[]
   onOpenGapReport: (scheme: SchemeResult) => void
   onNavigate: (idOrCode: string) => void
+  onToggleHeldDoc?: (docId: string) => void
 }
 
 const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
-  ({ scheme, showMatchTags, matchScore, isRecommended, userHeldDocs, onOpenGapReport, onNavigate }) => {
+  ({ scheme, showMatchTags, matchScore, isRecommended, userHeldDocs, onOpenGapReport, onNavigate, onToggleHeldDoc }) => {
     const docCount = scheme.document_count || (scheme.required_documents ? scheme.required_documents.length : 4)
     const divStyle = getDivisionBadgeColor(scheme.division)
 
@@ -495,86 +496,121 @@ const SchemeCardItem: React.FC<SchemeCardItemProps> = React.memo(
             {scheme.benefit_description}
           </Typography>
 
-          {/* Dynamic Document Readiness & Gap Analysis Pill */}
+          {/* Dynamic Document Readiness & Eligibility Status Banner */}
           <Box
             sx={{
-              p: 1.25,
-              borderRadius: '8px',
+              p: 1.4,
+              borderRadius: '10px',
               mb: 1.5,
               bgcolor:
                 docAnalysis.readinessPercentage === 100
-                  ? '#F0FDF4'
+                  ? '#ECFDF5'
                   : docAnalysis.readinessPercentage >= 50
                   ? '#FFFBEB'
                   : '#FEF2F2',
-              border: `1px solid ${
+              border: `1.5px solid ${
                 docAnalysis.readinessPercentage === 100
-                  ? '#BBF7D0'
+                  ? '#6EE7B7'
                   : docAnalysis.readinessPercentage >= 50
-                  ? '#FDE68A'
-                  : '#FECDD3'
+                  ? '#FCD34D'
+                  : '#FCA5A5'
               }`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 1,
             }}
           >
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
-              {docAnalysis.readinessPercentage === 100 ? (
-                <TaskAltIcon sx={{ fontSize: 16, color: '#166534', flexShrink: 0 }} />
-              ) : (
-                <WarningAmberOutlinedIcon sx={{ fontSize: 16, color: docAnalysis.readinessPercentage >= 50 ? '#B45309' : '#DC2626', flexShrink: 0 }} />
-              )}
-              <Box sx={{ minWidth: 0 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.8 }}>
+              <Stack direction="row" spacing={0.8} alignItems="center">
+                {docAnalysis.readinessPercentage === 100 ? (
+                  <CheckCircleIcon sx={{ fontSize: 18, color: '#059669', flexShrink: 0 }} />
+                ) : (
+                  <WarningAmberOutlinedIcon sx={{ fontSize: 18, color: docAnalysis.readinessPercentage >= 50 ? '#D97706' : '#DC2626', flexShrink: 0 }} />
+                )}
                 <Typography
-                  variant="caption"
+                  variant="subtitle2"
                   sx={{
                     fontWeight: 800,
-                    fontSize: '0.74rem',
+                    fontSize: '0.8rem',
                     color:
                       docAnalysis.readinessPercentage === 100
-                        ? '#166534'
+                        ? '#065F46'
                         : docAnalysis.readinessPercentage >= 50
-                        ? '#B45309'
+                        ? '#92400E'
                         : '#991B1B',
-                    display: 'block',
-                    lineHeight: 1.2,
                   }}
                 >
                   {docAnalysis.readinessPercentage === 100
-                    ? `100% Document Ready (${docAnalysis.totalCount}/${docAnalysis.totalCount})`
-                    : `${docAnalysis.heldCount}/${docAnalysis.totalCount} Documents Ready (${docAnalysis.readinessPercentage}%)`}
+                    ? '✅ FULLY ELIGIBLE (All Documents Ready)'
+                    : `⚠️ NOT YET ELIGIBLE (Missing ${docAnalysis.missingDocs.length} Doc${docAnalysis.missingDocs.length > 1 ? 's' : ''})`}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.68rem', display: 'block' }} noWrap>
-                  {docAnalysis.missingDocs.length === 0
-                    ? 'All required documents in firm dossier'
-                    : `Missing ${docAnalysis.missingDocs.length} required: ${docAnalysis.missingDocs.map((d) => d.name).slice(0, 2).join(', ')}`}
-                </Typography>
-              </Box>
+              </Stack>
+
+              <Chip
+                label={`${docAnalysis.heldCount}/${docAnalysis.totalCount} Held (${docAnalysis.readinessPercentage}%)`}
+                size="small"
+                sx={{
+                  height: 20,
+                  fontSize: '0.66rem',
+                  fontWeight: 800,
+                  bgcolor: docAnalysis.readinessPercentage === 100 ? '#DCFCE7' : docAnalysis.readinessPercentage >= 50 ? '#FEF3C7' : '#FEE2E2',
+                  color: docAnalysis.readinessPercentage === 100 ? '#166534' : docAnalysis.readinessPercentage >= 50 ? '#B45309' : '#B91C1C',
+                }}
+              />
             </Stack>
 
-            <Button
-              size="small"
-              onClick={() => onOpenGapReport(scheme)}
-              sx={{
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                textTransform: 'none',
-                color:
-                  docAnalysis.readinessPercentage === 100
-                    ? '#166534'
-                    : docAnalysis.readinessPercentage >= 50
-                    ? '#B45309'
-                    : '#DC2626',
-                p: '2px 8px',
-                minWidth: 'auto',
-                whiteSpace: 'nowrap',
-                '&:hover': { bgcolor: 'rgba(0,0,0,0.04)', textDecoration: 'underline' },
-              }}
-            >
-              Analyze Gap →
-            </Button>
+            {docAnalysis.readinessPercentage === 100 ? (
+              <Typography variant="caption" sx={{ color: '#047857', display: 'block', fontSize: '0.73rem', fontWeight: 600 }}>
+                ✓ Your firm holds all statutory documents required under this scheme. You are completely eligible to apply.
+              </Typography>
+            ) : (
+              <Box sx={{ mt: 0.5 }}>
+                <Typography variant="caption" sx={{ color: '#78350F', display: 'block', fontSize: '0.72rem', fontWeight: 700, mb: 0.3 }}>
+                  Missing: {docAnalysis.missingDocs.map((d) => d.name).join(', ')}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#B45309', display: 'block', fontSize: '0.72rem' }}>
+                  👉 <strong>Action to unlock:</strong> Add <strong>"{docAnalysis.missingDocs[0]?.name}"</strong> {scheme.max_benefit_lakhs ? `to unlock up to ₹${scheme.max_benefit_lakhs >= 100 ? `${(scheme.max_benefit_lakhs / 100).toFixed(1)} Cr` : `${scheme.max_benefit_lakhs} Lakhs`} benefit under this scheme` : 'to satisfy eligibility requirements'}.
+                </Typography>
+              </Box>
+            )}
+
+            <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              {docAnalysis.missingDocs.length > 0 && onToggleHeldDoc ? (
+                <Button
+                  size="small"
+                  onClick={() => {
+                    onToggleHeldDoc(docAnalysis.missingDocs[0].id)
+                    toast.success(`Added "${docAnalysis.missingDocs[0].name}" to your firm dossier!`)
+                  }}
+                  sx={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    bgcolor: '#FFFFFF',
+                    border: '1px solid #CBD5E1',
+                    color: '#0F2E59',
+                    py: 0.2,
+                    px: 1,
+                    borderRadius: '5px',
+                    '&:hover': { bgcolor: '#F1F5F9', borderColor: '#0F2E59' },
+                  }}
+                >
+                  + I Have {docAnalysis.missingDocs[0].name.split(' ')[0]}
+                </Button>
+              ) : <Box />}
+
+              <Button
+                size="small"
+                onClick={() => onOpenGapReport(scheme)}
+                sx={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  color: docAnalysis.readinessPercentage === 100 ? '#047857' : '#92400E',
+                  p: '2px 6px',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                Analyze Document Gap →
+              </Button>
+            </Box>
           </Box>
 
           {/* Source PDF File Pill */}
@@ -724,6 +760,7 @@ export const SchemesDashboard: React.FC = () => {
   const [selectedSchemeForGapReport, setSelectedSchemeForGapReport] = useState<SchemeResult | null>(null)
   const [gapReportModalOpen, setGapReportModalOpen] = useState(false)
   const [documentVaultModalOpen, setDocumentVaultModalOpen] = useState(false)
+  const [eligibilityFilter, setEligibilityFilter] = useState<'all' | 'eligible' | 'near' | 'gap'>('all')
 
   // Real-time synchronization of document checklist
   useEffect(() => {
@@ -977,6 +1014,44 @@ export const SchemesDashboard: React.FC = () => {
     // Sort by highest matchScore first when requirements are active
     return calculated.sort((a, b) => b.matchScore - a.matchScore)
   }, [schemes, hasActiveFilterOrSearch, activeSearch, needFilter, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
+
+  // ─── Document-Driven Eligibility Filtering ─────────────────────────────────────
+  const schemesWithDocAnalysis = useMemo(() => {
+    return scoredSchemes.map((item) => {
+      const docAnalysis = analyzeSchemeDocuments(item.scheme.required_documents, userHeldDocs)
+      return {
+        ...item,
+        docAnalysis,
+      }
+    })
+  }, [scoredSchemes, userHeldDocs])
+
+  const eligibilityCounts = useMemo(() => {
+    let eligible = 0
+    let near = 0
+    let gap = 0
+    schemesWithDocAnalysis.forEach((item) => {
+      if (item.docAnalysis.readinessPercentage === 100) eligible++
+      else if (item.docAnalysis.readinessPercentage >= 50) near++
+      else gap++
+    })
+    return { all: schemesWithDocAnalysis.length, eligible, near, gap }
+  }, [schemesWithDocAnalysis])
+
+  const finalFilteredSchemes = useMemo(() => {
+    if (eligibilityFilter === 'eligible') {
+      return schemesWithDocAnalysis.filter((s) => s.docAnalysis.readinessPercentage === 100)
+    }
+    if (eligibilityFilter === 'near') {
+      return schemesWithDocAnalysis.filter(
+        (s) => s.docAnalysis.readinessPercentage >= 50 && s.docAnalysis.readinessPercentage < 100
+      )
+    }
+    if (eligibilityFilter === 'gap') {
+      return schemesWithDocAnalysis.filter((s) => s.docAnalysis.readinessPercentage < 50)
+    }
+    return schemesWithDocAnalysis
+  }, [schemesWithDocAnalysis, eligibilityFilter])
 
   return (
     <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 2, sm: 3, md: 4 }, py: 3.5 }}>
@@ -1712,6 +1787,139 @@ export const SchemesDashboard: React.FC = () => {
         </Grid>
       </Paper>
 
+      {/* ─── 4.5 DOCUMENT-DRIVEN ELIGIBILITY STATUS RIBBON & TABS ─────────── */}
+      <Paper
+        elevation={0}
+        sx={{
+          mb: 3.5,
+          p: { xs: 2, sm: 2.5 },
+          bgcolor: '#FFFFFF',
+          border: '1.5px solid #CBD5E1',
+          borderRadius: '14px',
+          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.05)',
+        }}
+      >
+        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} spacing={2} sx={{ mb: 2 }}>
+          <Box>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+              <PlaylistAddCheckIcon sx={{ color: '#0F2E59', fontSize: 24 }} />
+              <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.02rem', color: '#0F2E59' }}>
+                Document-Driven Scheme Eligibility
+              </Typography>
+            </Stack>
+            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.84rem' }}>
+              Your firm currently has <strong>{userHeldDocs.length} statutory business documents</strong> registered in dossier. Schemes below dynamically compute eligibility based on required vs held documents.
+            </Typography>
+          </Box>
+
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<EditNoteIcon />}
+            onClick={() => setDocumentVaultModalOpen(true)}
+            sx={{
+              color: '#0F2E59',
+              borderColor: '#0F2E59',
+              fontWeight: 700,
+              fontSize: '0.82rem',
+              borderRadius: '8px',
+              textTransform: 'none',
+              px: 2,
+              py: 0.8,
+              bgcolor: '#F8FAFC',
+              whiteSpace: 'nowrap',
+              '&:hover': { bgcolor: '#F1F5F9' },
+            }}
+          >
+            Search & Manage Held Documents ({userHeldDocs.length})
+          </Button>
+        </Stack>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Eligibility Filter Pills */}
+        <Stack direction="row" spacing={1.2} flexWrap="wrap" sx={{ gap: 1 }}>
+          {[
+            {
+              id: 'all',
+              label: 'All Schemes',
+              count: eligibilityCounts.all,
+              color: '#0F2E59',
+              bgColor: '#F1F5F9',
+              activeBg: '#0F2E59',
+              activeColor: '#FFFFFF',
+            },
+            {
+              id: 'eligible',
+              label: '✅ Fully Eligible (All Docs Ready)',
+              count: eligibilityCounts.eligible,
+              color: '#047857',
+              bgColor: '#ECFDF5',
+              activeBg: '#059669',
+              activeColor: '#FFFFFF',
+            },
+            {
+              id: 'near',
+              label: '⚠️ Near-Eligible (1-2 Docs Missing)',
+              count: eligibilityCounts.near,
+              color: '#B45309',
+              bgColor: '#FFFBEB',
+              activeBg: '#D97706',
+              activeColor: '#FFFFFF',
+            },
+            {
+              id: 'gap',
+              label: '❌ Document Gaps (>2 Docs Missing)',
+              count: eligibilityCounts.gap,
+              color: '#B91C1C',
+              bgColor: '#FEF2F2',
+              activeBg: '#DC2626',
+              activeColor: '#FFFFFF',
+            },
+          ].map((tab) => {
+            const isSelected = eligibilityFilter === tab.id
+            return (
+              <Button
+                key={tab.id}
+                size="small"
+                onClick={() => setEligibilityFilter(tab.id as any)}
+                sx={{
+                  py: 0.9,
+                  px: 2,
+                  borderRadius: '9px',
+                  textTransform: 'none',
+                  fontWeight: 800,
+                  fontSize: '0.82rem',
+                  transition: 'all 0.15s ease',
+                  border: isSelected ? '1.5px solid transparent' : '1px solid #CBD5E1',
+                  bgcolor: isSelected ? tab.activeBg : tab.bgColor,
+                  color: isSelected ? tab.activeColor : tab.color,
+                  boxShadow: isSelected ? '0 3px 10px rgba(0,0,0,0.14)' : 'none',
+                  '&:hover': {
+                    bgcolor: isSelected ? tab.activeBg : '#E2E8F0',
+                  },
+                }}
+              >
+                {tab.label}
+                <Chip
+                  label={tab.count}
+                  size="small"
+                  sx={{
+                    ml: 1,
+                    height: 20,
+                    fontSize: '0.7rem',
+                    fontWeight: 900,
+                    bgcolor: isSelected ? 'rgba(255,255,255,0.25)' : '#FFFFFF',
+                    color: isSelected ? '#FFFFFF' : tab.color,
+                    border: isSelected ? 'none' : '1px solid #E2E8F0',
+                  }}
+                />
+              </Button>
+            )
+          })}
+        </Stack>
+      </Paper>
+
       {/* ─── 5. Schemes Grid ──────────────────────────────────────────────── */}
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', py: 10, gap: 2 }}>
@@ -1720,25 +1928,36 @@ export const SchemesDashboard: React.FC = () => {
             Loading statutory schemes & policy circulars...
           </Typography>
         </Box>
-      ) : scoredSchemes.length === 0 ? (
+      ) : finalFilteredSchemes.length === 0 ? (
         <Card sx={{ bgcolor: '#FFFFFF', p: 5, textAlign: 'center', borderRadius: '14px', border: '1px solid #E2E8F0', boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)' }}>
           <Typography variant="h6" sx={{ color: '#0F172A', fontWeight: 700 }}>
-            No schemes matched your exact filters or search query.
+            No schemes found under the "{eligibilityFilter === 'eligible' ? 'Fully Eligible' : eligibilityFilter === 'near' ? 'Near-Eligible' : eligibilityFilter === 'gap' ? 'Document Gaps' : 'Selected'}" tab.
           </Typography>
           <Typography variant="body2" sx={{ color: '#64748B', mt: 1, maxWidth: 600, mx: 'auto' }}>
-            Try resetting filters or searching with terms like "Gujarat", "Assam", "Organic", "Loan", "Coffee", "PMEGP", or "Subsidy".
+            {eligibilityFilter === 'eligible'
+              ? `You currently have ${userHeldDocs.length} documents in your dossier. Add 1-2 more documents to unlock near-eligible schemes, or switch to All Schemes.`
+              : 'Try selecting a different filter tab or updating your document checklist.'}
           </Typography>
-          <Button
-            variant="contained"
-            onClick={handleClearAllFilters}
-            sx={{ mt: 3, bgcolor: '#0F2E59', textTransform: 'none', fontWeight: 700, borderRadius: '8px', px: 3, '&:hover': { bgcolor: '#0A1E3A' } }}
-          >
-            Reset All Filters
-          </Button>
+          <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ mt: 3 }}>
+            <Button
+              variant="outlined"
+              onClick={() => setEligibilityFilter('all')}
+              sx={{ color: '#0F2E59', borderColor: '#0F2E59', textTransform: 'none', fontWeight: 700, borderRadius: '8px', px: 2.5 }}
+            >
+              Show All Schemes ({eligibilityCounts.all})
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setDocumentVaultModalOpen(true)}
+              sx={{ bgcolor: '#0F2E59', textTransform: 'none', fontWeight: 700, borderRadius: '8px', px: 2.5, '&:hover': { bgcolor: '#0A1E3A' } }}
+            >
+              Update Document Checklist
+            </Button>
+          </Stack>
         </Card>
       ) : (
         <Grid container spacing={2.5}>
-          {scoredSchemes.map(({ scheme, matchScore, isRecommended }) => (
+          {finalFilteredSchemes.map(({ scheme, matchScore, isRecommended }) => (
             <Grid item xs={12} md={6} key={scheme.id || scheme.scheme_code}>
               <SchemeCardItem
                 scheme={scheme}
@@ -1748,6 +1967,7 @@ export const SchemesDashboard: React.FC = () => {
                 userHeldDocs={userHeldDocs}
                 onOpenGapReport={handleOpenGapReport}
                 onNavigate={handleNavigateScheme}
+                onToggleHeldDoc={handleToggleHeldDoc}
               />
             </Grid>
           ))}
@@ -1958,6 +2178,33 @@ export const SchemesDashboard: React.FC = () => {
                             <Typography variant="caption" sx={{ color: '#DC2626', display: 'block', mt: 0.5, fontWeight: 700, fontSize: '0.72rem' }}>
                               How to acquire: {doc.guidance}
                             </Typography>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1, pt: 0.8, borderTop: '1px dashed #FECDD3' }}>
+                              <Typography variant="caption" sx={{ color: '#991B1B', fontWeight: 700, fontSize: '0.71rem' }}>
+                                Add this document to satisfy scheme eligibility
+                              </Typography>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => {
+                                  handleToggleHeldDoc(doc.id)
+                                  toast.success(`Added "${doc.name}" to your firm dossier! Scheme readiness updated.`)
+                                }}
+                                sx={{
+                                  bgcolor: '#059669',
+                                  color: '#FFFFFF',
+                                  fontWeight: 700,
+                                  fontSize: '0.7rem',
+                                  textTransform: 'none',
+                                  borderRadius: '6px',
+                                  py: 0.3,
+                                  px: 1.2,
+                                  boxShadow: 'none',
+                                  '&:hover': { bgcolor: '#047857' },
+                                }}
+                              >
+                                + I Have Acquired This
+                              </Button>
+                            </Stack>
                           </Box>
                         ))}
                       </Stack>

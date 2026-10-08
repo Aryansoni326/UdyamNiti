@@ -16,6 +16,21 @@ import {
   Divider,
   TextField,
   InputAdornment,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Tooltip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import SearchIcon from '@mui/icons-material/Search'
@@ -26,7 +41,14 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { ALL_OFFICIAL_SCHEMES } from '../data/officialSchemes'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import CloseIcon from '@mui/icons-material/Close'
+import ViewModuleIcon from '@mui/icons-material/ViewModule'
+import ViewListIcon from '@mui/icons-material/ViewList'
+import StorageIcon from '@mui/icons-material/Storage'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { ALL_OFFICIAL_SCHEMES, OfficialSchemeItem } from '../data/officialSchemes'
 
 export const ResourcesPage: React.FC = () => {
   const navigate = useNavigate()
@@ -36,6 +58,10 @@ export const ResourcesPage: React.FC = () => {
   const [pdfSearch, setPdfSearch] = useState<string>('')
   const [selectedDivision, setSelectedDivision] = useState<string>('all')
   const [selectedState, setSelectedState] = useState<string>('all')
+  const [viewMode, setViewMode] = useState<'grid' | 'database'>('grid')
+
+  // PDF Preview Modal State
+  const [previewScheme, setPreviewScheme] = useState<OfficialSchemeItem | null>(null)
 
   useEffect(() => {
     const tabParam = searchParams.get('tab')
@@ -55,6 +81,7 @@ export const ResourcesPage: React.FC = () => {
       s.pdfFile.toLowerCase().includes(query) ||
       s.ministry.toLowerCase().includes(query) ||
       s.division.toLowerCase().includes(query) ||
+      s.gazette.toLowerCase().includes(query) ||
       s.targetStates.some((st) => st.toLowerCase().includes(query))
 
     const matchesDivision =
@@ -69,6 +96,14 @@ export const ResourcesPage: React.FC = () => {
     return matchesSearch && matchesDivision && matchesState
   })
 
+  const handleOpenPdfPreview = (scheme: OfficialSchemeItem) => {
+    setPreviewScheme(scheme)
+  }
+
+  const handleClosePdfPreview = () => {
+    setPreviewScheme(null)
+  }
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#F8FAFC', pb: 10 }}>
       {/* Header Banner */}
@@ -82,7 +117,7 @@ export const ResourcesPage: React.FC = () => {
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
-          <Stack spacing={1.5} sx={{ maxWidth: 900 }}>
+          <Stack spacing={1.5} sx={{ maxWidth: 960 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               <Chip
                 icon={<MenuBookIcon sx={{ color: '#A7F3D0 !important', fontSize: '15px !important' }} />}
@@ -96,7 +131,8 @@ export const ResourcesPage: React.FC = () => {
                 }}
               />
               <Chip
-                label={`${ALL_OFFICIAL_SCHEMES.length} Verified Gazette Guidelines`}
+                icon={<StorageIcon sx={{ color: '#FDE047 !important', fontSize: '15px !important' }} />}
+                label={`${ALL_OFFICIAL_SCHEMES.length} Scheme Database PDFs`}
                 size="small"
                 sx={{
                   bgcolor: 'rgba(5, 150, 105, 0.25)',
@@ -106,7 +142,7 @@ export const ResourcesPage: React.FC = () => {
                 }}
               />
               <Chip
-                label="5 Departmental Divisions"
+                label="Instant In-App PDF Preview"
                 size="small"
                 sx={{
                   bgcolor: 'rgba(59, 130, 246, 0.25)',
@@ -126,7 +162,7 @@ export const ResourcesPage: React.FC = () => {
                 color: '#FFFFFF',
               }}
             >
-              Statutory Resources & Scheme Guidelines
+              Statutory Resources & Scheme Database PDFs
             </Typography>
 
             <Typography
@@ -137,13 +173,13 @@ export const ResourcesPage: React.FC = () => {
                 lineHeight: 1.6,
               }}
             >
-              Access the complete digital library of Gazette notifications, operational scheme PDFs, statutory Acts, DPR project templates, and Udyam registration manuals archived in the UdyamNiti corpus.
+              Explore and preview the complete digital database of official scheme PDFs, Gazette circulars, statutory Acts, and bank-ready DPR templates archived in the UdyamNiti repository.
             </Typography>
           </Stack>
         </Container>
       </Box>
 
-      {/* Tabs */}
+      {/* Navigation Tabs */}
       <Box sx={{ bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0', position: 'sticky', top: 58, zIndex: 100 }}>
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Tabs
@@ -163,7 +199,7 @@ export const ResourcesPage: React.FC = () => {
               '& .MuiTabs-indicator': { bgcolor: '#059669', height: 3 },
             }}
           >
-            <Tab value="guidelines" label="Scheme Guidelines & Official PDFs" icon={<PictureAsPdfIcon fontSize="small" />} iconPosition="start" />
+            <Tab value="guidelines" label="Scheme PDFs & Guidelines Database" icon={<PictureAsPdfIcon fontSize="small" />} iconPosition="start" />
             <Tab value="acts" label="Statutory Acts & Rules" icon={<GavelIcon fontSize="small" />} iconPosition="start" />
             <Tab value="dpr" label="DPR Templates & Formats" icon={<DescriptionIcon fontSize="small" />} iconPosition="start" />
             <Tab value="udyam" label="Udyam Registration Guide" icon={<VerifiedUserIcon fontSize="small" />} iconPosition="start" />
@@ -172,20 +208,47 @@ export const ResourcesPage: React.FC = () => {
       </Box>
 
       <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 }, mt: 4 }}>
-        {/* TAB 1: GUIDELINES & PDFS */}
+        {/* TAB 1: GUIDELINES & SCHEME PDF DATABASE */}
         {currentTab === 'guidelines' && (
           <Box>
+            {/* Header Controls */}
             <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} sx={{ mb: 2.5, gap: 2 }}>
               <Box>
-                <Typography variant="h5" sx={{ fontWeight: 800, color: '#0F2E59' }}>
-                  Archived Operational Scheme Guidelines ({filteredPdfs.length} of {ALL_OFFICIAL_SCHEMES.length})
+                <Typography variant="h5" sx={{ fontWeight: 800, color: '#0F2E59', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>Official Scheme PDFs Database</span>
+                  <Chip
+                    label={`${filteredPdfs.length} of ${ALL_OFFICIAL_SCHEMES.length} Documents`}
+                    size="small"
+                    sx={{ bgcolor: '#E0F2FE', color: '#0284C7', fontWeight: 800, fontSize: '0.76rem' }}
+                  />
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#64748B' }}>
-                  Official scheme gazettes and policy documents extracted from Central Ministries and State Departments.
+                  Click <strong>"Preview PDF"</strong> on any document below to view the original verified government PDF directly on your screen.
                 </Typography>
               </Box>
 
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="center" sx={{ width: { xs: '100%', md: 'auto' } }}>
+                {/* View Mode Toggle */}
+                <ToggleButtonGroup
+                  value={viewMode}
+                  exclusive
+                  onChange={(_, val) => val && setViewMode(val)}
+                  size="small"
+                  sx={{ bgcolor: '#FFFFFF' }}
+                >
+                  <ToggleButton value="grid" aria-label="grid view" sx={{ px: 1.5 }}>
+                    <Tooltip title="Grid View">
+                      <ViewModuleIcon fontSize="small" />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="database" aria-label="database view" sx={{ px: 1.5 }}>
+                    <Tooltip title="Database Table View">
+                      <ViewListIcon fontSize="small" />
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+
+                {/* State Filter */}
                 <TextField
                   select
                   size="small"
@@ -202,6 +265,7 @@ export const ResourcesPage: React.FC = () => {
                   <MenuItem value="Karnataka">Karnataka</MenuItem>
                 </TextField>
 
+                {/* Search Bar */}
                 <TextField
                   size="small"
                   placeholder="Search PDF, Scheme, Ministry..."
@@ -214,7 +278,7 @@ export const ResourcesPage: React.FC = () => {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ width: { xs: '100%', sm: 260 }, bgcolor: '#FFFFFF', borderRadius: '8px' }}
+                  sx={{ width: { xs: '100%', sm: 280 }, bgcolor: '#FFFFFF', borderRadius: '8px' }}
                 />
               </Stack>
             </Stack>
@@ -248,93 +312,287 @@ export const ResourcesPage: React.FC = () => {
               ))}
             </Stack>
 
-            <Grid container spacing={3}>
-              {filteredPdfs.map((scheme) => (
-                <Grid item xs={12} md={6} lg={4} key={scheme.code}>
-                  <Card
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      borderRadius: '14px',
-                      border: '1.5px solid #E2E8F0',
-                      bgcolor: '#FFFFFF',
-                      p: 1,
-                      transition: 'all 0.2s ease',
-                      '&:hover': { borderColor: '#059669', transform: 'translateY(-3px)', boxShadow: '0 8px 24px rgba(0,0,0,0.06)' },
-                    }}
-                  >
-                    <CardContent sx={{ p: 2.5 }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
-                        <Stack direction="row" spacing={0.5} alignItems="center">
-                          <Chip
-                            icon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#DC2626 !important' }} />}
-                            label={scheme.level === 'state_gujarat' ? 'Gujarat State' : scheme.level === 'state' ? 'State Scheme' : 'Central'}
-                            size="small"
-                            sx={{
-                              bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#FEF2F2',
-                              color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#991B1B',
-                              fontWeight: 800,
-                              fontSize: '0.7rem',
-                            }}
-                          />
+            {/* VIEW MODE: DATABASE TABLE */}
+            {viewMode === 'database' && (
+              <TableContainer component={Paper} sx={{ borderRadius: '14px', border: '1px solid #E2E8F0', mb: 4, boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+                <Table sx={{ minWidth: 800 }}>
+                  <TableHead sx={{ bgcolor: '#0F2E59' }}>
+                    <TableRow>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800, width: 60 }}>#</TableCell>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800 }}>Scheme / Policy Name</TableCell>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800 }}>Ministry / Division</TableCell>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800 }}>PDF Document Name</TableCell>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800 }}>Max Benefit</TableCell>
+                      <TableCell sx={{ color: '#FFFFFF', fontWeight: 800, textAlign: 'center', width: 220 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredPdfs.map((scheme, idx) => (
+                      <TableRow key={scheme.code} hover sx={{ '&:nth-of-type(even)': { bgcolor: '#F8FAFC' } }}>
+                        <TableCell sx={{ fontWeight: 700, color: '#64748B' }}>{idx + 1}</TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                            {scheme.name}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.3 }}>
+                            Gazette: {scheme.gazette}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
+                            {scheme.ministry}
+                          </Typography>
                           <Chip
                             label={scheme.division}
                             size="small"
-                            sx={{
-                              bgcolor: '#F1F5F9',
-                              color: '#334155',
-                              fontWeight: 700,
-                              fontSize: '0.68rem',
-                            }}
+                            sx={{ mt: 0.5, bgcolor: '#F1F5F9', color: '#475569', fontSize: '0.68rem', fontWeight: 700 }}
                           />
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                            <PictureAsPdfIcon sx={{ color: '#DC2626', fontSize: 18 }} />
+                            <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#334155' }}>
+                              {scheme.pdfFile}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 800, color: scheme.categoryColor }}>
+                            {scheme.maxBenefit}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'center' }}>
+                          <Stack direction="row" spacing={1} justifyContent="center">
+                            <Button
+                              variant="contained"
+                              size="small"
+                              startIcon={<VisibilityIcon sx={{ fontSize: 16 }} />}
+                              onClick={() => handleOpenPdfPreview(scheme)}
+                              sx={{
+                                bgcolor: '#059669',
+                                color: '#FFFFFF',
+                                fontWeight: 700,
+                                textTransform: 'none',
+                                fontSize: '0.75rem',
+                                py: 0.6,
+                                px: 1.2,
+                                '&:hover': { bgcolor: '#047857' },
+                              }}
+                            >
+                              Preview
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              startIcon={<OpenInNewIcon sx={{ fontSize: 15 }} />}
+                              onClick={() => window.open(`/scheme_pdfs/${encodeURIComponent(scheme.pdfFile)}`, '_blank')}
+                              sx={{
+                                borderColor: '#CBD5E1',
+                                color: '#0F2E59',
+                                fontWeight: 700,
+                                textTransform: 'none',
+                                fontSize: '0.75rem',
+                                py: 0.6,
+                                px: 1,
+                                '&:hover': { bgcolor: '#F1F5F9', borderColor: '#0F2E59' },
+                              }}
+                            >
+                              Open
+                            </Button>
+                            <Button
+                              variant="text"
+                              size="small"
+                              onClick={() => navigate(`/scheme/${scheme.code}`)}
+                              sx={{
+                                color: '#475569',
+                                fontWeight: 700,
+                                textTransform: 'none',
+                                fontSize: '0.75rem',
+                                minWidth: 'auto',
+                                px: 1,
+                              }}
+                            >
+                              Details
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+
+            {/* VIEW MODE: CARDS GRID */}
+            {viewMode === 'grid' && (
+              <Grid container spacing={3}>
+                {filteredPdfs.map((scheme) => (
+                  <Grid item xs={12} md={6} lg={4} key={scheme.code}>
+                    <Card
+                      sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        borderRadius: '14px',
+                        border: '1.5px solid #E2E8F0',
+                        bgcolor: '#FFFFFF',
+                        p: 1,
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          borderColor: '#059669',
+                          transform: 'translateY(-3px)',
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
+                        },
+                      }}
+                    >
+                      <CardContent sx={{ p: 2.5 }}>
+                        {/* Top Badges */}
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
+                          <Stack direction="row" spacing={0.5} alignItems="center">
+                            <Chip
+                              icon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#DC2626 !important' }} />}
+                              label={scheme.level === 'state_gujarat' ? 'Gujarat State' : scheme.level === 'state' ? 'State Scheme' : 'Central'}
+                              size="small"
+                              sx={{
+                                bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#FEF2F2',
+                                color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#991B1B',
+                                fontWeight: 800,
+                                fontSize: '0.7rem',
+                              }}
+                            />
+                            <Chip
+                              label={scheme.division}
+                              size="small"
+                              sx={{
+                                bgcolor: '#F1F5F9',
+                                color: '#334155',
+                                fontWeight: 700,
+                                fontSize: '0.68rem',
+                              }}
+                            />
+                          </Stack>
+                          <Typography variant="caption" sx={{ fontWeight: 800, color: scheme.categoryColor }}>
+                            {scheme.maxBenefit}
+                          </Typography>
                         </Stack>
-                        <Typography variant="caption" sx={{ fontWeight: 800, color: scheme.categoryColor }}>
-                          {scheme.maxBenefit}
+
+                        {/* Title */}
+                        <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '1.05rem', lineHeight: 1.35, mb: 1 }}>
+                          {scheme.name}
                         </Typography>
-                      </Stack>
 
-                      <Typography variant="h6" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '1.05rem', lineHeight: 1.35, mb: 1 }}>
-                        {scheme.name}
-                      </Typography>
-
-                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 1.5, fontWeight: 600 }}>
-                        {scheme.ministry}
-                      </Typography>
-
-                      <Paper sx={{ p: 1.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', mb: 2 }}>
-                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                          Gazette / Circular Reference:
+                        {/* Ministry */}
+                        <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 1.5, fontWeight: 600 }}>
+                          {scheme.ministry}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 600, display: 'block' }}>
-                          {scheme.gazette}
-                        </Typography>
-                      </Paper>
 
-                      <Paper sx={{ p: 1.2, bgcolor: '#F1F5F9', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PictureAsPdfIcon sx={{ fontSize: 16, color: '#DC2626' }} />
-                        <Typography variant="caption" sx={{ color: '#475569', fontWeight: 700, fontFamily: 'monospace' }} noWrap>
-                          {scheme.pdfFile}
-                        </Typography>
-                      </Paper>
-                    </CardContent>
+                        {/* Gazette Reference */}
+                        <Paper sx={{ p: 1.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', mb: 2 }}>
+                          <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                            Gazette / Circular Reference:
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#334155', fontWeight: 600, display: 'block' }}>
+                            {scheme.gazette}
+                          </Typography>
+                        </Paper>
 
-                    <Box sx={{ p: 2, pt: 0 }}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        onClick={() => navigate(`/scheme/${scheme.code}`)}
-                        endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important' }} />}
-                        sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 700, textTransform: 'none', borderRadius: '8px', py: 0.9 }}
-                      >
-                        Read Guidelines & Criteria
-                      </Button>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                        {/* PDF File Pill with Clickable Preview */}
+                        <Paper
+                          onClick={() => handleOpenPdfPreview(scheme)}
+                          sx={{
+                            p: 1.2,
+                            bgcolor: '#FEF2F2',
+                            border: '1px solid #FEE2E2',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                            '&:hover': { bgcolor: '#FEE2E2', borderColor: '#FCA5A5' },
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflow: 'hidden' }}>
+                            <PictureAsPdfIcon sx={{ fontSize: 18, color: '#DC2626', flexShrink: 0 }} />
+                            <Typography variant="caption" sx={{ color: '#991B1B', fontWeight: 700, fontFamily: 'monospace' }} noWrap>
+                              {scheme.pdfFile}
+                            </Typography>
+                          </Box>
+                          <Chip
+                            label="Click to Preview"
+                            size="small"
+                            sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700, bgcolor: '#DC2626', color: '#FFFFFF', flexShrink: 0 }}
+                          />
+                        </Paper>
+                      </CardContent>
+
+                      {/* Card Actions */}
+                      <Box sx={{ p: 2, pt: 0 }}>
+                        <Stack spacing={1}>
+                          <Stack direction="row" spacing={1}>
+                            <Button
+                              fullWidth
+                              variant="contained"
+                              startIcon={<VisibilityIcon sx={{ fontSize: '16px !important' }} />}
+                              onClick={() => handleOpenPdfPreview(scheme)}
+                              sx={{
+                                bgcolor: '#059669',
+                                color: '#FFFFFF',
+                                fontWeight: 700,
+                                textTransform: 'none',
+                                borderRadius: '8px',
+                                py: 0.85,
+                                fontSize: '0.85rem',
+                                '&:hover': { bgcolor: '#047857' },
+                              }}
+                            >
+                              Preview PDF
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => window.open(`/scheme_pdfs/${encodeURIComponent(scheme.pdfFile)}`, '_blank')}
+                              startIcon={<OpenInNewIcon sx={{ fontSize: '15px !important' }} />}
+                              sx={{
+                                borderColor: '#CBD5E1',
+                                color: '#0F2E59',
+                                fontWeight: 700,
+                                textTransform: 'none',
+                                borderRadius: '8px',
+                                py: 0.85,
+                                fontSize: '0.82rem',
+                                px: 2,
+                                whiteSpace: 'nowrap',
+                                '&:hover': { bgcolor: '#F1F5F9', borderColor: '#0F2E59' },
+                              }}
+                            >
+                              Open Tab
+                            </Button>
+                          </Stack>
+
+                          <Button
+                            fullWidth
+                            variant="text"
+                            onClick={() => navigate(`/scheme/${scheme.code}`)}
+                            endIcon={<ArrowForwardIcon sx={{ fontSize: '14px !important' }} />}
+                            sx={{
+                              color: '#0F2E59',
+                              fontWeight: 700,
+                              textTransform: 'none',
+                              fontSize: '0.82rem',
+                              py: 0.5,
+                              '&:hover': { bgcolor: '#F8FAFC' },
+                            }}
+                          >
+                            Read Eligibility & Criteria →
+                          </Button>
+                        </Stack>
+                      </Box>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Box>
         )}
 
@@ -491,6 +749,199 @@ export const ResourcesPage: React.FC = () => {
           </Paper>
         )}
       </Container>
+
+      {/* ─── IN-APP PDF PREVIEW DIALOG ─── */}
+      <Dialog
+        open={Boolean(previewScheme)}
+        onClose={handleClosePdfPreview}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            bgcolor: '#FFFFFF',
+            overflow: 'hidden',
+            maxHeight: '94vh',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        }}
+      >
+        {previewScheme && (
+          <>
+            {/* Dialog Header */}
+            <DialogTitle
+              sx={{
+                bgcolor: '#0F2E59',
+                color: '#FFFFFF',
+                py: 2,
+                px: 3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, overflow: 'hidden', mr: 2 }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '8px',
+                    bgcolor: 'rgba(255,255,255,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <PictureAsPdfIcon sx={{ color: '#FCA5A5', fontSize: 22 }} />
+                </Box>
+                <Box sx={{ overflow: 'hidden' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.05rem', color: '#FFFFFF', lineHeight: 1.2 }} noWrap>
+                    {previewScheme.name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#93C5FD', display: 'block' }} noWrap>
+                    {previewScheme.gazette} • {previewScheme.ministry}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Stack direction="row" spacing={1} alignItems="center" flexShrink={0}>
+                <Tooltip title="Open PDF in dedicated browser tab">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
+                    onClick={() => window.open(`/scheme_pdfs/${encodeURIComponent(previewScheme.pdfFile)}`, '_blank')}
+                    sx={{
+                      color: '#FFFFFF',
+                      borderColor: 'rgba(255,255,255,0.3)',
+                      fontWeight: 700,
+                      textTransform: 'none',
+                      fontSize: '0.8rem',
+                      display: { xs: 'none', sm: 'inline-flex' },
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', borderColor: '#FFFFFF' },
+                    }}
+                  >
+                    Open Tab
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="Download original PDF">
+                  <IconButton
+                    component="a"
+                    href={`/scheme_pdfs/${encodeURIComponent(previewScheme.pdfFile)}`}
+                    download={previewScheme.pdfFile}
+                    sx={{ color: '#FFFFFF', bgcolor: 'rgba(255,255,255,0.15)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
+                    size="small"
+                  >
+                    <FileDownloadIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+
+                <IconButton
+                  onClick={handleClosePdfPreview}
+                  sx={{ color: '#FFFFFF', bgcolor: 'rgba(255,255,255,0.15)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
+                  size="small"
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            </DialogTitle>
+
+            {/* Sub-bar with details */}
+            <Box sx={{ bgcolor: '#F1F5F9', px: 3, py: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, borderBottom: '1px solid #E2E8F0' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 700, color: '#475569' }}>
+                  Document File:
+                </Typography>
+                <Chip
+                  label={previewScheme.pdfFile}
+                  size="small"
+                  sx={{ bgcolor: '#FFFFFF', border: '1px solid #CBD5E1', fontFamily: 'monospace', fontWeight: 700, fontSize: '0.72rem' }}
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 700, color: '#475569' }}>
+                  Division:
+                </Typography>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0F2E59' }}>
+                  {previewScheme.division}
+                </Typography>
+                <Divider orientation="vertical" flexItem sx={{ mx: 0.5, height: 14 }} />
+                <Typography variant="caption" sx={{ fontWeight: 700, color: '#475569' }}>
+                  Max Support:
+                </Typography>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: previewScheme.categoryColor }}>
+                  {previewScheme.maxBenefit}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* PDF Viewer Iframe */}
+            <DialogContent sx={{ p: 0, bgcolor: '#475569', flex: 1, overflow: 'hidden', minHeight: { xs: 450, md: 620 } }}>
+              <iframe
+                src={`/scheme_pdfs/${encodeURIComponent(previewScheme.pdfFile)}`}
+                title={previewScheme.name}
+                width="100%"
+                height="100%"
+                style={{
+                  border: 'none',
+                  minHeight: '620px',
+                  display: 'block',
+                  backgroundColor: '#525659',
+                }}
+              />
+            </DialogContent>
+
+            {/* Dialog Footer Actions */}
+            <DialogActions sx={{ p: 2, px: 3, bgcolor: '#FFFFFF', borderTop: '1px solid #E2E8F0', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InfoOutlinedIcon sx={{ color: '#059669', fontSize: 18 }} />
+                <Typography variant="caption" sx={{ color: '#475569' }}>
+                  Verified government Gazette guideline stored in the UdyamNiti corpus database.
+                </Typography>
+              </Box>
+
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    handleClosePdfPreview()
+                    navigate(`/scheme/${previewScheme.code}`)
+                  }}
+                  sx={{
+                    borderColor: '#0F2E59',
+                    color: '#0F2E59',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  View Scheme Breakdown & Eligibility
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleClosePdfPreview}
+                  sx={{
+                    bgcolor: '#0F2E59',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.85rem',
+                    '&:hover': { bgcolor: '#0A1E3A' },
+                  }}
+                >
+                  Close Preview
+                </Button>
+              </Stack>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </Box>
   )
 }

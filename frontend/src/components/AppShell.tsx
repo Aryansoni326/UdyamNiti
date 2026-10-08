@@ -75,6 +75,7 @@ import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
 import { useLanguage, Language, LANGUAGE_LABELS } from '../i18n'
 import langIconImg from '../assets/lang_icon.png'
+import { FindBenefitsAiModal } from './FindBenefitsAiModal'
 
 export const AppShell: React.FC = () => {
   const navigate = useNavigate()
@@ -94,9 +95,10 @@ export const AppShell: React.FC = () => {
   const [updatesAnchor, setUpdatesAnchor] = useState<null | HTMLElement>(null)
   const [supportAnchor, setSupportAnchor] = useState<null | HTMLElement>(null)
 
-  // Search Modal
+  // Search & AI Modals
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [aiModalOpen, setAiModalOpen] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('udyamniti_user')
@@ -622,90 +624,28 @@ export const AppShell: React.FC = () => {
                 ))}
               </Menu>
 
-              {/* 3. Schemes & Benefits ▾ */}
+              {/* 3. Schemes & Benefits (Direct navigation to Scheme Dashboard) */}
               <Button
-                onClick={(e) => setSchemesAnchor(e.currentTarget)}
-                endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 17 }} />}
+                onClick={() => {
+                  closeAllMenus()
+                  navigate('/dashboard')
+                }}
                 sx={{
                   height: '100%',
                   px: 2,
-                  color: '#1E293B',
+                  color: location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/scheme') ? '#0F2E59' : '#1E293B',
                   fontWeight: 700,
                   fontSize: '0.92rem',
                   textTransform: 'none',
                   borderRadius: 0,
                   borderRight: '1px solid #F1F5F9',
+                  borderBottom: location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/scheme') ? '3px solid #0F2E59' : 'none',
+                  bgcolor: location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/scheme') ? '#F8FAFC' : 'transparent',
                   '&:hover': { bgcolor: '#F8FAFC', color: '#0F2E59' },
                 }}
               >
                 {t('schemesAndBenefits')}
               </Button>
-              <Menu
-                anchorEl={schemesAnchor}
-                open={Boolean(schemesAnchor)}
-                onClose={() => setSchemesAnchor(null)}
-                PaperProps={{
-                  sx: {
-                    mt: 1,
-                    minWidth: 320,
-                    borderRadius: '10px',
-                    boxShadow: '0 10px 30px rgba(15, 23, 42, 0.14)',
-                    border: '1px solid #E2E8F0',
-                    py: 1,
-                  },
-                }}
-              >
-                <MenuItem
-                  onClick={() => { closeAllMenus(); navigate('/dashboard'); }}
-                  sx={{ py: 1.2, px: 2, bgcolor: '#F8FAFC' }}
-                >
-                  <ListItemIcon sx={{ minWidth: 32, color: '#0F2E59' }}>
-                    <GridViewIcon fontSize="small" />
-                  </ListItemIcon>
-                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F2E59' }}>
-                    {t('exploreAllSchemes')}
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => { closeAllMenus(); navigate('/onboard'); }}
-                  sx={{ py: 1.2, px: 2, bgcolor: '#FEF3C7' }}
-                >
-                  <ListItemIcon sx={{ minWidth: 32, color: '#B45309' }}>
-                    <StarBorderIcon fontSize="small" />
-                  </ListItemIcon>
-                  <Typography variant="body2" sx={{ fontWeight: 800, color: '#B45309' }}>
-                    {t('findSchemesForMyBusiness')}
-                  </Typography>
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                {[
-                  { label: t('creditAndFinance'), category: 'credit_guarantee', icon: <MonetizationOnOutlinedIcon fontSize="small" sx={{ color: '#059669' }} /> },
-                  { label: t('subsidiesAndIncentives'), category: 'capital_subsidy', icon: <AssessmentIcon fontSize="small" sx={{ color: '#D97706' }} /> },
-                  { label: t('technologyAndInnovation'), category: 'quality_certification', icon: <BuildCircleOutlinedIcon fontSize="small" sx={{ color: '#2563EB' }} /> },
-                  { label: t('skillDevelopment'), category: 'skill_development', icon: <SchoolOutlinedIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
-                  { label: t('marketingSupport'), category: 'market_development', icon: <StorefrontOutlinedIcon fontSize="small" sx={{ color: '#CA8A04' }} /> },
-                  { label: t('exportSupport'), category: 'export_support', icon: <FlightTakeoffOutlinedIcon fontSize="small" sx={{ color: '#EA580C' }} /> },
-                  { label: t('infrastructureAndClusters'), category: 'infrastructure', icon: <ApartmentOutlinedIcon fontSize="small" sx={{ color: '#0891B2' }} /> },
-                  { label: t('womenEntrepreneurs'), persona: 'women', icon: <FemaleIcon fontSize="small" sx={{ color: '#DB2777' }} /> },
-                  { label: t('scstEntrepreneurs'), persona: 'sc_st', icon: <GroupIcon fontSize="small" sx={{ color: '#9333EA' }} /> },
-                  { label: t('startupAndEntrepreneurship'), persona: 'startup', icon: <RocketLaunchOutlinedIcon fontSize="small" sx={{ color: '#4F46E5' }} /> },
-                ].map((item, idx) => (
-                  <MenuItem
-                    key={idx}
-                    onClick={() => {
-                      closeAllMenus()
-                      if (item.category) navigate(`/dashboard?category=${item.category}`)
-                      else if (item.persona) navigate(`/dashboard?persona=${item.persona}`)
-                    }}
-                    sx={{ py: 0.9, px: 2 }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32 }}>{item.icon}</ListItemIcon>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
-                      {item.label}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
 
               {/* 4. Resources ▾ */}
               <Button
@@ -971,12 +911,12 @@ export const AppShell: React.FC = () => {
                 {t('search')}
               </Button>
 
-              {/* ✨ Prominent "Find Benefits for My Business" Button */}
+              {/* ✨ Prominent "Find Benefits for My Business" Button with Gemini AI */}
               <Button
                 variant="contained"
                 size="small"
                 startIcon={<AutoAwesomeIcon sx={{ fontSize: 17, color: '#FEF08A' }} />}
-                onClick={() => navigate('/onboard')}
+                onClick={() => setAiModalOpen(true)}
                 sx={{
                   background: 'linear-gradient(135deg, #E65100 0%, #EA580C 100%)',
                   color: '#FFFFFF',
@@ -1168,7 +1108,7 @@ export const AppShell: React.FC = () => {
           fullWidth
           variant="contained"
           startIcon={<AutoAwesomeIcon sx={{ color: '#FEF08A' }} />}
-          onClick={() => { closeAllMenus(); navigate('/onboard'); }}
+          onClick={() => { closeAllMenus(); setAiModalOpen(true); }}
           sx={{
             mb: 2,
             background: 'linear-gradient(135deg, #E65100 0%, #EA580C 100%)',
@@ -1268,6 +1208,12 @@ export const AppShell: React.FC = () => {
           </Container>
         </Box>
       )}
+
+      {/* ─── 5. GEMINI AI NATURAL LANGUAGE SCHEME FINDER MODAL ─── */}
+      <FindBenefitsAiModal
+        open={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+      />
     </Box>
   )
 }
