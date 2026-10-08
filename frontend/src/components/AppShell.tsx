@@ -603,7 +603,6 @@ export const AppShell: React.FC = () => {
                   { tab: 'divisions', label: t('divisions'), icon: <BusinessCenterIcon fontSize="small" sx={{ color: '#7C3AED' }} /> },
                   { tab: 'bodies', label: t('organisations'), icon: <AccountBalanceIcon fontSize="small" sx={{ color: '#D97706' }} /> },
                   { tab: 'about', label: t('rolesAndResponsibilities'), icon: <AssessmentIcon fontSize="small" sx={{ color: '#0891B2' }} /> },
-                  { tab: 'stats', label: t('msmeOverview'), icon: <ArticleIcon fontSize="small" sx={{ color: '#DC2626' }} /> },
                   { tab: 'directory', label: t('ministryDirectory'), icon: <ContactPhoneIcon fontSize="small" sx={{ color: '#4B5563' }} /> },
                 ].map((item, idx) => (
                   <MenuItem
@@ -768,11 +767,9 @@ export const AppShell: React.FC = () => {
                 <Divider sx={{ my: 0.5 }} />
                 {[
                   { tab: 'acts', label: t('actsAndRules') },
-                  { tab: 'guidelines', label: t('policies') },
                   { route: '/updates?tab=circulars', label: t('notifications') },
                   { route: '/updates?tab=circulars', label: t('circularsAndOrders') },
                   { route: '/ministry?tab=overview', label: t('reports') },
-                  { tab: 'guidelines', label: t('publications') },
                   { tab: 'dpr', label: t('formsAndTemplates') },
                   { route: '/support?tab=faqs', label: t('faqs') },
                 ].map((item, idx) => (
