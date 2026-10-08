@@ -156,6 +156,7 @@ export const apiClient = {
   // Google OAuth Login
   googleLogin: (data: { email: string; name?: string; picture?: string; google_id?: string }) =>
     api.post('/auth/google/', data),
+  getGoogleConfig: () => api.get<{ client_id: string }>('/auth/google/config/'),
 
   // Profiles
   getProfiles: () => api.get<{ results: BusinessProfile[] }>('/profiles/'),

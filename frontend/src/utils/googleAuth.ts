@@ -63,10 +63,38 @@ export const getGoogleClientId = (): string => {
 }
 
 /**
+ * Checks backend API config for Google Client ID
+ */
+export const fetchBackendGoogleClientId = async (): Promise<string> => {
+  try {
+    const res = await fetch('/api/v1/auth/google/config/')
+    if (res.ok) {
+      const data = await res.json()
+      if (data?.client_id && typeof data.client_id === 'string' && data.client_id.trim()) {
+        const id = data.client_id.trim()
+        localStorage.setItem('udyamniti_google_client_id', id)
+        return id
+      }
+    }
+  } catch {
+    // Silent fallback
+  }
+  return ''
+}
+
+/**
  * Triggers Google OAuth2 popup and retrieves verified user profile
  */
-export const initiateGoogleSignIn = async (customClientId?: string): Promise<GoogleUserProfile> => {
-  const clientId = (customClientId || getGoogleClientId()).trim()
+export const initiateGoogleSignIn = async (customClientId?: unknown): Promise<GoogleUserProfile> => {
+  let clientId = ''
+  if (typeof customClientId === 'string' && customClientId.trim()) {
+    clientId = customClientId.trim()
+  } else {
+    clientId = getGoogleClientId()
+    if (!clientId) {
+      clientId = await fetchBackendGoogleClientId()
+    }
+  }
 
   if (!clientId || clientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
     throw new Error('MISSING_CLIENT_ID')
@@ -112,11 +140,14 @@ export const initiateGoogleSignIn = async (customClientId?: string): Promise<Goo
             reject(fetchError)
           }
         },
+        error_callback: (error: any) => {
+          reject(new Error(error?.message || error?.type || 'Google Sign-In popup closed or cancelled.'))
+        },
       })
 
       // Open Google OAuth consent popup
       tokenClient.requestAccessToken({ prompt: 'consent' })
-    } catch (err) {
+    } catch (err: any) {
       reject(err)
     }
   })

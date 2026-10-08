@@ -238,14 +238,18 @@ def google_auth_view(request):
     csrf_token = get_token(request)
 
     # Log security audit event
-    SecurityAuditLog.objects.create(
-        user=user,
-        action=AuditAction.LOGIN,
-        ip_address=request.META.get('REMOTE_ADDR', '127.0.0.1'),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')[:255],
-        status_code=200,
-        metadata={'auth_provider': 'google_oauth', 'google_id': google_id}
-    )
+    try:
+        SecurityAuditLog.objects.create(
+            user=user,
+            actor_username=user.username,
+            action=AuditAction.LOGIN_SUCCESS,
+            ip_address=request.META.get('REMOTE_ADDR', '127.0.0.1'),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')[:255],
+            status='SUCCESS',
+            details={'auth_provider': 'google_oauth', 'google_id': google_id}
+        )
+    except Exception:
+        pass
 
     return Response({
         'user': UserDetailSerializer(user).data,
@@ -254,14 +258,32 @@ def google_auth_view(request):
     }, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def google_config_view(request):
+    """
+    Returns public Google OAuth Client ID for frontend GIS initialization.
+    """
+    from django.conf import settings
+    import os
+    client_id = (
+        getattr(settings, 'GOOGLE_CLIENT_ID', '')
+        or os.environ.get('GOOGLE_CLIENT_ID', '')
+        or os.environ.get('VITE_GOOGLE_CLIENT_ID', '')
+    )
+    return Response({'client_id': client_id or ''})
+
+
 urlpatterns = [
     path('auth/login/', login_view, name='login'),
     path('auth/logout/', logout_view, name='logout'),
     path('auth/register/', register_view, name='register'),
     path('auth/google/', google_auth_view, name='google_auth'),
+    path('auth/google/config/', google_config_view, name='google_config'),
     path('auth/me/', me_view, name='me'),
     path('auth/csrf/', csrf_token_view, name='csrf'),
     path('auth/demo/', demo_login, name='demo_login'),
     path('auth/audit-logs/', security_audit_logs_view, name='security_audit_logs'),
     path('health/', health_check, name='health_check'),
 ]
+

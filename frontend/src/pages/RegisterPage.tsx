@@ -36,9 +36,8 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
-import { initiateGoogleSignIn } from '../utils/googleAuth'
+import { initiateGoogleSignIn, getGoogleClientId } from '../utils/googleAuth'
 import { apiClient } from '../api/client'
 
 // Official Google Logo SVG
@@ -164,13 +163,14 @@ export const RegisterPage: React.FC = () => {
   }
 
   const [clientIdModalOpen, setClientIdModalOpen] = useState(false)
-  const [manualClientId, setManualClientId] = useState('')
+  const [manualClientId, setManualClientId] = useState(() => getGoogleClientId())
 
   // Real Google Sign Up (OAuth 2.0 via Google Identity Services)
-  const handleGoogleOneClick = async (customId?: string) => {
+  const handleGoogleOneClick = async (customId?: unknown) => {
     setLoading(true)
     try {
-      const profile = await initiateGoogleSignIn(customId)
+      const cleanId = typeof customId === 'string' && customId.trim() ? customId.trim() : undefined
+      const profile = await initiateGoogleSignIn(cleanId)
 
       // Synchronize with Django backend session
       try {
@@ -313,7 +313,7 @@ export const RegisterPage: React.FC = () => {
             <Button
               fullWidth
               variant="outlined"
-              onClick={handleGoogleOneClick}
+              onClick={() => handleGoogleOneClick()}
               disabled={loading}
               sx={{
                 bgcolor: '#FFFFFF',

@@ -33,7 +33,7 @@ import FlashOnIcon from '@mui/icons-material/FlashOn'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
-import { initiateGoogleSignIn } from '../utils/googleAuth'
+import { initiateGoogleSignIn, getGoogleClientId } from '../utils/googleAuth'
 import { apiClient } from '../api/client'
 
 // Official Google Logo SVG matching RegisterPage
@@ -184,13 +184,14 @@ export const LoginPage: React.FC = () => {
   }
 
   const [clientIdModalOpen, setClientIdModalOpen] = useState(false)
-  const [manualClientId, setManualClientId] = useState('')
+  const [manualClientId, setManualClientId] = useState(() => getGoogleClientId())
 
   // Real Google Sign In (OAuth 2.0 via Google Identity Services)
-  const handleGoogleOneClick = async (customId?: string) => {
+  const handleGoogleOneClick = async (customId?: unknown) => {
     setLoading(true)
     try {
-      const profile = await initiateGoogleSignIn(customId)
+      const cleanId = typeof customId === 'string' && customId.trim() ? customId.trim() : undefined
+      const profile = await initiateGoogleSignIn(cleanId)
 
       // Synchronize with Django backend session
       try {
@@ -304,7 +305,7 @@ export const LoginPage: React.FC = () => {
             <Button
               fullWidth
               variant="outlined"
-              onClick={handleGoogleOneClick}
+              onClick={() => handleGoogleOneClick()}
               disabled={loading}
               sx={{
                 bgcolor: '#FFFFFF',
