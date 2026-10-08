@@ -131,11 +131,15 @@ export const AppShell: React.FC = () => {
     setMobileOpen(false)
   }
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!searchQuery.trim()) return
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    const query = searchQuery.trim()
     setSearchOpen(false)
-    navigate(`/dashboard?search=${encodeURIComponent(searchQuery.trim())}`)
+    if (query) {
+      navigate(`/dashboard?search=${encodeURIComponent(query)}`)
+    } else {
+      navigate('/dashboard')
+    }
   }
 
   return (
@@ -663,7 +667,7 @@ export const AppShell: React.FC = () => {
                   </Typography>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => { closeAllMenus(); navigate('/dashboard?mode=finder'); }}
+                  onClick={() => { closeAllMenus(); navigate('/onboard'); }}
                   sx={{ py: 1.2, px: 2, bgcolor: '#FEF3C7' }}
                 >
                   <ListItemIcon sx={{ minWidth: 32, color: '#B45309' }}>
@@ -972,7 +976,7 @@ export const AppShell: React.FC = () => {
                 variant="contained"
                 size="small"
                 startIcon={<AutoAwesomeIcon sx={{ fontSize: 17, color: '#FEF08A' }} />}
-                onClick={() => navigate('/dashboard?mode=finder')}
+                onClick={() => navigate('/onboard')}
                 sx={{
                   background: 'linear-gradient(135deg, #E65100 0%, #EA580C 100%)',
                   color: '#FFFFFF',
@@ -1003,13 +1007,45 @@ export const AppShell: React.FC = () => {
       </Box>
       )}
 
-      {/* ─── 3. SEARCH MODAL ─── */}
-      <Dialog open={searchOpen} onClose={() => setSearchOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ bgcolor: '#0F2E59', color: '#FFFFFF', fontWeight: 800 }}>
-          Search MSME Schemes & Benefits
+      {/* ─── 3. SEARCH MODAL (NO BLUE FOCUS BOX, WORKING SUBMIT BUTTON) ─── */}
+      <Dialog
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(15, 23, 42, 0.25)',
+            border: '1px solid #E2E8F0',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            bgcolor: '#0F2E59',
+            color: '#FFFFFF',
+            fontWeight: 800,
+            py: 2,
+            px: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Stack direction="row" spacing={1.2} alignItems="center">
+            <SearchIcon sx={{ color: '#FEF08A', fontSize: 22 }} />
+            <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.08rem', color: '#FFFFFF' }}>
+              Search MSME Schemes & Benefits
+            </Typography>
+          </Stack>
+          <IconButton onClick={() => setSearchOpen(false)} size="small" sx={{ color: '#94A3B8', '&:hover': { color: '#FFFFFF' } }}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </DialogTitle>
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          <form onSubmit={handleSearchSubmit}>
+        <form onSubmit={handleSearchSubmit}>
+          <DialogContent sx={{ p: 3, bgcolor: '#FFFFFF' }}>
             <TextField
               fullWidth
               autoFocus
@@ -1019,25 +1055,90 @@ export const AppShell: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: '#0F2E59' }} />
+                    <SearchIcon sx={{ color: '#0F2E59', fontSize: 22 }} />
                   </InputAdornment>
                 ),
               }}
-              sx={{ my: 1 }}
+              sx={{
+                my: 1,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  bgcolor: '#FFFFFF',
+                  outline: 'none !important',
+                  boxShadow: 'none !important',
+                  '& fieldset': {
+                    borderColor: '#CBD5E1',
+                    borderWidth: '1.5px',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#0F2E59',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#0F2E59',
+                    borderWidth: '2px',
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  outline: 'none !important',
+                  boxShadow: 'none !important',
+                  border: 'none !important',
+                  fontSize: '0.96rem',
+                  py: 1.4,
+                  '&:focus': {
+                    outline: 'none !important',
+                    boxShadow: 'none !important',
+                    border: 'none !important',
+                  },
+                  '&:focus-visible': {
+                    outline: 'none !important',
+                    boxShadow: 'none !important',
+                    border: 'none !important',
+                  },
+                },
+                '& input': {
+                  outline: 'none !important',
+                  boxShadow: 'none !important',
+                  border: 'none !important',
+                  '&:focus': {
+                    outline: 'none !important',
+                    boxShadow: 'none !important',
+                    border: 'none !important',
+                  },
+                  '&:focus-visible': {
+                    outline: 'none !important',
+                    boxShadow: 'none !important',
+                    border: 'none !important',
+                  },
+                },
+              }}
             />
             <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 1 }}>
               Search across 52+ official schemes & 33 verified guidelines: PMEGP, CGTMSE, Gujarat SER, ZED, TReDS, SFURTI, and more.
             </Typography>
-          </form>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, bgcolor: '#F8FAFC' }}>
-          <Button onClick={() => setSearchOpen(false)} sx={{ color: '#64748B' }}>
-            Cancel
-          </Button>
-          <Button onClick={handleSearchSubmit} variant="contained" sx={{ bgcolor: '#0F2E59' }}>
-            Search Schemes →
-          </Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions sx={{ p: 2, px: 3, bgcolor: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
+            <Button onClick={() => setSearchOpen(false)} sx={{ color: '#64748B', fontWeight: 600, textTransform: 'none' }}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                bgcolor: '#0F2E59',
+                color: '#FFFFFF',
+                fontWeight: 700,
+                px: 3,
+                py: 1,
+                borderRadius: '8px',
+                textTransform: 'none',
+                boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                '&:hover': { bgcolor: '#0A1E3A' },
+              }}
+            >
+              Search Schemes →
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
 
       {/* ─── 4. MOBILE DRAWER MENU ─── */}
@@ -1067,7 +1168,7 @@ export const AppShell: React.FC = () => {
           fullWidth
           variant="contained"
           startIcon={<AutoAwesomeIcon sx={{ color: '#FEF08A' }} />}
-          onClick={() => { closeAllMenus(); navigate('/dashboard?mode=finder'); }}
+          onClick={() => { closeAllMenus(); navigate('/onboard'); }}
           sx={{
             mb: 2,
             background: 'linear-gradient(135deg, #E65100 0%, #EA580C 100%)',

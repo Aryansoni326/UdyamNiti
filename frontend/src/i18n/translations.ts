@@ -86,9 +86,9 @@ export const translations = {
     gu: 'સહાયતા',
   },
   findBenefitsForMyBusiness: {
-    en: '✨ Find Benefits for My Business',
-    hi: '✨ मेरे व्यवसाय के लिए लाभ खोजें',
-    gu: '✨ મારા વ્યવસાય માટે લાભો શોધો',
+    en: 'Find Benefits for My Business',
+    hi: 'मेरे व्यवसाय के लिए लाभ खोजें',
+    gu: 'મારા વ્યવસાય માટે લાભો શોધો',
   },
   searchPlaceholder: {
     en: 'Search schemes, benefits or programs...',
@@ -419,12 +419,7 @@ export const translations = {
     gu: 'અધિકૃત પહેલ - MSME મંત્રાલય, ભારત સરકાર',
   },
 
-  // ─── ANNOUNCEMENTS ──────────────────────────────────────────────────────────
-  announcements: {
-    en: 'Announcements',
-    hi: 'घोषणाएं',
-    gu: 'જાહેરાતો',
-  },
+  // ─── ANNOUNCEMENTS TICKER ──────────────────────────────────────────────────
   announcement1: {
     en: '⚠️ Beware of Fake Sites. For MSME Udyam Registration, visit only official portal udyamregistration.gov.in',
     hi: '⚠️ नकली साइटों से सावधान रहें। MSME उद्यम पंजीकरण के लिए, केवल आधिकारिक पोर्टल udyamregistration.gov.in पर जाएं',

@@ -208,6 +208,11 @@ const FastSearchBar: React.FC<SearchBarProps> = React.memo(({ initialQuery, onSe
                 border: 'none !important',
                 boxShadow: 'none !important',
               },
+              '&:focus-visible': {
+                outline: 'none !important',
+                border: 'none !important',
+                boxShadow: 'none !important',
+              },
             },
             '& input::placeholder': {
               color: '#64748B',
@@ -586,12 +591,13 @@ export const SchemesDashboard: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
 
-  // Sync state if URL query params change (e.g. navigation from Home page categories)
+  // Sync state and immediately fetch if URL query params change (e.g. navigation from navbar search or Home categories)
   useEffect(() => {
     const q = searchParams.get('q') || searchParams.get('search') || ''
     const nd = searchParams.get('need') || searchParams.get('category') || 'all'
-    if (q !== activeSearch) setActiveSearch(q)
-    if (nd !== needFilter) setNeedFilter(nd)
+    setActiveSearch(q)
+    setNeedFilter(nd)
+    fetchSchemes(q)
   }, [searchParams])
 
   // Authentic User profile from localStorage — if none exists, remains null (no dummy profile!)
@@ -654,16 +660,19 @@ export const SchemesDashboard: React.FC = () => {
   }, [fetchSchemes, activeSearch, needFilter])
 
   const handleSearch = useCallback((newQuery: string) => {
-    setActiveSearch(newQuery)
+    const trimmed = newQuery.trim()
+    setActiveSearch(trimmed)
     const newParams = new URLSearchParams(searchParams)
-    if (newQuery) {
-      newParams.set('search', newQuery)
+    if (trimmed) {
+      newParams.set('search', trimmed)
+      newParams.delete('q')
     } else {
       newParams.delete('search')
       newParams.delete('q')
     }
     setSearchParams(newParams)
-  }, [searchParams, setSearchParams])
+    fetchSchemes(trimmed)
+  }, [searchParams, setSearchParams, fetchSchemes])
 
   const handleSelectNeed = (needId: string) => {
     setNeedFilter(needId)
@@ -885,6 +894,57 @@ export const SchemesDashboard: React.FC = () => {
               />
             </Tooltip>
           </Stack>
+        </Paper>
+      )}
+
+      {/* ─── FINDER MODE CALLOUT (If navigated via mode=finder) ─── */}
+      {searchParams.get('mode') === 'finder' && (
+        <Paper
+          elevation={0}
+          sx={{
+            mb: 3,
+            p: 2.5,
+            bgcolor: '#FFF7ED',
+            border: '2px solid #EA580C',
+            borderRadius: '14px',
+            boxShadow: '0 4px 16px rgba(234, 88, 12, 0.12)',
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: { xs: 'flex-start', md: 'center' },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+              <AutoAwesomeIcon sx={{ color: '#EA580C', fontSize: 22 }} />
+              <Typography variant="h6" sx={{ fontWeight: 900, color: '#9A3412', fontSize: '1.05rem' }}>
+                Benefits & Scheme Navigator Active
+              </Typography>
+            </Stack>
+            <Typography variant="body2" sx={{ color: '#C2410C', fontWeight: 600 }}>
+              Looking for exact subsidies, collateral-free credit, or equipment grants? Launch the step-by-step goal navigator.
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/onboard')}
+            startIcon={<AutoAwesomeIcon sx={{ color: '#FEF08A' }} />}
+            sx={{
+              bgcolor: '#EA580C',
+              color: '#FFFFFF',
+              fontWeight: 800,
+              textTransform: 'none',
+              px: 3,
+              py: 1,
+              borderRadius: '8px',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)',
+              '&:hover': { bgcolor: '#C2410C' },
+            }}
+          >
+            Launch Deep Scheme Navigator →
+          </Button>
         </Paper>
       )}
 
