@@ -13,7 +13,9 @@ import {
   Tabs,
   Tab,
   Button,
-  Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import GavelIcon from '@mui/icons-material/Gavel'
@@ -23,6 +25,8 @@ import LocationCityIcon from '@mui/icons-material/LocationCity'
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 export const SupportPage: React.FC = () => {
   const navigate = useNavigate()
@@ -129,6 +133,7 @@ export const SupportPage: React.FC = () => {
             <Tab value="champions" label="CHAMPIONS Portal" icon={<EmojiEventsIcon fontSize="small" />} iconPosition="start" />
             <Tab value="dic" label="Gujarat DIC Network" icon={<LocationCityIcon fontSize="small" />} iconPosition="start" />
             <Tab value="helpdesk" label="National Helpdesk & Contacts" icon={<PhoneInTalkIcon fontSize="small" />} iconPosition="start" />
+            <Tab value="faqs" label="Frequently Asked Questions (FAQs)" icon={<HelpOutlineIcon fontSize="small" />} iconPosition="start" />
           </Tabs>
         </Container>
       </Box>
@@ -325,6 +330,79 @@ export const SupportPage: React.FC = () => {
                 </Paper>
               </Grid>
             </Grid>
+          </Paper>
+        )}
+
+        {/* TAB 6: FAQS */}
+        {currentTab === 'faqs' && (
+          <Paper sx={{ p: 4, borderRadius: '16px', bgcolor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: '#0F2E59', mb: 1 }}>
+              Frequently Asked Questions (Statutory & Scheme Operations)
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#64748B', mb: 3 }}>
+              Clear, verified answers regarding MSME classification criteria, credit guarantees, delayed payment tribunals, and platform navigation.
+            </Typography>
+
+            <Stack spacing={2}>
+              {[
+                {
+                  q: 'How do I access the Schemes Dashboard and personalized recommendations?',
+                  a: 'Click "Register" or "Sign In" at the top of the portal. Once you enter your enterprise details (turnover, investment, sector, and location), you will immediately be directed to the full Schemes Dashboard with tailored statutory recommendations and matching scores.',
+                },
+                {
+                  q: 'Can my business combine Gujarat State schemes with Central Government schemes?',
+                  a: 'Yes! Central credit guarantees (such as CGTMSE with up to 85% coverage) can generally be stacked with Gujarat State capital subsidies and power tariff exemptions, provided there is no explicit mutual exclusion clause in the respective scheme guidelines.',
+                },
+                {
+                  q: 'Do I need an active Udyam registration to get started?',
+                  a: 'No. You can explore schemes and evaluate approximate eligibility by entering your estimated plant & machinery investment, turnover, and enterprise type. However, for final subsidy disbursement and bank sanction, an official Udyam Registration Number (URN) is statutory.',
+                },
+                {
+                  q: 'How are scheme PDFs and Gazette notifications parsed into the platform?',
+                  a: 'Our intelligence engine extracts structured data directly from official Ministry of MSME and Gujarat Industries Department gazette guidelines, extracting investment limits, subsidy caps, eligibility matrices, and required documentation.',
+                },
+                {
+                  q: 'What is the statutory interest penalty on delayed corporate payments?',
+                  a: 'Under Section 16 of the MSMED Act, 2006, any buyer failing to make payment within 45 days is legally mandated to pay compound interest with monthly rests at three times (3x) the Bank Rate notified by the Reserve Bank of India.',
+                },
+                {
+                  q: 'What is the maximum collateral-free loan covered under CGTMSE?',
+                  a: 'Under the revamped CGTMSE guidelines, collateral-free credit facilities up to ₹5.00 Crore are eligible for guarantee coverage ranging from 75% to 85%, with special enhanced cover for micro enterprises, women entrepreneurs, and SC/ST promoters.',
+                },
+                {
+                  q: 'What is the margin money subsidy percentage under PMEGP?',
+                  a: 'Under PMEGP, general category applicants receive 15% (urban) or 25% (rural) margin money subsidy. Special categories (SC, ST, OBC, Women, Ex-servicemen, Minorities, PwD, and NER) receive 25% in urban areas and 35% in rural areas, with project cost ceilings of ₹50 Lakh for manufacturing.',
+                },
+              ].map((faq, idx) => (
+                <Accordion
+                  key={idx}
+                  elevation={0}
+                  defaultExpanded={idx === 0}
+                  sx={{
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '10px !important',
+                    '&:before': { display: 'none' },
+                    overflow: 'hidden',
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon sx={{ color: '#0F2E59' }} />}
+                    sx={{
+                      bgcolor: '#F8FAFC',
+                      fontWeight: 700,
+                      color: '#0F2E59',
+                      fontSize: '0.96rem',
+                      py: 1,
+                    }}
+                  >
+                    {faq.q}
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ p: 2.5, bgcolor: '#FFFFFF', color: '#334155', lineHeight: 1.7, fontSize: '0.92rem' }}>
+                    {faq.a}
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Stack>
           </Paper>
         )}
       </Container>

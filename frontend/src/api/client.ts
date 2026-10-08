@@ -153,6 +153,10 @@ export const apiClient = {
   // Demo auto-login
   demoLogin: () => api.get('/auth/demo/'),
 
+  // Google OAuth Login
+  googleLogin: (data: { email: string; name?: string; picture?: string; google_id?: string }) =>
+    api.post('/auth/google/', data),
+
   // Profiles
   getProfiles: () => api.get<{ results: BusinessProfile[] }>('/profiles/'),
   getProfile: (id: string) => api.get<BusinessProfile>(`/profiles/${id}/`),
@@ -210,7 +214,7 @@ export const apiClient = {
   getStrategyForGoal: (goalId: string) => api.get<Strategy>(`/strategies/for_goal/?goal_id=${goalId}`),
 
   // Schemes
-  getSchemes: (params?: { search?: string; q?: string; level?: string; support_type?: string; category?: string }) =>
+  getSchemes: (params?: { search?: string; q?: string; level?: string; support_type?: string; category?: string; state?: string; division?: string; ministry?: string }) =>
     api.get<{ count: number; results: SchemeResult[] }>('/schemes/', { params }),
   getScheme: (id: string) => api.get<SchemeResult>(`/schemes/${id}/`),
   ragRecommend: (data: { query: string; sector?: string; msme_type?: string }) =>

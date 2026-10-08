@@ -128,7 +128,9 @@ export interface SchemeResult {
   name: string
   short_name: string
   ministry: string
-  implementing_agency?: string
+  division?: string
+  pdf_filename?: string
+  target_states?: string[]
   level: 'central' | 'state' | 'state_gujarat' | string
   support_type: SupportType | string
   status?: MatchStatus | string

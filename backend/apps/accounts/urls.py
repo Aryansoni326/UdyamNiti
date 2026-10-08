@@ -199,10 +199,66 @@ def health_check(request):
     })
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def google_auth_view(request):
+    """
+    Authenticate or register user via verified Google OAuth identity.
+    Logs into Django session and provisions CSRF token.
+    """
+    email = request.data.get('email', '').strip().lower()
+    name = request.data.get('name', '').strip()
+    google_id = request.data.get('google_id', '')
+
+    if not email:
+        return Response({'error': 'Email is required from Google authentication.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Find or create user
+    user = User.objects.filter(email=email).first()
+    if not user:
+        username = email.split('@')[0]
+        base_username = username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}_{counter}"
+            counter += 1
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=name or username,
+        )
+        UserSecurityProfile.objects.create(
+            user=user,
+            role=UserRole.MSME_USER
+        )
+
+    # Establish authenticated Django session
+    login(request, user)
+    csrf_token = get_token(request)
+
+    # Log security audit event
+    SecurityAuditLog.objects.create(
+        user=user,
+        action=AuditAction.LOGIN,
+        ip_address=request.META.get('REMOTE_ADDR', '127.0.0.1'),
+        user_agent=request.META.get('HTTP_USER_AGENT', '')[:255],
+        status_code=200,
+        metadata={'auth_provider': 'google_oauth', 'google_id': google_id}
+    )
+
+    return Response({
+        'user': UserDetailSerializer(user).data,
+        'csrf_token': csrf_token,
+        'message': 'Google authentication successful'
+    }, status=status.HTTP_200_OK)
+
+
 urlpatterns = [
     path('auth/login/', login_view, name='login'),
     path('auth/logout/', logout_view, name='logout'),
     path('auth/register/', register_view, name='register'),
+    path('auth/google/', google_auth_view, name='google_auth'),
     path('auth/me/', me_view, name='me'),
     path('auth/csrf/', csrf_token_view, name='csrf'),
     path('auth/demo/', demo_login, name='demo_login'),

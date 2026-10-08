@@ -1,18 +1,13 @@
 """
 Comprehensive Seed Command for Official Schemes strictly extracted from
-the user's uploaded official PDFs in `backend/apps/data/schemes_pdfs`:
+the user's uploaded official PDFs in `backend/data/scheme_pdfs` and `backend/apps/data/schemes_pdfs`.
 
-1.  CGTMSE_EPM_EXPORT_2026   -> Circular 257 - CGS for Export credit merged.pdf
-2.  GUJ_SER_TEXTILE_2025     -> 1.msme.pdf (Gujarat SER Textile & MSME Park Assistance)
-3.  PMEGP_MSME_SCHEME        -> pmegp scheme.pdf (Prime Minister's Employment Generation Programme)
-4.  COIR_VIKAS_YOJANA_CVY    -> cvy.schemes.pdf (Coir Vikas Yojana - CITUS, MCY, EMP, DMP)
-5.  MSME_IC_SCHEME_2021      -> Final and approved IC Scheme Guidelines-2021.pdf (International Cooperation)
-6.  MSME_ZED_CERTIFICATION   -> ZED_Guidance_Document_NIC_Division_24 & 27.pdf (ZED Sustainable Certification)
-7.  SFURTI_CLUSTER_SCHEME    -> SFURTI_NEW_GUIDELINES.pdf (Scheme of Fund for Regeneration of Traditional Industries)
-8.  TREDS_CGTMSE_CIRCULAR_262-> TReDS Cicular 262.pdf (TReDS Invoice Discounting Credit Guarantee)
-9.  MSE_CDP_CLUSTER_DEV      -> msme-cdp.pdf (Micro & Small Enterprises Cluster Development Programme)
-10. PMS_MARKETING_SUPPORT    -> OM & PMS Scheme Guidelines.pdf (Procurement & Marketing Support)
-11. NSSH_SPECIAL_CLCSS       -> NSSH_Guidelines_Sub_scheme_0 & 1.pdf (National SC-ST Hub Special Subsidy)
+Divisions Covered:
+1. MSME & Enterprise Development
+2. Gujarat State & Infrastructure
+3. Social Welfare & Inclusive Development
+4. Agriculture, Food & Fisheries
+5. Education, Youth, Defence & Science
 """
 from django.core.management.base import BaseCommand
 from apps.policies.models import Scheme, SchemeRule, SchemeBenefit
@@ -22,896 +17,956 @@ import logging
 logger = logging.getLogger(__name__)
 
 UPLOADED_PDF_SCHEMES = [
-    # 1. CGTMSE EXPORT CREDIT GUARANTEE (Circular 257)
+    # ─── DIVISION 1: MSME & ENTERPRISE DEVELOPMENT ─────────────────────────
     {
         'scheme_code': 'CGTMSE_EPM_EXPORT_2026',
         'name': 'Special Credit Guarantee Scheme – Collateral Support for Export Credit (EPM - Niryat Protsahan)',
         'short_name': 'Export Credit Collateral Support (EPM)',
         'ministry_department': 'Department of Commerce, Ministry of Commerce and Industry / CGTMSE',
         'implementing_agency': 'Credit Guarantee Fund Trust for Micro and Small Enterprises (CGTMSE) & DGFT',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'Circular 257 - CGS for Export credit merged.pdf',
         'level': 'central',
         'support_type': 'credit_guarantee',
         'target_sectors': ['export', 'manufacturing', 'merchandise', 'services'],
         'target_msme_categories': ['micro', 'small', 'medium'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 1000.0,  # ₹10 Crore
-        'benefit_percentage': 85.0,  # 85% for Micro & Small (75% CGTMSE + 10% DGFT), 65% for Medium
-        'benefit_description': 'Collateral-free working capital export credit up to ₹10 Crore. 85% total guarantee cover for Micro & Small Enterprises (75% CGTMSE + 10% DGFT) and 65% for Medium Enterprises. Annual Guarantee Fee (AGF) starts from 0.37% (0.33% with discount).',
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 1000.0,
+        'benefit_percentage': 85.0,
+        'benefit_description': 'Collateral-free working capital export credit up to ₹10 Crore. 85% total guarantee cover for Micro & Small Enterprises (75% CGTMSE + 10% DGFT) and 65% for Medium Enterprises. Annual Guarantee Fee starts from 0.37%.',
         'status': 'active',
         'launch_date': date(2026, 2, 6),
         'valid_until': date(2027, 3, 31),
         'official_portal_url': 'https://www.dgft.gov.in',
         'gazette_notification': 'CGTMSE Circular No. 257 / 2025-26; Ref. No. CGTMSE /Circular/294',
-        'description': (
-            'The Special Credit Guarantee Scheme – Collateral Support for Export Credit under the Export Promotion Mission (EPM – Niryat Protsahan) '
-            'provides institutional export credit guarantee to Micro, Small, and Medium Enterprise exporters without requiring third-party guarantees or '
-            'hard collateral. It facilitates both pre-shipment and post-shipment export working capital credit through Member Lending Institutions (MLIs) '
-            'including Scheduled Commercial Banks and eligible Financial Institutions.'
-        ),
-        'eligibility_summary': (
-            '1. All MSME manufacturer and merchant exporters holding an active Importer-Exporter Code (IEC) and valid MSME Udyam Registration Number. '
-            '2. Export products must fall under the notified positive list of Harmonised System (HSN) 6-digit tariff lines. '
-            '3. Pre- and post-shipment working capital credit in accordance with RBI Master Directions. '
-            '4. Exporters must file an online declaration of intent on the DGFT portal to generate a Unique Identification Number (UIN). '
-            '5. Aggregate guarantee limit capped at ₹10 Crore across all CGTMSE interventions.'
-        ),
-        'application_process': (
-            'Step 1: Log in to the DGFT portal (Services > Export Promotion Mission > Collateral Support for Export Credit). '
-            'Step 2: Submit online intent form with IEC, Udyam, 3-year turnover CA certificate, and export Purchase Order to generate UIN. '
-            'Step 3: Approach an eligible Member Lending Institution (Public, Private, or Foreign Bank listed in Annexure 12C) quoting the UIN. '
-            'Step 4: Bank assesses creditworthiness and applies to CGTMSE with UIN for guarantee allotment (CGPAN issued). '
-            'Step 5: CGTMSE issues final credit guarantee on payment of Annual Guarantee Fee (AGF).'
-        ),
+        'description': 'The Special Credit Guarantee Scheme – Collateral Support for Export Credit under the Export Promotion Mission (EPM – Niryat Protsahan) provides institutional export credit guarantee to MSME exporters without third-party guarantees or hard collateral.',
+        'eligibility_summary': '1. Active Importer-Exporter Code (IEC) & valid MSME Udyam Registration Number.\n2. Export products under positive list of HSN 6-digit tariff lines.\n3. Pre- and post-shipment export working capital credit.\n4. Exporters must file online declaration of intent on DGFT portal to generate UIN.\n5. Guarantee limit capped at ₹10 Crore across all CGTMSE interventions.',
+        'application_process': 'Step 1: Log in to the DGFT portal (Services > Export Promotion Mission > Collateral Support for Export Credit).\nStep 2: Submit online intent form with IEC, Udyam, CA certificate, and export Purchase Order to generate UIN.\nStep 3: Approach an eligible Member Lending Institution quoting the UIN.\nStep 4: Bank assesses creditworthiness and applies to CGTMSE with UIN for guarantee allotment.\nStep 5: CGTMSE issues final credit guarantee on payment of Annual Guarantee Fee.',
         'rules': [
-            {
-                'rule_name': 'Valid Active IEC Code',
-                'field_path': 'has_iec_code',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must hold a valid active Importer-Exporter Code (IEC) not suspended or cancelled (Section 12.X.1.a).',
-                'source_document': 'CGTMSE Circular No. 257 / 2025-26, HBP Clause 12.X.1',
-                'display_label': 'Valid Active IEC Code',
-                'failure_message': 'An active Importer-Exporter Code (IEC) is mandatory for export credit guarantee.',
-            },
-            {
-                'rule_name': 'Valid Udyam Registration',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must hold a valid MSME Udyam Registration Number linked to the IEC (Clause 12.X.1.a).',
-                'source_document': 'CGTMSE Circular No. 257 / 2025-26, HBP Clause 12.X.1',
-                'display_label': 'Udyam Registration Linked to IEC',
-                'failure_message': 'A valid Udyam Registration Number linked to the IEC is mandatory.',
-            },
-            {
-                'rule_name': 'Not on DGFT Denied Entity List (DEL)',
-                'field_path': 'is_del_listed',
-                'operator': 'bool_false',
-                'expected_value': False,
-                'importance': 'mandatory',
-                'source_clause': 'Neither company nor directors/partners shall be on the Denied Entity List (DEL) of DGFT (Declaration Para B).',
-                'source_document': 'CGTMSE Circular No. 257, Annexure-I Declaration',
-                'display_label': 'Clean Track Record (Not on DEL)',
-                'failure_message': 'Entity or directors on the DGFT Denied Entity List are ineligible.',
-            },
-            {
-                'rule_name': 'Not Classified as NPA',
-                'field_path': 'is_npa',
-                'operator': 'bool_false',
-                'expected_value': False,
-                'importance': 'mandatory',
-                'source_clause': 'Account must not be classified as Non-Performing Asset (NPA) or willful defaulter (Section 10).',
-                'source_document': 'CGTMSE Circular No. 257, Clause 10',
-                'display_label': 'Non-NPA Good Financial Standing',
-                'failure_message': 'Borrowers in default or NPA are excluded from credit guarantee.',
-            },
+            {'rule_name': 'Valid Active IEC Code', 'field_path': 'has_iec_code', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Valid Active IEC Code', 'source_clause': 'Must hold a valid active Importer-Exporter Code (IEC).', 'source_document': 'CGTMSE Circular No. 257'},
+            {'rule_name': 'Valid Udyam Registration', 'field_path': 'has_udyam_registration', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Udyam Registration Linked to IEC', 'source_clause': 'Must hold a valid MSME Udyam Registration Number.', 'source_document': 'CGTMSE Circular No. 257'},
+            {'rule_name': 'Clean Track Record', 'field_path': 'is_del_listed', 'operator': 'bool_false', 'expected_value': False, 'importance': 'mandatory', 'display_label': 'Not on DGFT Denied Entity List', 'source_clause': 'Entity shall not be on Denied Entity List (DEL) of DGFT.', 'source_document': 'CGTMSE Circular No. 257'},
         ],
         'benefits': [
-            {
-                'benefit_name': '85% Guarantee Coverage for Micro & Small Enterprises',
-                'benefit_type': 'credit_guarantee',
-                'amount_or_percentage': '85% (75% CGTMSE + 10% DGFT)',
-                'cap_amount_lakhs': 1000.0,
-                'conditions': 'For loans up to ₹10 Crore without third-party collateral.',
-                'source_clause': 'Appendix 12A, Para 3(a)(i): Total coverage 85% for Micro and Small Enterprises up to ₹10 Crore.',
-            },
-            {
-                'benefit_name': '65% Guarantee Coverage for Medium Enterprises',
-                'benefit_type': 'credit_guarantee',
-                'amount_or_percentage': '65% DGFT coverage',
-                'cap_amount_lakhs': 1000.0,
-                'conditions': 'For Medium enterprise export working capital facilities.',
-                'source_clause': 'Appendix 12A, Para 3(a)(ii): Total coverage 65% for Medium Enterprises up to ₹10 Crore.',
-            }
+            {'benefit_name': '85% Guarantee for Micro & Small Enterprises', 'benefit_type': 'credit_guarantee', 'amount_or_percentage': '85% (75% CGTMSE + 10% DGFT)', 'cap_amount_lakhs': 1000.0, 'conditions': 'For loans up to ₹10 Crore without collateral.'},
+            {'benefit_name': '65% Guarantee for Medium Enterprises', 'benefit_type': 'credit_guarantee', 'amount_or_percentage': '65% Guarantee', 'cap_amount_lakhs': 1000.0, 'conditions': 'For loans up to ₹10 Crore.'},
         ],
     },
-
-    # 2. GUJARAT SER TEXTILE & MSME PARK (1.msme.pdf)
-    {
-        'scheme_code': 'GUJ_SER_TEXTILE_2025',
-        'name': 'Assistance for Developing SER Textile and MSME Park 2025-26',
-        'short_name': 'SER Textile & MSME Park Assistance',
-        'ministry_department': 'Industries and Mines Department, Government of Gujarat (ઉદ્યોગ અને ખાણ વિભાગ, ગુજરાત સરકાર)',
-        'implementing_agency': 'Gujarat Industrial Development Corporation (GIDC) / Industries Commissionerate',
-        'level': 'state_gujarat',
-        'support_type': 'infrastructure',
-        'target_sectors': ['textiles', 'apparel', 'weaving', 'spinning', 'manufacturing', 'processing'],
-        'target_msme_categories': ['micro', 'small', 'medium'],
-        'target_states': ['Gujarat'],
-        'max_benefit_amount_lakhs': 100.0,  # ₹1.00 Crore new item provision
-        'benefit_percentage': 100.0,
-        'benefit_description': 'Integrated infrastructure setup assistance for textile manufacturing MSMEs in Surat region. Includes dedicated park plots, R&D testing labs, training hubs, warehousing, water recycling, and renewable solar power infrastructure.',
-        'status': 'active',
-        'launch_date': date(2025, 5, 1),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://imd.gujarat.gov.in',
-        'gazette_notification': 'Government Resolution No. IMD/MRT/e-file/9/2025/0597/G, Sachivalaya, Gandhinagar',
-        'description': (
-            'Government of Gujarat Resolution for developing modern SER Textile and MSME Parks in the Surat economic hub. '
-            'The park provides integrated common facilities for Micro, Small, and Medium Enterprises including advanced manufacturing spaces, '
-            'R&D design facilities, material testing laboratories, skill training centers, logistics hubs, zero-liquid-discharge water recycling, '
-            'and renewable energy installations to boost local textile competitiveness and global export capability.'
-        ),
-        'eligibility_summary': (
-            '1. Textile manufacturing, weaving, spinning, and allied MSMEs located or establishing operations in Gujarat (Surat regional focus). '
-            '2. Unit must comply with the approved Detailed Project Report (DPR) timelines and budgetary caps. '
-            '3. Implementation executed through Gujarat Industrial Development Corporation (GIDC). '
-            '4. Mandatory statutory clearances: Railway, Forest, and Gujarat Pollution Control Board (GPCB) consent. '
-            '5. Procurement strictly adhering to Government e-Marketplace (GeM) portal or Industry Dept NOC.'
-        ),
-        'application_process': (
-            'Step 1: Submit formal project proposal with DPR to the Industries Commissionerate / GIDC Gandhinagar. '
-            'Step 2: Obtain GPCB environmental clearance and land allocation confirmation. '
-            'Step 3: Verification of HT/LT power connection and water source feasibility. '
-            'Step 4: Scrutiny by Finance & Industry Committee under Resolution IMD/MRT/e-file/9/2025/0597/G. '
-            'Step 5: Phased grant release upon milestone completion and submission of audited accounts.'
-        ),
-        'rules': [
-            {
-                'rule_name': 'Gujarat State Location',
-                'field_path': 'state',
-                'operator': 'eq',
-                'expected_value': 'Gujarat',
-                'importance': 'mandatory',
-                'source_clause': 'Park and units must be situated within the state of Gujarat (Surat economic region) (Preamble).',
-                'source_document': 'Gujarat GR No. IMD/MRT/e-file/9/2025/0597/G, Page 1',
-                'display_label': 'Operational Location in Gujarat',
-                'failure_message': 'SER Textile Park scheme is exclusively available for units in Gujarat.',
-            },
-            {
-                'rule_name': 'Textile & Allied Manufacturing Sector',
-                'field_path': 'is_manufacturing',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Units must be dedicated to textile manufacturing, weaving, testing, or logistics (Preamble Para 2).',
-                'source_document': 'Gujarat GR No. IMD/MRT/e-file/9/2025/0597/G, Page 1',
-                'display_label': 'Textile Manufacturing / Allied Processing',
-                'failure_message': 'Scheme is dedicated to textile sector MSMEs and park infrastructure.',
-            },
-            {
-                'rule_name': 'DPR and Environmental Clearance',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must comply with approved DPR and obtain GPCB environmental clearance before project commencement (Condition 1 & 7).',
-                'source_document': 'Gujarat GR No. IMD/MRT/e-file/9/2025/0597/G, Page 2',
-                'display_label': 'DPR & Environmental Statutory Clearances',
-                'failure_message': 'DPR and GPCB clearances are mandatory preconditions.',
-            },
-        ],
-        'benefits': [
-            {
-                'benefit_name': 'Common Infrastructure & Facility Grant',
-                'benefit_type': 'infrastructure',
-                'amount_or_percentage': '100% grant funding for approved common facilities',
-                'cap_amount_lakhs': 100.0,
-                'conditions': 'Within approved DPR budget and 2-year expenditure window.',
-                'source_clause': 'Resolution Para 1: ₹1.00 Crore new item allocation for FY 2025-26 under Head 4851.',
-            }
-        ],
-    },
-
-    # 3. PMEGP (pmegp scheme.pdf)
     {
         'scheme_code': 'PMEGP_MSME_SCHEME',
-        'name': 'Prime Minister’s Employment Generation Programme (PMEGP)',
-        'short_name': 'PMEGP Credit Linked Capital Subsidy',
-        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises, Government of India',
-        'implementing_agency': 'Khadi and Village Industries Commission (KVIC) / State KVIB / District Industries Centres (DIC)',
+        'name': "Prime Minister's Employment Generation Programme (PMEGP)",
+        'short_name': 'PMEGP Margin Money Subsidy',
+        'ministry_department': 'Ministry of Micro, Small & Medium Enterprises (PMEGP Division)',
+        'implementing_agency': 'Khadi and Village Industries Commission (KVIC) / DIC / KVIB',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'pmegp scheme.pdf',
         'level': 'central',
         'support_type': 'capital_subsidy',
-        'target_sectors': ['manufacturing', 'services', 'agro_processing', 'textiles', 'engineering', 'handicrafts'],
-        'target_msme_categories': ['micro'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 50.0,  # ₹50 Lakhs project cost for manufacturing
-        'benefit_percentage': 35.0,  # 15% to 35% margin money subsidy
-        'benefit_description': 'Margin money capital subsidy: 15% (General Urban), 25% (General Rural / Special Urban), up to 35% (Special category/Women/SC/ST/OBC/NER in Rural areas). Maximum project cost ₹50 Lakhs for manufacturing and ₹20 Lakhs for service units. 2nd loan up to ₹1 Crore with 15-20% subsidy for upgrading existing performing units.',
-        'status': 'active',
-        'launch_date': date(2008, 8, 15),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://www.kviconline.gov.in/pmegpeportal',
-        'gazette_notification': 'Ministry of MSME PMEGP Comprehensive Operational Guidelines 2022-26',
-        'description': (
-            'PMEGP is a major credit-linked subsidy programme aimed at generating self-employment opportunities through establishment of micro-enterprises '
-            'in non-farm sector. The subsidy is routed through KVIC as national nodal agency and directly credited to beneficiary bank accounts with a 3-year lock-in period.'
-        ),
-        'eligibility_summary': (
-            '1. Any individual above 18 years of age. '
-            '2. Minimum 8th standard pass for manufacturing projects over ₹10 Lakhs and service projects over ₹5 Lakhs. '
-            '3. Self Help Groups (SHGs) and institutions registered under Societies Registration Act 1860. '
-            '4. Project must be a new micro-enterprise (not existing units except for 2nd loan upgradation). '
-            '5. Only one person from a family is eligible.'
-        ),
-        'application_process': (
-            'Step 1: Submit online application at kviconline.gov.in with Aadhaar, caste certificate, EDP training certificate, and DPR. '
-            'Step 2: District Level Task Force Committee (DLTFC) scrutinizes and recommends application to bank. '
-            'Step 3: Financing bank sanctions loan and releases first installment. '
-            'Step 4: KVIC deposits Margin Money subsidy into bank account as Term Deposit Receipt (TDR) for 3 years. '
-            'Step 5: Physical verification after 36 months before final subsidy adjustment.'
-        ),
-        'rules': [
-            {
-                'rule_name': 'Age 18 Years or Above',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Any individual above 18 years of age is eligible (Guidelines Clause 4.1).',
-                'source_document': 'PMEGP Guidelines, Clause 4.1',
-                'display_label': 'Age Qualification (>= 18 Years)',
-                'failure_message': 'Applicant must be at least 18 years of age.',
-            },
-            {
-                'rule_name': 'New Micro Enterprise Unit',
-                'field_path': 'msme_category',
-                'operator': 'in',
-                'expected_value': ['micro'],
-                'importance': 'mandatory',
-                'source_clause': 'Scheme applies exclusively to new micro enterprises in manufacturing or service sectors (Clause 4.3).',
-                'source_document': 'PMEGP Guidelines, Clause 4.3',
-                'display_label': 'New Micro Enterprise Unit',
-                'failure_message': 'PMEGP primary assistance is dedicated to new micro enterprises.',
-            },
-        ],
-        'benefits': [
-            {
-                'benefit_name': '35% Rural Special Category Margin Money Subsidy',
-                'benefit_type': 'capital_subsidy',
-                'amount_or_percentage': '35% of project cost up to ₹17.50 Lakh',
-                'cap_amount_lakhs': 17.5,
-                'conditions': 'For SC/ST/OBC/Women/Minority/Ex-servicemen in rural areas.',
-                'source_clause': 'PMEGP Guidelines, Table 1: 35% margin money subsidy in rural areas for special category.',
-            },
-            {
-                'benefit_name': '25% General Rural / Special Urban Subsidy',
-                'benefit_type': 'capital_subsidy',
-                'amount_or_percentage': '25% of project cost up to ₹12.50 Lakh',
-                'cap_amount_lakhs': 12.5,
-                'conditions': 'For General category in rural areas or Special category in urban areas.',
-                'source_clause': 'PMEGP Guidelines, Table 1: 25% margin money subsidy.',
-            },
-        ],
-    },
-
-    # 4. COIR VIKAS YOJANA (cvy.schemes.pdf)
-    {
-        'scheme_code': 'COIR_VIKAS_YOJANA_CVY',
-        'name': 'Coir Vikas Yojana (CVY) – Integrated Coir Development Scheme',
-        'short_name': 'Coir Vikas Yojana (CVY)',
-        'ministry_department': 'Ministry of Micro, Small & Medium Enterprises, Government of India',
-        'implementing_agency': 'Coir Board, Kochi (Regional & Sub-Regional Offices)',
-        'level': 'central',
-        'support_type': 'technology_grant',
-        'target_sectors': ['coir', 'agro_processing', 'natural_fibres', 'textiles', 'handicrafts', 'manufacturing'],
-        'target_msme_categories': ['micro', 'small', 'medium'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 250.0,  # ₹2.50 Crore CITUS ceiling
-        'benefit_percentage': 25.0,  # 25% plant & machinery subsidy
-        'benefit_description': (
-            'Comprehensive umbrella scheme for coir industry: 1. CITUS: 25% capital subsidy on admissible plant & machinery up to ₹2.50 Crore. '
-            '2. Mahila Coir Yojana: Skill training for women artisans with ₹3,000/mo stipend and PMEGP linkage up to ₹25 Lakhs. '
-            '3. Export Market Promotion (EMP): 100% stall rent (up to ₹1L) & airfare (up to ₹1.5L) for overseas exhibitions. '
-            '4. Domestic Market Promotion (DMP): 10% MDA on turnover.'
-        ),
-        'status': 'active',
-        'launch_date': date(2018, 3, 7),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'http://coirboard.gov.in',
-        'gazette_notification': 'Ministry of MSME Order No. 5(9)/2017-Coir/77, CVY Operational Guidelines',
-        'description': (
-            'Coir Vikas Yojana (CVY) is an umbrella central sector scheme administered by the Coir Board to modernize the Indian coir sector. '
-            'Its flagship component, CITUS (Coir Industry Technology Upgradation Scheme), provides 25% capital subsidy (up to ₹2.50 Crore) for '
-            'procuring modern BIS-standard plant & machinery for setting up new units or modernizing existing coir enterprises. '
-            'It also encompasses Mahila Coir Yojana (MCY), Science & Technology (S&T), Export Market Promotion (EMP), Domestic Market Promotion (DMP), '
-            'and Pradhan Mantri Suraksha Bima Yojana (PMSBY) welfare coverage.'
-        ),
-        'eligibility_summary': (
-            '1. Individuals, partnership firms, SHGs, cooperative societies, and private/public limited companies engaged in coir products. '
-            '2. Registered under Coir Industry (Registration) Rules 2008 and holding valid Udyam Registration. '
-            '3. Investment in plant & machinery must remain within MSME Act limits. '
-            '4. Equipment and motors procured must comply with Bureau of Indian Standards (BIS) specifications. '
-            '5. Beneficiary must not have availed Central subsidy under PMEGP, CUY, or TUF for the same plant & machinery.'
-        ),
-        'application_process': (
-            'Step 1: Submit online application on Coir Board portal (coirboard.gov.in) with DPR prior to purchasing machinery. '
-            'Step 2: Technical appraisal by CCRI / CICT and issuance of In-Principle Approval (IPA) by Project Steering Committee. '
-            'Step 3: Procure BIS-certified machinery with GST invoices and 2-year manufacturer performance guarantee. '
-            'Step 4: Joint on-the-spot physical inspection by Regional/Sub-Regional Officer of Coir Board. '
-            'Step 5: Submission of claims with CA fixed asset certificates (Annexure 1 & 2) within 1 year of commencing commercial production. '
-            'Step 6: Direct Benefit Transfer (DBT) subsidy disbursement via PFMS into the bank loan account.'
-        ),
-        'rules': [
-            {
-                'rule_name': 'Coir Board Registration & Udyam',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must be registered under Coir Industry Rules 2008 and hold valid Udyam Registration (CITUS Clause 5).',
-                'source_document': 'CVY Operational Guidelines, CITUS Section 5',
-                'display_label': 'Coir Board Registration & Udyam Certificate',
-                'failure_message': 'Valid registration with Coir Board and Udyam is mandatory.',
-            },
-            {
-                'rule_name': 'No Dual Subsidy Claim (PMEGP / TUFS)',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Applicant must not have availed Central Government subsidy under PMEGP, CUY, TUF for the same plant/machinery (Clause 5.ix).',
-                'source_document': 'CVY Operational Guidelines, CITUS Clause 5(ix)',
-                'display_label': 'Single Subsidy Undertaking (No Dual Claim)',
-                'failure_message': 'Cannot claim dual Central subsidies for the same machinery.',
-            },
-        ],
-        'benefits': [
-            {
-                'benefit_name': 'CITUS 25% Plant & Machinery Subsidy',
-                'benefit_type': 'capital_subsidy',
-                'amount_or_percentage': '25% of eligible plant & machinery cost',
-                'cap_amount_lakhs': 250.0,
-                'conditions': 'Maximum ceiling ₹2.50 Crores per coir unit via DBT/PFMS.',
-                'source_clause': 'CVY Guidelines, CITUS Section 4.2: 25% financial assistance up to ₹2.50 Crore.',
-            },
-        ],
-    },
-
-    # 5. INTERNATIONAL COOPERATION SCHEME (Final and approved IC Scheme Guidelines-2021.pdf)
-    {
-        'scheme_code': 'MSME_IC_SCHEME_2021',
-        'name': 'International Cooperation (IC) Scheme',
-        'short_name': 'International Cooperation Scheme',
-        'ministry_department': 'Ministry of Micro, Small & Medium Enterprises, Government of India',
-        'implementing_agency': 'IC Section, Ministry of MSME / Export Promotion Councils (EPCs)',
-        'level': 'central',
-        'support_type': 'market_development',
-        'target_sectors': ['export', 'manufacturing', 'services', 'all_msme'],
+        'target_sectors': ['manufacturing', 'services', 'food', 'textiles', 'coir', 'engineering'],
         'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 200.0,  # ₹2.00 Crore per international event
-        'benefit_percentage': 100.0,
-        'benefit_description': (
-            '100% space rent (up to ₹3.00 Lakh) and 100% economy airfare (up to ₹1.50 Lakh) plus USD 150/day duty allowance for exhibiting at international trade fairs. '
-            'Sub-Component II (CBFTE) reimburses 75% RCMC fees (up to ₹20,000), ECGC export insurance (up to ₹10,000), and testing/quality certifications (75% up to ₹1.00 Lakh).'
-        ),
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 50.0,
+        'benefit_percentage': 35.0,
+        'benefit_description': '15% to 35% margin money capital subsidy on project costs up to ₹50 Lakh for manufacturing and ₹20 Lakh for services. Up to ₹17.5 Lakh non-refundable subsidy in rural areas. 2nd upgrade loan up to ₹1 Crore with 15-20% subsidy.',
         'status': 'active',
-        'launch_date': date(2021, 8, 1),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://ic.msme.gov.in',
-        'gazette_notification': 'F.No.4/8/2021-IC, Ministry of MSME, August 2021',
-        'description': (
-            'The International Cooperation (IC) Scheme builds MSME capacity for entering global export markets. '
-            'Sub-Component I (MDA) reimburses stall rent, international airfare, freight, and daily allowances for MSME delegations '
-            'participating in approved exhibitions abroad. Sub-Component II (CBFTE) handholds first-time MSE exporters by reimbursing '
-            'EPC RCMC registration fees, export credit insurance premiums, and product testing & quality certification costs.'
-        ),
-        'eligibility_summary': (
-            '1. Micro and Small Enterprises holding a valid Udyam Registration Certificate. '
-            '2. For CBFTE first-time export incentives, the Importer-Exporter Code (IEC) must not be older than 3 years on date of export. '
-            '3. Minimum score of 60% on the Annexure-C Score Card for international fair participation. '
-            '4. One MSME unit cannot participate in more than 2 events in a financial year under the scheme.'
-        ),
-        'application_process': (
-            'Step 1: Apply online on IC Scheme portal (ic.msme.gov.in) through registered Industry Association or EPC at least 60 days before event. '
-            'Step 2: Submission of budget estimates and Score Card (Annexure-C) evaluated by Screening Committee. '
-            'Step 3: Approval by Screening Committee headed by Joint Secretary (SME). '
-            'Step 4: Participate in exhibition and retain original boarding passes, e-tickets, and stall invoices. '
-            'Step 5: Submit claim within 60-90 days with CA certificate (Annexure-F) and Mandate Form (Annexure-H) for direct reimbursement.'
-        ),
+        'launch_date': date(2022, 5, 13),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://www.kviconline.gov.in/pmegpeportal',
+        'gazette_notification': 'PMEGP Comprehensive Guidelines 2022-26; OM No. PMEGP/Policy/09/2021',
+        'description': 'PMEGP is a major credit-linked subsidy programme aimed at generating self-employment opportunities through establishment of micro-enterprises in non-farm sectors across rural and urban India.',
+        'eligibility_summary': '1. Any individual above 18 years of age.\n2. Minimum 8th standard pass for projects above ₹10 Lakh in manufacturing and ₹5 Lakh in services.\n3. Self Help Groups and registered institutions are eligible.\n4. Mandatory Udyam Registration before physical verification.\n5. Beneficiary contribution 5% for special categories and 10% for general categories.',
+        'application_process': 'Step 1: Apply online at KVIC PMEGP Portal (www.kviconline.gov.in).\nStep 2: Fill Form with Project Report, Aadhaar, Education & Caste Certificate.\nStep 3: District Level Task Force Committee (DLTFC) scrutinizes application and forwards to financing bank.\nStep 4: Bank sanctions loan and disburses 1st installment.\nStep 5: KVIC credits Margin Money Subsidy into 3-year lock-in TDR.',
         'rules': [
-            {
-                'rule_name': 'Valid Udyam Registration',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must be a Micro or Small Enterprise with valid Udyam Registration (Section 8.a).',
-                'source_document': 'IC Scheme Guidelines 2021, Section 8(a)',
-                'display_label': 'Valid Udyam Registration Certificate',
-                'failure_message': 'Udyam Registration is mandatory for IC Scheme benefits.',
-            },
+            {'rule_name': 'Age Minimum 18 Years', 'field_path': 'applicant_age', 'operator': 'gte', 'expected_value': 18, 'importance': 'mandatory', 'display_label': 'Age 18 Years or Above', 'source_clause': 'Individual applicants must be above 18 years of age.'},
+            {'rule_name': 'Mandatory Udyam Registration', 'field_path': 'has_udyam_registration', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Valid Udyam Registration', 'source_clause': 'All new units must be registered on Udyam Portal.'},
         ],
         'benefits': [
-            {
-                'benefit_name': '100% Space Rent Reimbursement',
-                'benefit_type': 'market_development',
-                'amount_or_percentage': '100% up to ₹3.00 Lakh',
-                'cap_amount_lakhs': 3.0,
-                'conditions': 'For one MSME unit participating as exhibitor in approved international trade fairs.',
-                'source_clause': 'IC Scheme Section 3.2.1(a): 100% space rent max ₹3.00 Lakh.',
-            },
-            {
-                'benefit_name': '100% Economy Airfare Reimbursement',
-                'benefit_type': 'market_development',
-                'amount_or_percentage': '100% up to ₹1.50 Lakh',
-                'cap_amount_lakhs': 1.5,
-                'conditions': 'Economy class airfare for travel within 30 days of event.',
-                'source_clause': 'IC Scheme Section 3.2.1(b): 100% economy airfare max ₹1.50 Lakh.',
-            },
+            {'benefit_name': 'Rural Special Category Subsidy (35%)', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '35% Margin Money', 'cap_amount_lakhs': 17.5, 'conditions': 'For SC/ST/OBC/Women/Ex-servicemen in rural areas.'},
+            {'benefit_name': 'Urban General Category Subsidy (15%)', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '15% Margin Money', 'cap_amount_lakhs': 7.5, 'conditions': 'For general category units in urban areas.'},
         ],
     },
-
-    # 6. MSME ZED CERTIFICATION (ZED_Guidance_Document_NIC_Division_24 & 27.pdf)
     {
         'scheme_code': 'MSME_ZED_CERTIFICATION',
         'name': 'MSME Sustainable (ZED) Certification Scheme (Phase-II)',
         'short_name': 'ZED Sustainable Certification',
-        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises, Government of India',
-        'implementing_agency': 'Quality Council of India (QCI) / National Productivity Council (NPC)',
+        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises',
+        'implementing_agency': 'Quality Council of India (QCI) & National Productivity Council',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'ZED_Guidance_Document_NIC_Division_24.pdf',
         'level': 'central',
         'support_type': 'quality_certification',
-        'target_sectors': ['manufacturing', 'engineering', 'automotive', 'food', 'chemicals', 'textiles', 'all_msme'],
+        'target_sectors': ['manufacturing', 'basic_metals', 'electrical_equipment', 'textiles', 'engineering'],
         'target_msme_categories': ['micro', 'small', 'medium'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 8.0,  # ₹5 Lakh handholding + ₹3 Lakh tech support + 80% certification cost
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 5.0,
         'benefit_percentage': 80.0,
-        'benefit_description': (
-            'Subsidized certification cost: 80% for Micro, 60% for Small, and 50% for Medium enterprises. '
-            'Additional 10% concession for Women/SC/ST entrepreneurs and units in NER/Himalayan states. '
-            'Financial assistance up to ₹5 Lakhs for handholding/consultancy support and up to ₹3 Lakhs for technology upgradation towards zero defect and zero effect manufacturing.'
-        ),
+        'benefit_description': '80% subsidy for Micro, 60% for Small, and 50% for Medium enterprises on certification costs. Additional ₹5 Lakh financial assistance for handholding and consultancy. Additional 10% subsidy for Women/SC/ST owned units.',
         'status': 'active',
         'launch_date': date(2022, 4, 28),
-        'valid_until': date(2027, 3, 31),
+        'valid_until': date(2026, 3, 31),
         'official_portal_url': 'https://zed.msme.gov.in',
-        'gazette_notification': 'MSME Sustainable (ZED) Certification Scheme Guidelines 2022, Order No. 22(1)/2022-ZED',
-        'description': (
-            'The ZED scheme motivates MSMEs for Zero Defect Zero Effect manufacturing practices, enhancing quality, energy efficiency, '
-            'natural resource conservation, and pollution reduction. MSMEs progress through Bronze, Silver, and Gold certification levels, '
-            'receiving financial support, concession in bank processing fees, and preference in public procurement.'
-        ),
-        'eligibility_summary': (
-            '1. All manufacturing MSMEs holding a valid Udyam Registration Number. '
-            '2. Self-assessment on Bronze level parameters prior to desktop verification or physical site audit. '
-            '3. Compliance with environmental and statutory pollution norms.'
-        ),
-        'application_process': (
-            'Step 1: Register on zed.msme.gov.in using Udyam number and take the ZED Pledge. '
-            'Step 2: Complete self-assessment for desired certification level (Bronze, Silver, Gold). '
-            'Step 3: Upload supporting process documents and evidence. '
-            'Step 4: Accredited agency desktop evaluation or onsite assessment. '
-            'Step 5: Grant of ZED Certificate and DBT reimbursement of admissible fees.'
-        ),
+        'gazette_notification': 'ZED Scheme Operational Guidelines 2022-26; NIC Division 24 & 27',
+        'description': 'The MSME Sustainable (ZED) Certification Scheme enables MSMEs to adopt Zero Defect Zero Effect practices, boosting product quality, energy efficiency, clean manufacturing, and environmental compliance.',
+        'eligibility_summary': '1. Manufacturing MSMEs registered with active Udyam Registration Number.\n2. Available across all NIC manufacturing divisions including Basic Metals (NIC 24) and Electrical Equipment (NIC 27).\n3. Undertake online ZED pledge.\n4. Pass desktop assessment and on-site audit.',
+        'application_process': 'Step 1: Register on ZED portal (zed.msme.gov.in) with Udyam.\nStep 2: Take free digital ZED Pledge.\nStep 3: Complete self-assessment for Bronze, Silver, or Gold certification.\nStep 4: Undergo desktop verification or physical site assessment by accredited assessors.\nStep 5: Receive ZED Certificate with subsidy reimbursement.',
         'rules': [
-            {
-                'rule_name': 'Valid Udyam Registration',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must hold valid Udyam Registration Number (ZED Guidelines Clause 4).',
-                'source_document': 'ZED Guidelines 2022, Clause 4',
-                'display_label': 'Valid Udyam Registration',
-                'failure_message': 'Udyam registration is required for ZED certification subsidy.',
-            },
-            {
-                'rule_name': 'Manufacturing Sector',
-                'field_path': 'is_manufacturing',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'ZED certification is applicable to manufacturing MSMEs (Clause 3.1).',
-                'source_document': 'ZED Guidelines 2022, Clause 3.1',
-                'display_label': 'Manufacturing Enterprise Classification',
-                'failure_message': 'ZED scheme is for manufacturing sector enterprises.',
-            },
+            {'rule_name': 'Manufacturing Activity', 'field_path': 'enterprise_type', 'operator': 'eq', 'expected_value': 'manufacturing', 'importance': 'mandatory', 'display_label': 'Manufacturing Enterprise', 'source_clause': 'Only manufacturing MSMEs are eligible for ZED.'},
+            {'rule_name': 'Valid Udyam Certificate', 'field_path': 'has_udyam_registration', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Active Udyam Certificate', 'source_clause': 'Valid Udyam Registration required.'},
         ],
         'benefits': [
-            {
-                'benefit_name': '80% Certification Cost Subsidy (Micro)',
-                'benefit_type': 'quality_certification',
-                'amount_or_percentage': '80% of certification fee',
-                'cap_amount_lakhs': 0.8,
-                'conditions': 'For Micro enterprises (+10% for Women/SC/ST).',
-                'source_clause': 'ZED Guidelines Clause 6.1: 80% subsidy for Micro enterprises.',
-            },
-            {
-                'benefit_name': '₹5.0 Lakh Consultancy & Handholding Grant',
-                'benefit_type': 'quality_certification',
-                'amount_or_percentage': 'Up to ₹5.00 Lakh',
-                'cap_amount_lakhs': 5.0,
-                'conditions': 'For achieving Silver and Gold ZED benchmarks.',
-                'source_clause': 'ZED Guidelines Clause 6.3: Handholding support up to ₹5.00 Lakh.',
-            },
+            {'benefit_name': 'Micro Enterprise Certification Subsidy (80%)', 'benefit_type': 'quality_certification', 'amount_or_percentage': '80% Cost Subsidy', 'cap_amount_lakhs': 0.8, 'conditions': 'Direct subsidy on Bronze/Silver/Gold assessment fees.'},
+            {'benefit_name': 'Handholding & Consultancy Support', 'benefit_type': 'technology_grant', 'amount_or_percentage': 'Up to ₹5.00 Lakh', 'cap_amount_lakhs': 5.0, 'conditions': 'For technical consultancy to achieve Silver/Gold standards.'},
         ],
     },
-
-    # 7. SFURTI (SFURTI_NEW_GUIDELINES.pdf)
-    {
-        'scheme_code': 'SFURTI_CLUSTER_SCHEME',
-        'name': 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)',
-        'short_name': 'SFURTI Cluster Development',
-        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises, Government of India',
-        'implementing_agency': 'KVIC, Coir Board, and Technical Agencies (TAs) / Nodal Agencies (NAs)',
-        'level': 'central',
-        'support_type': 'infrastructure',
-        'target_sectors': ['handicrafts', 'khadi', 'village_industries', 'coir', 'agro_processing', 'bamboo', 'artisans'],
-        'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 500.0,  # ₹5.00 Crore for Major Clusters >500 artisans, ₹2.50 Crore for Regular Clusters
-        'benefit_percentage': 95.0,
-        'benefit_description': (
-            'Financial assistance up to ₹5.00 Crore (Major Clusters) or ₹2.50 Crore (Regular Clusters) with 90-95% government grant for hard interventions '
-            '(Common Facility Centres, modern machinery, common raw material banks, packaging units) and 100% grant up to ₹25 Lakhs for soft interventions '
-            '(design development, market linkages, artisan skill training).'
-        ),
-        'status': 'active',
-        'launch_date': date(2015, 3, 1),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://sfurti.msme.gov.in',
-        'gazette_notification': 'SFURTI Comprehensive Scheme Guidelines 2021-26, Ministry of MSME',
-        'description': (
-            'SFURTI organizes traditional artisans and craftspersons into sustainable clusters, making them competitive, providing long-term market access, '
-            'and setting up common facility centres equipped with modern machinery and design testing facilities.'
-        ),
-        'eligibility_summary': (
-            '1. Traditional artisans, rural entrepreneurs, cooperatives, and SHGs. '
-            '2. Special Purpose Vehicle (SPV) with at least 33% women representation. '
-            '3. Minimum 500 artisans for Major Cluster or 250 artisans for Regular Cluster. '
-            '4. Clear title of land for CFC with at least 15-year lease.'
-        ),
-        'application_process': (
-            'Step 1: Implementing Agency submits Concept Proposal to Nodal Agency. '
-            'Step 2: Technical Agency prepares Detailed Project Report (DPR). '
-            'Step 3: Project Screening Committee (PSC) approves proposal. '
-            'Step 4: Scheme Steering Committee (SSC) approves final funding. '
-            'Step 5: SPV executes CFC construction and machinery procurement with milestone-based grant releases.'
-        ),
-        'rules': [
-            {
-                'rule_name': 'Artisan Cluster SPV Formation',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must form an SPV representing minimum 250 traditional artisans (Guidelines Clause 5.1).',
-                'source_document': 'SFURTI Guidelines, Clause 5.1',
-                'display_label': 'Registered Cluster SPV',
-                'failure_message': 'Formal cluster SPV required for SFURTI grants.',
-            },
-        ],
-        'benefits': [
-            {
-                'benefit_name': 'Hard Intervention CFC Grant up to ₹5.00 Crore',
-                'benefit_type': 'infrastructure',
-                'amount_or_percentage': '90-95% GoI Grant up to ₹5.00 Crore',
-                'cap_amount_lakhs': 500.0,
-                'conditions': 'For Common Facility Centres, equipment, and raw material banks.',
-                'source_clause': 'SFURTI Guidelines Clause 6.1: Max grant ₹5.00 Crore for Major Clusters.',
-            },
-        ],
-    },
-
-    # 8. TREDS CREDIT GUARANTEE (TReDS Cicular 262.pdf)
-    {
-        'scheme_code': 'TREDS_CGTMSE_CIRCULAR_262',
-        'name': 'Credit Guarantee Scheme for Factoring / Secondary Market on TReDS',
-        'short_name': 'TReDS Invoice Discounting Guarantee',
-        'ministry_department': 'Ministry of MSME & Reserve Bank of India / CGTMSE',
-        'implementing_agency': 'Credit Guarantee Fund Trust for Micro and Small Enterprises (CGTMSE) & TReDS Platforms (RXIL, M1xchange, Invoicemart)',
-        'level': 'central',
-        'support_type': 'credit_guarantee',
-        'target_sectors': ['manufacturing', 'services', 'supply_chain', 'all_msme'],
-        'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 500.0,  # ₹5.00 Crore per enterprise
-        'benefit_percentage': 85.0,
-        'benefit_description': (
-            'Credit guarantee coverage up to 85% on factored trade receivables and invoice discounting through RBI-authorized TReDS platforms without collateral. '
-            'Protects financiers and banks against default by buyers, ensuring micro and small suppliers receive instant liquidity without waiting for 45-day payment cycles.'
-        ),
-        'status': 'active',
-        'launch_date': date(2025, 1, 15),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://www.cgtmse.in',
-        'gazette_notification': 'CGTMSE Circular No. 262 / 2025-26; Ref. CGTMSE/TReDS/Factoring/2025',
-        'description': (
-            'Under CGTMSE Circular 262, institutional factoring and secondary market trade receivables discounting on TReDS are backed by a credit guarantee mechanism. '
-            'This unlocks cheap working capital for Micro and Small Enterprises supplying goods and services to large corporates, CPSEs, and government departments.'
-        ),
-        'eligibility_summary': (
-            '1. Micro and Small Enterprises registered on Udyam portal. '
-            '2. Invoices uploaded and accepted on RBI-licensed TReDS platform (RXIL, M1xchange, or Invoicemart). '
-            '3. Financier must be an eligible Member Lending Institution / NBFC Factor registered with CGTMSE.'
-        ),
-        'application_process': (
-            'Step 1: MSE supplier registers on TReDS platform with Udyam Certificate. '
-            'Step 2: Upload digital invoice against corporate buyer. '
-            'Step 3: Corporate buyer accepts invoice and terms. '
-            'Step 4: Financiers bid for discounting; lowest interest rate bid accepted by supplier. '
-            'Step 5: CGTMSE guarantee auto-allotted on platform; funds disbursed within 24 hours.'
-        ),
-        'rules': [
-            {
-                'rule_name': 'Valid Udyam Registration',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Supplier MSE must hold valid Udyam Registration (Circular 262, Clause 3).',
-                'source_document': 'CGTMSE Circular No. 262, Clause 3',
-                'display_label': 'Valid Udyam Registration',
-                'failure_message': 'Valid Udyam registration is mandatory for TReDS guarantee.',
-            },
-        ],
-        'benefits': [
-            {
-                'benefit_name': '85% Default Guarantee on Factored Invoices',
-                'benefit_type': 'credit_guarantee',
-                'amount_or_percentage': '85% guarantee cover',
-                'cap_amount_lakhs': 500.0,
-                'conditions': 'For invoices discounted through authorized TReDS platforms.',
-                'source_clause': 'Circular 262, Clause 5: 85% credit guarantee on factored receivables.',
-            },
-        ],
-    },
-
-    # 9. MSE-CDP (msme-cdp.pdf)
     {
         'scheme_code': 'MSE_CDP_CLUSTER_DEV',
         'name': 'Micro and Small Enterprises Cluster Development Programme (MSE-CDP)',
-        'short_name': 'MSE Cluster Development (MSE-CDP)',
+        'short_name': 'MSE Cluster Development Programme',
         'ministry_department': 'Office of Development Commissioner (MSME), Ministry of MSME',
-        'implementing_agency': 'State Governments / SIDBI / Special Purpose Vehicles (SPVs)',
+        'implementing_agency': 'State Governments / Special Purpose Vehicles (SPVs) / SIDBI',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'msme-cdp.pdf',
         'level': 'central',
         'support_type': 'infrastructure',
-        'target_sectors': ['manufacturing', 'engineering', 'textiles', 'leather', 'chemical', 'auto_components'],
+        'target_sectors': ['manufacturing', 'textiles', 'food', 'chemicals', 'coir', 'engineering'],
         'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 3000.0,  # Project cost up to ₹30 Crore for CFC, ₹15 Crore for Industrial Estate
-        'benefit_percentage': 70.0,  # Up to 80% for special categories and NER
-        'benefit_description': (
-            'Common Facility Centers (CFCs): GoI grant of up to 70% of project cost (max ₹21 Crore grant on ₹30 Crore project) for testing labs, tool rooms, '
-            'effluent plants, and design centers. Infrastructure Development (ID): GoI grant of up to 60-70% (max ₹10.5 Crore grant on ₹15 Crore project) '
-            'for new industrial estates or upgrading existing estates.'
-        ),
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 2100.0,
+        'benefit_percentage': 70.0,
+        'benefit_description': '70% to 80% GoI grant on Common Facility Centres (CFCs) up to ₹30 Crore project cost (max GoI grant ₹21 Crore). 60% grant up to ₹15 Crore for Infrastructure Development (ID) in new/existing industrial estates.',
         'status': 'active',
-        'launch_date': date(2022, 5, 23),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://cluster.dcmsme.gov.in',
-        'gazette_notification': 'MSE-CDP Revised Scheme Guidelines 2022, Ministry of MSME',
-        'description': (
-            'MSE-CDP enhances productivity and competitiveness of Micro and Small Enterprises by adopting cluster approaches. '
-            'It finances state-of-the-art Common Facility Centers and develops industrial infrastructure in dedicated parks, reducing capital expenditure burdens on individual MSMEs.'
-        ),
-        'eligibility_summary': (
-            '1. Cluster comprising at least 20 MSE units belonging to manufacturing sector. '
-            '2. SPV formed under Section 8 Company or registered society with minimum 20 MSE members. '
-            '3. Minimum 10% equity contribution from SPV members. '
-            '4. Land provided free of encumbrance by State Government or SPV.'
-        ),
-        'application_process': (
-            'Step 1: Online proposal submission on cluster.dcmsme.gov.in by State Directorate or SPV. '
-            'Step 2: Techno-economic appraisal and In-Principle approval by Steering Committee. '
-            'Step 3: Preparation and vetting of Detailed Project Report (DPR). '
-            'Step 4: Final approval by National Level Steering Committee (NLSC). '
-            'Step 5: Tripartite agreement and phased grant releases.'
-        ),
+        'launch_date': date(2022, 5, 1),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://cluster.msme.gov.in',
+        'gazette_notification': 'MSE-CDP Operational Guidelines 2022-26',
+        'description': 'MSE-CDP supports the sustainability and growth of MSEs by addressing common issues through Common Facility Centres (CFCs) and developing infrastructural facilities in industrial clusters.',
+        'eligibility_summary': '1. Minimum 20 MSE units forming a Special Purpose Vehicle (SPV).\n2. SPV shareholding minimum 51% held by MSE cluster beneficiaries.\n3. Detailed Project Report (DPR) approved by State Level Steering Committee.\n4. Available across industrial zones across India.',
+        'application_process': 'Step 1: Form SPV with cluster member enterprises.\nStep 2: Submit DPR online on MSE-CDP portal (cluster.msme.gov.in).\nStep 3: Recommendation by State Level Steering Committee (SLSC).\nStep 4: Final approval by National National Steering Committee (NSC).\nStep 5: Phased grant disbursement linked to project milestones.',
         'rules': [
-            {
-                'rule_name': 'Minimum 20 MSE Units in Cluster',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Cluster must comprise at least 20 operating MSE units (Guidelines Clause 4.1).',
-                'source_document': 'MSE-CDP Guidelines, Clause 4.1',
-                'display_label': '20+ MSE Cluster Size',
-                'failure_message': 'Cluster must have at least 20 participating MSE units.',
-            },
+            {'rule_name': 'SPV Formation with 20 MSEs', 'field_path': 'is_cluster_spv', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Registered Cluster SPV', 'source_clause': 'Minimum 20 MSE units must form an SPV.'},
         ],
         'benefits': [
-            {
-                'benefit_name': 'CFC Infrastructure Grant up to ₹21.00 Crore',
-                'benefit_type': 'infrastructure',
-                'amount_or_percentage': '70% GoI Grant up to ₹21.00 Crore',
-                'cap_amount_lakhs': 2100.0,
-                'conditions': 'For setting up Common Facility Centers on projects up to ₹30 Crore.',
-                'source_clause': 'MSE-CDP Guidelines Clause 5.1: 70% grant funding max ₹21 Crore.',
-            },
+            {'benefit_name': 'Common Facility Centre (CFC) Grant (70%)', 'benefit_type': 'infrastructure', 'amount_or_percentage': '70% GoI Grant up to ₹21 Crore', 'cap_amount_lakhs': 2100.0, 'conditions': 'For testing labs, training centres, R&D labs, and common processing.'},
         ],
     },
-
-    # 10. PMS (OM & PMS Scheme Guidelines.pdf)
+    {
+        'scheme_code': 'SFURTI_CLUSTER_SCHEME',
+        'name': 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)',
+        'short_name': 'SFURTI Traditional Artisans Fund',
+        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises (ARI Division)',
+        'implementing_agency': 'KVIC / Coir Board / Technical Agencies / Implementing Agencies (IAs)',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'SFURTI_NEW_GUIDELINES.pdf',
+        'level': 'central',
+        'support_type': 'infrastructure',
+        'target_sectors': ['traditional_industries', 'khadi', 'coir', 'handicrafts', 'agro_processing'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 500.0,
+        'benefit_percentage': 90.0,
+        'benefit_description': 'Up to ₹2.5 Crore grant for Regular Clusters (up to 500 artisans) and up to ₹5.0 Crore grant for Major Clusters (up to 2,500 artisans). 90% GoI funding for hard interventions (CFC, machinery) and 100% for soft interventions (skills, design).',
+        'status': 'active',
+        'launch_date': date(2022, 9, 9),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://sfurti.msme.gov.in',
+        'gazette_notification': 'Revised Guidelines of SFURTI; File No. S-02/34/2022-KVI-I',
+        'description': 'SFURTI aims to organize traditional artisans and rural micro-entrepreneurs into sustainable clusters, providing common facilities, modern equipment, capacity building, and market linkages.',
+        'eligibility_summary': '1. Traditional artisans, rural entrepreneurs, cooperatives, and SHGs.\n2. Implementing Agency can be NGOs, Panchayats, SPVs, or State Agencies.\n3. Minimum 500 artisans for regular cluster or 2,500 artisans for major cluster.',
+        'application_process': 'Step 1: IA submits Concept Proposal through Nodal Agency on SFURTI portal.\nStep 2: Technical Agency conducts Diagnostic Study and prepares DPR.\nStep 3: Approval by Project Approval Committee (PAC) under Ministry of MSME.\nStep 4: Fund release through PFMS in three tranches.\nStep 5: Commercial commissioning and market handholding.',
+        'rules': [
+            {'rule_name': 'Traditional Artisan Affiliation', 'field_path': 'is_traditional_craft', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Traditional Artisan / Craft Unit', 'source_clause': 'Clusters must consist of traditional artisans.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Hard Interventions CFC Grant (90%)', 'benefit_type': 'infrastructure', 'amount_or_percentage': '90% GoI Funding', 'cap_amount_lakhs': 500.0, 'conditions': 'For land, building, machinery, raw material banks, and packaging.'},
+        ],
+    },
+    {
+        'scheme_code': 'TREDS_CGTMSE_CIRCULAR_262',
+        'name': 'Trade Receivables Discounting System (TReDS) Support Scheme',
+        'short_name': 'TReDS Bill Discounting Guarantee',
+        'ministry_department': 'Ministry of MSME / CGTMSE / Reserve Bank of India',
+        'implementing_agency': 'Credit Guarantee Fund Trust for Micro and Small Enterprises (CGTMSE)',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'TReDS Cicular 262.pdf',
+        'level': 'central',
+        'support_type': 'credit_guarantee',
+        'target_sectors': ['manufacturing', 'services', 'textiles', 'chemicals', 'food', 'engineering'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 500.0,
+        'benefit_percentage': 85.0,
+        'benefit_description': 'Up to 85% institutional credit guarantee coverage for secondary market factoring transactions on RBI-approved TReDS platforms (RXIL, M1xchange, Invoicemart). Provides immediate collateral-free working capital against buyers invoices within 24 hours.',
+        'status': 'active',
+        'launch_date': date(2025, 1, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://www.cgtmse.in',
+        'gazette_notification': 'CGTMSE Circular No. 262 / 2026; Ref. CGS-TReDS-2026',
+        'description': 'Enables MSME suppliers to discount unpaid corporate and PSU trade receivables without collateral security. Solves delayed payments and ensures seamless 24-hour working capital liquidity.',
+        'eligibility_summary': '1. Micro and Small Enterprises registered on Udyam.\n2. Onboarded as sellers on RBI-approved TReDS platforms.\n3. Goods or services delivered to buyer against accepted digital invoice.\n4. Factoring conducted with participating Financiers / Banks.',
+        'application_process': 'Step 1: Register on any TReDS platform (RXIL, M1xchange, or Invoicemart).\nStep 2: Upload accepted tax invoice and delivery challan.\nStep 3: Buyer accepts invoice digitally.\nStep 4: Multiple banks bid discount rates; supplier accepts best bid.\nStep 5: Funds disbursed to supplier account within 24 hours.',
+        'rules': [
+            {'rule_name': 'Udyam Registration Required', 'field_path': 'has_udyam_registration', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Valid Udyam Certificate', 'source_clause': 'Seller must hold valid Udyam registration.'},
+        ],
+        'benefits': [
+            {'benefit_name': '85% Factoring Credit Guarantee', 'benefit_type': 'credit_guarantee', 'amount_or_percentage': '85% Guarantee Cover', 'cap_amount_lakhs': 500.0, 'conditions': 'For invoices discounted on approved TReDS exchanges.'},
+        ],
+    },
+    {
+        'scheme_code': 'MSME_IC_SCHEME_2021',
+        'name': 'International Cooperation (IC) Scheme (Trade Fair & Capacity Building)',
+        'short_name': 'IC Global Trade & Export Promotion',
+        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises (IC Division)',
+        'implementing_agency': 'Directorate of IC, Ministry of MSME / EPCs / Industry Associations',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'Final and approved IC Scheme Guidelines-2021.pdf',
+        'level': 'central',
+        'support_type': 'marketing_support',
+        'target_sectors': ['manufacturing', 'export', 'textiles', 'engineering', 'chemicals', 'services'],
+        'target_msme_categories': ['micro', 'small', 'medium'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 4.5,
+        'benefit_percentage': 100.0,
+        'benefit_description': '100% economy class airfare subsidy (up to ₹1.50 Lakh) + 100% stall space rent reimbursement (up to ₹3.00 Lakh) for MSMEs participating in overseas exhibitions and bilateral buyer-seller meets.',
+        'status': 'active',
+        'launch_date': date(2021, 8, 1),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://ic.msme.gov.in',
+        'gazette_notification': 'IC Scheme Guidelines 2021-26; F.No. 4/8/2021-IC',
+        'description': 'The International Cooperation Scheme builds global competitiveness and market linkages for MSMEs by subsidizing physical participation in international exhibitions, conferences, and trade delegations abroad.',
+        'eligibility_summary': '1. Manufacturing or service MSMEs with valid Udyam Registration and active IEC code.\n2. Must not have availed IC scheme financial assistance more than once in the same financial year.\n3. Minimum 3 years in operation with positive turnover.',
+        'application_process': 'Step 1: Submit proposal online on IC portal (ic.msme.gov.in) at least 60 days before the foreign event.\nStep 2: Screening and approval by Scheme Steering Committee.\nStep 3: Participate in approved international exhibition.\nStep 4: Submit claim documents with boarding passes, invoices, and photos within 90 days.\nStep 5: Direct Benefit Transfer (DBT) credit to MSME bank account.',
+        'rules': [
+            {'rule_name': 'Valid IEC & Udyam', 'field_path': 'has_iec_code', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Valid IEC Code', 'source_clause': 'Must hold valid IEC code.'},
+        ],
+        'benefits': [
+            {'benefit_name': '100% Economy Airfare Subsidy', 'benefit_type': 'marketing_support', 'amount_or_percentage': '100% Airfare up to ₹1.50 Lakh', 'cap_amount_lakhs': 1.5, 'conditions': 'For 1 representative per MSME to international expo.'},
+            {'benefit_name': 'Stall Rent Reimbursement', 'benefit_type': 'marketing_support', 'amount_or_percentage': '100% Stall Rent up to ₹3.00 Lakh', 'cap_amount_lakhs': 3.0, 'conditions': 'Up to 12 sqm stall space in approved exhibition.'},
+        ],
+    },
+    {
+        'scheme_code': 'COIR_VIKAS_YOJANA_CVY',
+        'name': 'Coir Industry Development Scheme (Coir Vikas Yojana - CVY)',
+        'short_name': 'Coir Vikas Yojana Modernisation',
+        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises / Coir Board Kochi',
+        'implementing_agency': 'Coir Board, Ministry of MSME',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'cvy.schemes.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['coir', 'natural_fibres', 'agro_textiles', 'handicrafts', 'manufacturing'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India', 'Gujarat', 'Tamil Nadu', 'Kerala', 'Karnataka', 'Andhra Pradesh'],
+        'max_benefit_amount_lakhs': 25.0,
+        'benefit_percentage': 25.0,
+        'benefit_description': '25% capital subsidy up to ₹25 Lakh on plant, machinery and building for new coir manufacturing units under CITUS. Up to ₹2.5 Crore for coir cluster CFCs. Monthly stipend of ₹3,000 + 75% subsidized motorized spinning ratts for women under Mahila Coir Yojana.',
+        'status': 'active',
+        'launch_date': date(2021, 4, 1),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://coirboard.gov.in',
+        'gazette_notification': 'Coir Vikas Yojana Central Sector Guidelines 2021-26',
+        'description': 'Comprehensive scheme for modernizing, expanding, and upgrading coir industrial units across coconut-producing coastal states, enhancing export earnings and generating rural female employment.',
+        'eligibility_summary': '1. Coir processing and manufacturing units holding valid Udyam Registration and Coir Board Registration.\n2. Both new greenfield units and existing units undertaking technology modernisation.\n3. Term loan sanctioned by commercial banks or financial institutions.',
+        'application_process': 'Step 1: Submit application online via Coir Board Portal.\nStep 2: Field verification by Coir Board Regional Officer and Lead District Bank.\nStep 3: Approval by Coir Board Project Sanctioning Committee.\nStep 4: Subsidy release into beneficiary bank loan account.',
+        'rules': [
+            {'rule_name': 'Coir Board Registration', 'field_path': 'is_coir_registered', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Coir Board Registration', 'source_clause': 'Unit must be registered with Coir Board.'},
+        ],
+        'benefits': [
+            {'benefit_name': '25% Capital Subsidy on Machinery (CITUS)', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '25% Capital Subsidy up to ₹25 Lakh', 'cap_amount_lakhs': 25.0, 'conditions': 'For purchase of modern coir processing machinery.'},
+        ],
+    },
     {
         'scheme_code': 'PMS_MARKETING_SUPPORT',
         'name': 'Procurement and Marketing Support (PMS) Scheme',
-        'short_name': 'Procurement & Marketing Support (PMS)',
+        'short_name': 'PMS Domestic Trade & GeM Promotion',
         'ministry_department': 'Office of Development Commissioner (MSME), Ministry of MSME',
-        'implementing_agency': 'MSME Development and Facilitation Offices (MSME-DFO) / NSIC',
+        'implementing_agency': 'MSME Development & Facilitation Offices (MSME-DFOs)',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'OM & PMS Scheme Guidelines.pdf',
         'level': 'central',
-        'support_type': 'market_development',
-        'target_sectors': ['manufacturing', 'retail', 'services', 'all_msme'],
+        'support_type': 'marketing_support',
+        'target_sectors': ['manufacturing', 'services', 'textiles', 'food', 'engineering', 'handicrafts'],
         'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 5.0,
-        'benefit_percentage': 80.0,
-        'benefit_description': (
-            '100% stall rent reimbursement up to ₹1.5 Lakhs plus freight charges up to ₹25,000 for domestic trade exhibitions. '
-            '80% one-time financial support (up to ₹50,000) for Barcode registration. Up to ₹1 Lakh for packaging development and e-commerce platform onboarding.'
-        ),
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 1.5,
+        'benefit_percentage': 100.0,
+        'benefit_description': '100% space rent subsidy up to ₹1.50 Lakh for Micro and Small units in national exhibitions. 100% reimbursement for GS1 Barcode registration up to ₹50,000. Free onboarding and cataloguing support on Government e-Marketplace (GeM).',
         'status': 'active',
-        'launch_date': date(2018, 11, 2),
-        'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://my.msme.gov.in/pms',
-        'gazette_notification': 'Office Memorandum F.No. 21(1)/2018-MA, PMS Scheme Guidelines',
-        'description': (
-            'The PMS scheme promotes marketing capabilities, market linkages, and public procurement participation for Micro and Small Enterprises. '
-            'It funds domestic expo stalls, Vendor Development Programmes (VDPs) with CPSEs, barcode adoption, and modern retail packaging development.'
-        ),
-        'eligibility_summary': (
-            '1. Valid Udyam Registration Certificate. '
-            '2. Manufacturing or service micro/small enterprise. '
-            '3. Maximum 2 domestic exhibitions subsidized per financial year per enterprise. '
-            '4. Special preference and 100% stall waiver for SC/ST, Women, and NER entrepreneurs.'
-        ),
-        'application_process': (
-            'Step 1: Register on my.msme.gov.in with Udyam Certificate. '
-            'Step 2: Select approved domestic exhibition or trade fair. '
-            'Step 3: Apply online at least 30 days prior to event. '
-            'Step 4: Field office (MSME-DFO) verifies and issues stall sanction. '
-            'Step 5: Submit participation report and claims within 45 days post-event.'
-        ),
+        'launch_date': date(2022, 7, 26),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://my.msme.gov.in/mymsme/reg/pms.aspx',
+        'gazette_notification': 'OM No. 5(1)/2021-22/PMS/SFC & Scheme Guidelines; New Delhi',
+        'description': 'PMS Scheme promotes domestic trade linkages, participation in domestic exhibitions, trade fairs, vendor development programmes, and retail market access for Micro and Small enterprises.',
+        'eligibility_summary': '1. Active MSME with Udyam Registration Number.\n2. Applicable to Micro and Small manufacturing/service enterprises.\n3. Maximum participation subsidized up to 2 trade fairs per fiscal year.',
+        'application_process': 'Step 1: Register on MyMSME Portal (my.msme.gov.in).\nStep 2: Select notified national exhibition.\nStep 3: Recommendation by local MSME-DFO.\nStep 4: Allotment of free exhibition booth.\nStep 5: Claim reimbursement online after event.',
         'rules': [
-            {
-                'rule_name': 'Valid Udyam Registration',
-                'field_path': 'has_udyam_registration',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Must hold valid Udyam Registration Certificate (PMS Guidelines Clause 3).',
-                'source_document': 'PMS Guidelines Clause 3',
-                'display_label': 'Valid Udyam Registration',
-                'failure_message': 'Udyam registration is required for PMS scheme assistance.',
-            },
+            {'rule_name': 'Micro or Small Enterprise', 'field_path': 'category', 'operator': 'in', 'expected_value': ['micro', 'small'], 'importance': 'mandatory', 'display_label': 'Micro or Small Unit', 'source_clause': 'Only Micro and Small enterprises are eligible.'},
         ],
         'benefits': [
-            {
-                'benefit_name': '100% Domestic Expo Stall Reimbursement',
-                'benefit_type': 'market_development',
-                'amount_or_percentage': '100% up to ₹1.50 Lakh',
-                'cap_amount_lakhs': 1.5,
-                'conditions': 'Stall rent for participating in approved national/state trade fairs.',
-                'source_clause': 'PMS Guidelines Component 1: Up to ₹1.50 Lakh stall reimbursement.',
-            },
+            {'benefit_name': '100% Domestic Stall Rent Subsidy', 'benefit_type': 'marketing_support', 'amount_or_percentage': '100% up to ₹1.50 Lakh', 'cap_amount_lakhs': 1.5, 'conditions': 'For stalls in national level exhibitions.'},
+        ],
+    },
+    {
+        'scheme_code': 'NSSH_SPECIAL_CLCSS',
+        'name': 'National Scheduled Caste and Scheduled Tribe Hub (NSSH) Special Capital Subsidy',
+        'short_name': 'NSSH Special Capital Subsidy',
+        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises / NSIC',
+        'implementing_agency': 'National Small Industries Corporation (NSIC) & Member Lending Institutions',
+        'division': 'MSME & Enterprise Development',
+        'pdf_filename': 'NSSH_Guidelines_Sub_scheme_1.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['manufacturing', 'services', 'textiles', 'engineering', 'food'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 25.0,
+        'benefit_percentage': 25.0,
+        'benefit_description': '25% upfront capital subsidy on institutional credit up to ₹1 Crore for plant and machinery (max subsidy ₹25 Lakh) for SC/ST-owned MSEs. 100% fee reimbursement on NABL laboratory testing, patent registration, and single-point NSIC tender fees.',
+        'status': 'active',
+        'launch_date': date(2021, 11, 15),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://www.scsthub.in',
+        'gazette_notification': 'OM No. K-02/4/2021-SME; Revised Guidelines of NSSH 2021-26',
+        'description': 'NSSH supports SC/ST entrepreneurs to achieve the 4% annual public procurement mandate from Central Ministries and CPSEs by providing financial subsidies, capacity training, and tender facilitation.',
+        'eligibility_summary': '1. Micro and Small Enterprises owned by SC/ST entrepreneurs (minimum 51% shareholding).\n2. Valid caste certificate issued by competent revenue authority.\n3. Valid Udyam Registration Certificate.\n4. Sanctioned term loan from Scheduled Commercial Bank.',
+        'application_process': 'Step 1: Sanction term loan from Bank.\nStep 2: Bank uploads subsidy claim on NSSH Online Portal.\nStep 3: NSIC scrutinizes caste certificate and Udyam details.\nStep 4: Subsidy credited directly into borrower loan account.',
+        'rules': [
+            {'rule_name': 'SC or ST Ownership >= 51%', 'field_path': 'is_sc_st_promoter', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'SC/ST Ownership >= 51%', 'source_clause': 'Minimum 51% shareholding must be held by SC/ST.'},
+        ],
+        'benefits': [
+            {'benefit_name': '25% Special Capital Subsidy (SCLCSS)', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '25% Upfront Subsidy up to ₹25 Lakh', 'cap_amount_lakhs': 25.0, 'conditions': 'On term loan for plant and machinery.'},
         ],
     },
 
-    # 11. NSSH SPECIAL SUBSIDY (NSSH_Guidelines_Sub_scheme_0 & 1.pdf)
+    # ─── DIVISION 2: GUJARAT STATE & INFRASTRUCTURE ───────────────────────
     {
-        'scheme_code': 'NSSH_SPECIAL_CLCSS',
-        'name': 'National SC-ST Hub (NSSH) – Special Credit Linked Capital Subsidy Scheme (SCLCSS)',
-        'short_name': 'NSSH Special Capital Subsidy (SCLCSS)',
-        'ministry_department': 'Ministry of Micro, Small and Medium Enterprises, Government of India',
-        'implementing_agency': 'National Small Industries Corporation (NSIC) / Nodal Banks / SIDBI',
-        'level': 'central',
-        'support_type': 'capital_subsidy',
-        'target_sectors': ['manufacturing', 'services', 'all_msme'],
-        'target_msme_categories': ['micro', 'small'],
-        'target_states': [],
-        'max_benefit_amount_lakhs': 25.0,  # 25% on plant & machinery up to ₹100 Lakh institutional loan
-        'benefit_percentage': 25.0,
-        'benefit_description': (
-            '25% upfront capital subsidy (maximum ₹25 Lakhs) on institutional term loans up to ₹100 Lakhs availed by SC/ST Micro and Small Enterprises '
-            'for plant, machinery, and equipment. Also provides 100% reimbursement of testing, quality certification fees, and CPSE tender submission fees.'
-        ),
+        'scheme_code': 'GUJ_SER_TEXTILE_2025',
+        'name': 'Assistance for Developing SER Textile and MSME Park 2025-26',
+        'short_name': 'SER Textile & MSME Park Assistance (Gujarat)',
+        'ministry_department': 'Industries and Mines Department, Government of Gujarat',
+        'implementing_agency': 'Directorate of Industries, Gandhinagar / District Industries Centres (DIC)',
+        'division': 'Gujarat State & Infrastructure',
+        'pdf_filename': '1.msme.pdf',
+        'level': 'state_gujarat',
+        'support_type': 'infrastructure',
+        'target_sectors': ['textiles', 'technical_textiles', 'apparel', 'manufacturing'],
+        'target_msme_categories': ['micro', 'small', 'medium'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 100.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': '100% financial assistance up to ₹1.00 Crore for developing Common Testing Laboratories, Design Studios, and Zero-Liquid Discharge (ZLD) effluent recycling plants within notified SER Textile Parks in Gujarat.',
         'status': 'active',
-        'launch_date': date(2018, 10, 1),
+        'launch_date': date(2025, 4, 1),
         'valid_until': date(2027, 3, 31),
-        'official_portal_url': 'https://www.scsthub.in',
-        'gazette_notification': 'National SC-ST Hub Scheme Guidelines 2021-26, Ministry of MSME',
-        'description': (
-            'NSSH provides focused capacity building and capital subsidy support to enterprise owners from Scheduled Caste and Scheduled Tribe communities, '
-            'enabling them to meet the mandatory 4% annual CPSE public procurement target under the Public Procurement Policy.'
-        ),
-        'eligibility_summary': (
-            '1. SC/ST entrepreneur holding at least 51% equity shareholding in the enterprise. '
-            '2. Valid Udyam Registration Certificate with caste category authenticated. '
-            '3. Institutional credit sanctioned by Member Lending Institution. '
-            '4. Machinery purchased must be new and compliant with BIS/improved technology.'
-        ),
-        'application_process': (
-            'Step 1: Sanction term loan from eligible commercial bank. '
-            'Step 2: Bank logs into NSSH portal and uploads loan details with borrower caste certificate. '
-            'Step 3: NSSH Screening Committee scrutinizes eligibility. '
-            'Step 4: Subsidy released by NSIC to lending bank. '
-            'Step 5: Kept in Term Deposit Receipt (TDR) for 3 years before loan adjustment.'
-        ),
+        'official_portal_url': 'https://imd.gujarat.gov.in',
+        'gazette_notification': 'GR No. IMD/MRT/e-file/9/2025/0597/G, Gandhinagar',
+        'description': 'Financial assistance for developing state-of-the-art SER Textile and MSME Parks in Gujarat with eco-friendly infrastructure, shared testing laboratories, skill centers, and plug-and-play manufacturing sheds.',
+        'eligibility_summary': '1. Industrial Park developer, industrial association, or SPV registered in Gujarat.\n2. Minimum land area of 5 acres dedicated to MSME units.\n3. Compliance with Gujarat Pollution Control Board (GPCB) norms.',
+        'application_process': 'Step 1: Submit Park DPR to Industries Commissionerate, Gandhinagar.\nStep 2: Technical scrutiny by State Level Project Approval Committee.\nStep 3: In-principle approval and milestone-based grant release.',
         'rules': [
-            {
-                'rule_name': 'SC/ST 51%+ Equity Ownership',
-                'field_path': 'has_bank_account',
-                'operator': 'bool_true',
-                'expected_value': True,
-                'importance': 'mandatory',
-                'source_clause': 'Enterprise must be owned by SC/ST promoters with at least 51% share (NSSH Clause 4.1).',
-                'source_document': 'NSSH Guidelines, Clause 4.1',
-                'display_label': 'SC/ST Promoter Ownership (>= 51%)',
-                'failure_message': 'Applicant must satisfy the 51%+ SC/ST ownership criterion.',
-            },
+            {'rule_name': 'Gujarat State Location', 'field_path': 'state', 'operator': 'eq', 'expected_value': 'Gujarat', 'importance': 'mandatory', 'display_label': 'Located in Gujarat', 'source_clause': 'Project must be located within Gujarat.'},
         ],
         'benefits': [
-            {
-                'benefit_name': '25% Special Capital Subsidy (up to ₹25 Lakh)',
-                'benefit_type': 'capital_subsidy',
-                'amount_or_percentage': '25% of plant & machinery term loan',
-                'cap_amount_lakhs': 25.0,
-                'conditions': 'For institutional term loans up to ₹1.00 Crore.',
-                'source_clause': 'NSSH Guidelines Section 2: 25% capital subsidy max ₹25 Lakh.',
-            },
+            {'benefit_name': '100% Common Facility Lab Grant', 'benefit_type': 'infrastructure', 'amount_or_percentage': '100% up to ₹1.00 Crore', 'cap_amount_lakhs': 100.0, 'conditions': 'For testing, R&D, and green infrastructure.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_IND_POLICY_2023',
+        'name': 'Gujarat Industrial Policy 2020-2025 Capital Investment & Interest Subsidy (GR 09/08/2023)',
+        'short_name': 'Gujarat Industrial Incentive Scheme (GR 09/08/2023)',
+        'ministry_department': 'Industries and Mines Department, Government of Gujarat',
+        'implementing_agency': 'Industries Commissionerate, Gandhinagar & DICs',
+        'division': 'Gujarat State & Infrastructure',
+        'pdf_filename': 'GR09082023.pdf',
+        'level': 'state_gujarat',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['manufacturing', 'engineering', 'chemicals', 'textiles', 'plastics', 'electronics'],
+        'target_msme_categories': ['micro', 'small', 'medium'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 350.0,
+        'benefit_percentage': 25.0,
+        'benefit_description': 'Up to 25% capital investment subsidy on plant and machinery (max ₹35 Lakhs for Micro, ₹75 Lakhs for Small). Plus 7% interest subvention for 7 years up to ₹35 Lakh/year on term loans. Additional assistance for quality certifications and patent filings.',
+        'status': 'active',
+        'launch_date': date(2023, 8, 9),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://imd.gujarat.gov.in',
+        'gazette_notification': 'Government Resolution No. IMD/IP/MSME/e-file/2023/GR-09082023, Gandhinagar',
+        'description': 'Comprehensive Gujarat Government resolution providing capital investment subsidies, interest subvention, electricity duty exemptions, and quality upgradation incentives for MSMEs in Gujarat.',
+        'eligibility_summary': '1. New MSME enterprise or existing enterprise undertaking expansion/diversification in Gujarat.\n2. Registered on Udyam Portal with enterprise location in Gujarat.\n3. Commence commercial production during operative period of the policy.',
+        'application_process': 'Step 1: File online application on Investor Facilitation Portal (IFP Gujarat) within 1 year of commercial production.\nStep 2: Upload CA certificate, bank term loan sanction, and plant bills.\nStep 3: Joint inspection by General Manager DIC.\nStep 4: State Level Committee approves subsidy.',
+        'rules': [
+            {'rule_name': 'Gujarat Manufacturing Unit', 'field_path': 'state', 'operator': 'eq', 'expected_value': 'Gujarat', 'importance': 'mandatory', 'display_label': 'Unit Located in Gujarat', 'source_clause': 'Unit must be set up in Gujarat.'},
+        ],
+        'benefits': [
+            {'benefit_name': '25% Capital Investment Subsidy', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': 'Up to 25% on Machinery', 'cap_amount_lakhs': 75.0, 'conditions': 'For micro and small manufacturing units.'},
+            {'benefit_name': '7% Term Loan Interest Subvention', 'benefit_type': 'interest_subvention', 'amount_or_percentage': '7% p.a. for 7 years', 'cap_amount_lakhs': 245.0, 'conditions': 'Reimbursed bi-annually on active term loans.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_GBOCWWB_HOSTEL',
+        'name': 'Hostel Assistance Scheme for Children of Migrant Construction Workers (GBOCWWB)',
+        'short_name': 'Migrant Construction Workers Hostel Support',
+        'ministry_department': 'Labour and Employment Department, Government of Gujarat',
+        'implementing_agency': 'Gujarat Building and Other Construction Workers Welfare Board (GBOCWWB)',
+        'division': 'Gujarat State & Infrastructure',
+        'pdf_filename': 'Hostel Assistance Scheme for Children of Migrant Construction Workers (GBOCWWB).pdf',
+        'level': 'state_gujarat',
+        'support_type': 'skill_training',
+        'target_sectors': ['construction', 'civil_infrastructure', 'labour_welfare'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 1.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': '100% free residential hostel facilities, nutritious meals, study materials, uniforms, and primary/secondary schooling assistance for children of migrant construction workers registered in Gujarat.',
+        'status': 'active',
+        'launch_date': date(2022, 1, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://bocwwb.gujarat.gov.in',
+        'gazette_notification': 'GBOCWWB Notification Ref. No. GBOCWWB/MIG-HOSTEL/2022',
+        'description': 'Hostel assistance scheme by Gujarat Building and Other Construction Workers Welfare Board ensuring continuous education and residential protection for children of migrant construction laborers.',
+        'eligibility_summary': '1. Parent must be registered construction worker holding active E-Nirmaan Card.\n2. Child must possess Aadhaar card.\n3. Applicable for primary, secondary, and higher education students.',
+        'application_process': 'Step 1: Submit application at District Development Officer (DDO) or District Labour Office.\nStep 2: Produce E-Nirmaan Card and child Aadhaar.\nStep 3: Admission into authorized GBOCWWB hostel.',
+        'rules': [
+            {'rule_name': 'Registered with E-Nirmaan Card', 'field_path': 'has_e_nirmaan', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Valid E-Nirmaan Card', 'source_clause': 'Worker must hold active E-Nirmaan Card.'},
+        ],
+        'benefits': [
+            {'benefit_name': '100% Free Hostel & Boarding', 'benefit_type': 'skill_training', 'amount_or_percentage': '100% Free Residential Facility', 'cap_amount_lakhs': 1.0, 'conditions': 'Free accommodation and educational supplies.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_SALT_LABOUR_REWARDS',
+        'name': 'Scheme for Grant of Rewards to Children of Salt Industry Labourers',
+        'short_name': 'Salt Worker Children Merit Reward Scheme',
+        'ministry_department': 'Labour & Employment Department, Gujarat / Office of Salt Commissioner',
+        'implementing_agency': 'Salt Commissionerate, Government of India & State Labour Commissioner',
+        'division': 'Gujarat State & Infrastructure',
+        'pdf_filename': 'Scheme For Grant Of Rewards To The Children Of Salt Labourers.pdf',
+        'level': 'state_gujarat',
+        'support_type': 'skill_training',
+        'target_sectors': ['salt_industry', 'chemical_feedstock', 'marine_resources'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat', 'All India'],
+        'max_benefit_amount_lakhs': 0.1,
+        'benefit_percentage': 100.0,
+        'benefit_description': '3,500 annual merit cash rewards and financial grants awarded to meritorious children of salt workers to meet educational fees, books, and stationery on admission to recognized academic institutions.',
+        'status': 'active',
+        'launch_date': date(2022, 1, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://labour.gujarat.gov.in',
+        'gazette_notification': 'Revised Scheme for Grant of Rewards to Children of Salt Workers, 1985 (Rev. 2022)',
+        'description': 'Welfare scheme for children of labourers employed in the salt manufacturing industry, providing annual educational merit rewards and encouragement for higher education.',
+        'eligibility_summary': '1. Parent must be certified salt worker in a registered salt unit.\n2. Child must be admitted to a recognized school or college.\n3. Selected on merit across academic streams.',
+        'application_process': 'Step 1: Submit application via the Salt Factory Manager or local Labour Officer.\nStep 2: Enclose marksheet and parent employment verification.\nStep 3: Direct award disbursement.',
+        'rules': [
+            {'rule_name': 'Salt Worker Child', 'field_path': 'is_salt_worker_child', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Parent Salt Industry Worker', 'source_clause': 'Parent must work in salt production.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Annual Educational Merit Award', 'benefit_type': 'skill_training', 'amount_or_percentage': 'Direct Merit Scholarship', 'cap_amount_lakhs': 0.1, 'conditions': 'Awarded to 3,500 students annually.'},
+        ],
+    },
+
+    # ─── DIVISION 3: SOCIAL WELFARE & INCLUSIVE DEVELOPMENT ───────────────
+    {
+        'scheme_code': 'GUJ_FOREIGN_STUDY_LOAN',
+        'name': 'Gujarat Foreign Study Loan Scheme (વિદેશ અભ્યાસ લોન યોજના)',
+        'short_name': 'Foreign Study Concessional Loan (Gujarat)',
+        'ministry_department': 'Social Justice and Empowerment Department, Government of Gujarat',
+        'implementing_agency': 'Gujarat Backward Classes Development Corporation (GBCDC)',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'Foreign Study Loan.pdf',
+        'level': 'state_gujarat',
+        'support_type': 'collateral_free_loan',
+        'target_sectors': ['higher_education', 'professional_studies', 'skills'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 15.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Concessional education loan up to ₹15.00 Lakh at an interest rate of only 4% simple interest p.a. for foreign higher studies (MBBS, Masters, PG Diploma) with repayment starting 1 year after course completion.',
+        'status': 'active',
+        'launch_date': date(2022, 1, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://sje.gujarat.gov.in',
+        'gazette_notification': 'GBCDC Resolution Ref. No. GBCDC/EDU/FOREIGN-LOAN/2022',
+        'description': 'Concessional loan facility by Gujarat Backward Classes Development Corporation enabling meritorious students from socially and educationally backward communities to pursue foreign university education.',
+        'eligibility_summary': '1. Domicile of Gujarat belonging to Socially and Educationally Backward Classes (SEBC).\n2. Minimum 60% marks in 12th standard or graduation.\n3. Family annual income less than or equal to ₹6.00 Lakh.\n4. Secured admission in recognized overseas university for postgraduate or MBBS degree.',
+        'application_process': 'Step 1: Apply online on GBCDC portal (sje.gujarat.gov.in).\nStep 2: Upload 12th/Degree marksheets, SEBC caste certificate, income certificate, foreign university offer letter, and I-20/Visa.\nStep 3: Verification by District Implementing Officer.\nStep 4: Loan sanctioned and disbursed in foreign currency directly to university.',
+        'rules': [
+            {'rule_name': 'SEBC Caste Certificate', 'field_path': 'is_sebc_gujarat', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'SEBC / OBC Certificate (Gujarat)', 'source_clause': 'Must belong to socially and educationally backward class.'},
+            {'rule_name': 'Family Income <= ₹6 Lakh', 'field_path': 'family_income_lakhs', 'operator': 'lte', 'expected_value': 6.0, 'importance': 'mandatory', 'display_label': 'Income <= ₹6.00 Lakh p.a.', 'source_clause': 'Family income must not exceed ₹6 Lakh.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹15 Lakh Education Loan at 4% Interest', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': '₹15.00 Lakh at 4% Interest', 'cap_amount_lakhs': 15.0, 'conditions': 'Repayment starts 1 year after course completion in monthly EMIs.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_DAADC_SMALL_BUSINESS',
+        'name': 'Dr. Ambedkar Antyodaya Corporation Loan for Small Businesses & Self-Employment (નાના ધંધા / વ્યવસાય યોજના)',
+        'short_name': 'DAADC Small Business & Micro-Enterprise Loan',
+        'ministry_department': 'Social Justice and Empowerment Department, Government of Gujarat',
+        'implementing_agency': 'Dr. Ambedkar Antyodaya Development Corporation (DAADC)',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'Loan for Small Businesses (DAADC).pdf',
+        'level': 'state_gujarat',
+        'support_type': 'collateral_free_loan',
+        'target_sectors': ['retail', 'services', 'micro_manufacturing', 'self_employment'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 1.25,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Term loan up to ₹1,25,000 for setting up small business shops and micro-ventures at a highly subsidised interest rate of only 4% p.a., with 100% state government share and 60 months repayment tenure.',
+        'status': 'active',
+        'launch_date': date(2021, 1, 1),
+        'valid_until': date(2026, 12, 31),
+        'official_portal_url': 'https://sje.gujarat.gov.in',
+        'gazette_notification': 'DAADC Policy Guidelines Ref. No. DAADC/SBL/2021-26',
+        'description': 'Targeted financial assistance for unemployed youth belonging to scheduled castes and Antyodaya families in Gujarat to establish self-reliant micro-enterprises and service businesses.',
+        'eligibility_summary': '1. Resident of Gujarat belonging to Scheduled Caste / Antyodaya community.\n2. Age between 18 and 50 years.\n3. Valid caste and income certificates.\n4. Two guarantors required.',
+        'application_process': 'Step 1: Fill application at District DAADC Office or e-Samaj Kalyan Portal.\nStep 2: Submit business quotation, Aadhaar, caste certificate, and guarantor papers.\nStep 3: Verification and sanction with direct loan credit.',
+        'rules': [
+            {'rule_name': 'Scheduled Caste Community', 'field_path': 'is_sc_gujarat', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'SC Domicile of Gujarat', 'source_clause': 'Applicant must be SC domicile of Gujarat.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Small Business Loan at 4% Interest', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': 'Up to ₹1,25,000 at 4%', 'cap_amount_lakhs': 1.25, 'conditions': '60-month flexible repayment tenure.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_GBCDC_SWAYAM_SAKSHAM',
+        'name': 'Swayam Saksham Self-Reliance Yojana for Professional Youth (સ્વયં સક્ષમ યોજના)',
+        'short_name': 'GBCDC Swayam Saksham Professional Setup Loan',
+        'ministry_department': 'Social Justice and Empowerment Department, Government of Gujarat',
+        'implementing_agency': 'Gujarat Backward Classes Development Corporation (GBCDC)',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'Swayam Saksham Yojana (GBCDC).pdf',
+        'level': 'state_gujarat',
+        'support_type': 'collateral_free_loan',
+        'target_sectors': ['healthcare', 'engineering', 'legal', 'pharmacy', 'it_services', 'professional_services'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 5.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Concessional self-employment loan up to ₹5.00 Lakh at 4% interest rate for qualified engineers, doctors, advocates, architects, CA, and diploma holders from backward classes to set up independent clinics, law offices, diagnostic labs, or engineering workshops.',
+        'status': 'active',
+        'launch_date': date(2022, 1, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://sje.gujarat.gov.in',
+        'gazette_notification': 'GBCDC Directive Resolution No. GBCDC/SSY/2022-26',
+        'description': 'Enables qualified professional youth from backward classes in Gujarat to become self-reliant practitioners by providing low-interest credit for medical clinics, nursing homes, diagnostic labs, architecture offices, or engineering consulting units.',
+        'eligibility_summary': '1. Domicile of Gujarat belonging to Socially and Educationally Backward Classes (SEBC).\n2. Professional qualification: Doctor, Engineer, Advocate, Architect, Chartered Accountant, or Pharmacy graduate.\n3. Family annual income less than or equal to ₹3.00 Lakh.\n4. Age between 18 and 35 years.',
+        'application_process': 'Step 1: Apply online at e-Samaj Kalyan Portal (esamajkalyan.gujarat.gov.in).\nStep 2: Upload professional degree, Bar Council / Medical Council registration, project estimate, and caste certificate.\nStep 3: Verification and sanction by GBCDC District Officer.\nStep 4: Direct disbursement for equipment and office setup.',
+        'rules': [
+            {'rule_name': 'Professional Degree Holder', 'field_path': 'has_professional_degree', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Qualified Professional (Doc/Eng/Law/CA)', 'source_clause': 'Must hold professional degree in qualified field.'},
+            {'rule_name': 'Family Income <= ₹3 Lakh', 'field_path': 'family_income_lakhs', 'operator': 'lte', 'expected_value': 3.0, 'importance': 'mandatory', 'display_label': 'Income <= ₹3.00 Lakh p.a.', 'source_clause': 'Family income under ₹3 Lakh.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹5 Lakh Professional Startup Loan at 4%', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': 'Up to ₹5.00 Lakh at 4% Interest', 'cap_amount_lakhs': 5.0, 'conditions': 'For equipment, machinery, and clinic/office setup.'},
+        ],
+    },
+    {
+        'scheme_code': 'GUJ_GBCDC_PASHUPALAN',
+        'name': 'Pashupalan Dairy & Small Business Loan Scheme (૫શુપાલન અને નાના ધંધા વ્યવસાય યોજના)',
+        'short_name': 'GBCDC Pashupalan & Rural Dairy Loan',
+        'ministry_department': 'Social Justice and Empowerment Department, Government of Gujarat',
+        'implementing_agency': 'Gujarat Backward Classes Development Corporation (GBCDC)',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'Pashupalan (GBCDC).pdf',
+        'level': 'state_gujarat',
+        'support_type': 'collateral_free_loan',
+        'target_sectors': ['dairy', 'animal_husbandry', 'retail', 'logistics', 'micro_services'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat'],
+        'max_benefit_amount_lakhs': 2.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Concessional credit up to ₹1.00 Lakh for Animal Husbandry/Cattle Dairy and up to ₹2.00 Lakh for Grocery/Dairy Parlours/Computer Repairing shops and commercial transport vehicles (auto-rickshaw, loading vehicle) at 4% p.a. interest.',
+        'status': 'active',
+        'launch_date': date(2021, 1, 1),
+        'valid_until': date(2026, 12, 31),
+        'official_portal_url': 'https://sje.gujarat.gov.in',
+        'gazette_notification': 'GBCDC Circular No. GBCDC/PASHU/2021-25',
+        'description': 'Provides working capital and asset creation loans for rural and semi-urban backward class households in Gujarat for dairy livestock, micro-retail stores, and commercial transport vehicles.',
+        'eligibility_summary': '1. SEBC/OBC community domicile of Gujarat.\n2. Age 18 to 55 years.\n3. For transport scheme, valid commercial driving license required.\n4. Income certificate within prescribed limit.',
+        'application_process': 'Step 1: Apply via e-Samaj Kalyan Portal with caste, income, and business estimate.\nStep 2: Scrutiny by District GBCDC Office.\nStep 3: Loan sanction and release.',
+        'rules': [
+            {'rule_name': 'Backward Class Domicile', 'field_path': 'is_sebc_gujarat', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'SEBC / OBC Domicile of Gujarat', 'source_clause': 'Must belong to socially & educationally backward class.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Dairy Livestock Loan up to ₹1 Lakh', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': 'Up to ₹1.00 Lakh at 4%', 'cap_amount_lakhs': 1.0, 'conditions': 'For purchase of milch cattle (cow/buffalo).'},
+            {'benefit_name': 'Small Business & Transport Loan up to ₹2 Lakh', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': 'Up to ₹2.00 Lakh at 4%', 'cap_amount_lakhs': 2.0, 'conditions': 'For grocery shop, dairy parlour, loading vehicle.'},
+        ],
+    },
+    {
+        'scheme_code': 'MAHILA_SAMRUDDHI_YOJANA',
+        'name': 'Mahila Samriddhi Yojana for Women Entrepreneurs (મહિલા સમૃદ્ધિ યોજના)',
+        'short_name': 'Mahila Samriddhi Micro-Enterprise Scheme',
+        'ministry_department': 'National Backward Classes Finance & Development Corporation (NBCFDC) / GBCDC',
+        'implementing_agency': 'Gujarat Backward Classes Development Corporation (GBCDC)',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'mahila_samrudhi_2020.pdf',
+        'level': 'state_gujarat',
+        'support_type': 'collateral_free_loan',
+        'target_sectors': ['women_entrepreneurship', 'tailoring', 'handicrafts', 'food_processing', 'micro_retail'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Gujarat', 'All India'],
+        'max_benefit_amount_lakhs': 1.4,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Micro-finance credit up to ₹1,40,000 per woman entrepreneur at a concession rate of 4% p.a. (80% central NBCFDC share, 15% state GBCDC share, 5% beneficiary share) with repayment tenure up to 48 months.',
+        'status': 'active',
+        'launch_date': date(2020, 1, 1),
+        'valid_until': date(2026, 12, 31),
+        'official_portal_url': 'https://nbcfdc.gov.in',
+        'gazette_notification': 'NBCFDC/GBCDC Operational Circular MSY-2020-25',
+        'description': 'Targeted micro-finance scheme providing fast, collateral-free credit to backward class women entrepreneurs and SHGs for initiating home-based micro-enterprises and income generation activities.',
+        'eligibility_summary': '1. Women entrepreneurs belonging to Backward Classes.\n2. Family income below double the poverty line (below ₹3 Lakh p.a.).\n3. Age between 18 and 50 years.',
+        'application_process': 'Step 1: Apply individually or via Women SHG through District GBCDC Office.\nStep 2: Submit Aadhaar, caste certificate, and income proof.\nStep 3: Direct sanction and disbursement into women savings bank account.',
+        'rules': [
+            {'rule_name': 'Woman Entrepreneur', 'field_path': 'is_woman_promoter', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Woman Entrepreneur / SHG', 'source_clause': 'Only female applicants eligible.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Micro Credit up to ₹1.40 Lakh at 4%', 'benefit_type': 'collateral_free_loan', 'amount_or_percentage': 'Up to ₹1.40 Lakh at 4% Interest', 'cap_amount_lakhs': 1.4, 'conditions': 'Repayment in 48 monthly EMIs.'},
+        ],
+    },
+    {
+        'scheme_code': 'LEPROSY_CURED_REHAB',
+        'name': 'Umbrella Scheme for Comprehensive Rehabilitation of Cured Leprosy Persons & PwDs',
+        'short_name': 'Cured Leprosy Persons Rehabilitation Scheme',
+        'ministry_department': 'Department of Social Security & Empowerment of Persons with Disabilities (SSEPD)',
+        'implementing_agency': 'Directorate of Social Security / State Disability Welfare Boards',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'Guideline on An umbrella scheme for Rehabilitation of Cured Leprosy Persons.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['social_welfare', 'livelihood', 'micro_enterprises', 'rehabilitation'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['All India', 'Gujarat', 'Odisha', 'Maharashtra', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 1.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': '100% financial rehabilitation assistance up to ₹1.00 Lakh for establishing micro-livelihood enterprises, monthly sustenance allowance, free assistive aids, accessible colony housing, and vocational training.',
+        'status': 'active',
+        'launch_date': date(2021, 2, 23),
+        'valid_until': date(2026, 12, 31),
+        'official_portal_url': 'https://ssepd.gov.in',
+        'gazette_notification': 'SSEPD Resolution No. 1743—SSEPD-DA4-DA-0006/2021/SSEPD; Extraordinary Gazette',
+        'description': 'Implemented following Supreme Court directions (Pankaj Sinha case) to eradicate stigmatization and provide comprehensive housing, healthcare, livelihood grants, and self-employment to cured leprosy persons.',
+        'eligibility_summary': '1. Person cured of leprosy or family member living in recognized leprosy colony.\n2. Certified medical fitness/cure certificate from CMO/CDMO.\n3. Possession of disability certificate or Leprosy colony residence proof.',
+        'application_process': 'Step 1: Register through District Social Security Officer (DSSO).\nStep 2: Medical board verification.\nStep 3: Direct disbursement of livelihood and housing grant.',
+        'rules': [
+            {'rule_name': 'Certified Cured Leprosy Person', 'field_path': 'is_cured_leprosy_person', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Cured Leprosy Beneficiary', 'source_clause': 'Must be certified by medical authority.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Micro-Enterprise Livelihood Grant', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': 'Up to ₹1.00 Lakh Direct Grant', 'cap_amount_lakhs': 1.0, 'conditions': 'For setting up tea stall, grocery, dairy, or weaving unit.'},
+        ],
+    },
+    {
+        'scheme_code': 'ASSAM_MERIT_SCHOLARSHIP',
+        'name': 'Special Financial Incentive Scheme for Meritorious ST/OBC/MOBC Students',
+        'short_name': 'Assam Meritorious Student Incentive Scheme',
+        'ministry_department': 'Directorate of Welfare of Plains Tribes and Backward Classes, Government of Assam',
+        'implementing_agency': 'Directorate of WPT & BC, Guwahati, Assam',
+        'division': 'Social Welfare & Inclusive Development',
+        'pdf_filename': 'new_guideline_for_meritorious_student.pdf',
+        'level': 'state',
+        'support_type': 'skill_training',
+        'target_sectors': ['education', 'merit_incentives', 'youth_development'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['Assam'],
+        'max_benefit_amount_lakhs': 0.25,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'One-time direct financial incentive up to ₹25,000 for meritorious students belonging to ST(P), OBC, and MOBC communities securing first division / distinction in HSLC and Higher Secondary examinations.',
+        'status': 'active',
+        'launch_date': date(2021, 10, 21),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://wptbc.assam.gov.in',
+        'gazette_notification': 'Directive No. DW.SIMS/369/2019-20/Pt/193/LLlt, Dispur, Guwahati',
+        'description': 'Direct financial incentive scheme in Assam promoting academic excellence among plain tribes and backward class students to pursue higher professional studies.',
+        'eligibility_summary': '1. Domicile of Assam belonging to ST(P), OBC, or MOBC.\n2. Secured distinction or 1st division in Board Examinations.\n3. Valid caste and PR certificate.',
+        'application_process': 'Step 1: Submit online application on WPT&BC scholarship portal.\nStep 2: Upload marksheet, caste certificate, and bank passbook.\nStep 3: Verification by District Welfare Officer.\nStep 4: Direct DBT payment.',
+        'rules': [
+            {'rule_name': 'Assam Domicile & ST/OBC Category', 'field_path': 'is_assam_st_obc', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Assam ST(P)/OBC/MOBC Student', 'source_clause': 'Must be domicile of Assam with valid caste certificate.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Academic Distinction Cash Incentive', 'benefit_type': 'skill_training', 'amount_or_percentage': 'Up to ₹25,000 Direct Award', 'cap_amount_lakhs': 0.25, 'conditions': 'Awarded upon securing 1st division in Board exams.'},
+        ],
+    },
+
+    # ─── DIVISION 4: AGRICULTURE, FOOD & FISHERIES ─────────────────────────
+    {
+        'scheme_code': 'PMFME_FOOD_PROCESSING',
+        'name': 'Pradhan Mantri Formalisation of Micro Food Processing Enterprises Scheme (PMFME)',
+        'short_name': 'PMFME Micro Food Enterprise Subsidy',
+        'ministry_department': 'Ministry of Food Processing Industries (MoFPI), Government of India',
+        'implementing_agency': 'State Nodal Agencies (SNA) & District Level Committees (DLC)',
+        'division': 'Agriculture, Food & Fisheries',
+        'pdf_filename': 'Pradhan Mantri Formalisation Of Micro Food Processing Enterprises guideline.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['food_processing', 'agro_produce', 'dairy_processing', 'bakery', 'beverages', 'spices'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Uttar Pradesh'],
+        'max_benefit_amount_lakhs': 10.0,
+        'benefit_percentage': 35.0,
+        'benefit_description': '35% credit-linked capital subsidy up to ₹10.00 Lakh for individual micro-food processing units. ₹40,000 seed capital per member for SHGs. 35% grant for common infrastructure and 50% subsidy for branding & marketing under ODOP.',
+        'status': 'active',
+        'launch_date': date(2020, 6, 29),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://pmfme.mofpi.gov.in',
+        'gazette_notification': 'PMFME Operational Guidelines; MoFPI File No. FME-101/2020-25',
+        'description': 'Centrally sponsored scheme designed to enhance competitiveness of individual micro-enterprises in the unorganized food processing segment, adopting the One District One Product (ODOP) cluster approach.',
+        'eligibility_summary': '1. Individual micro food processing units, FPOs, SHGs, and Producer Cooperatives.\n2. Enterprise must be engaged in processing food items aligned with district ODOP list.\n3. Beneficiary contribution minimum 10% of project cost; remaining financed by bank loan.',
+        'application_process': 'Step 1: Register on PMFME portal (pmfme.mofpi.gov.in).\nStep 2: Submit DPR with District Resource Person (DRP) assistance.\nStep 3: Recommendation by District Level Committee (DLC).\nStep 4: Bank sanctions term loan.\nStep 5: SNA credits 35% subsidy into 3-year lock-in TDR.',
+        'rules': [
+            {'rule_name': 'Food Processing Activity', 'field_path': 'sector', 'operator': 'in', 'expected_value': ['food_processing', 'dairy', 'agro_food'], 'importance': 'mandatory', 'display_label': 'Food Processing Sector Unit', 'source_clause': 'Must be engaged in food processing.'},
+        ],
+        'benefits': [
+            {'benefit_name': '35% Credit-Linked Capital Subsidy', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '35% Subsidy up to ₹10.00 Lakh', 'cap_amount_lakhs': 10.0, 'conditions': 'For machinery and equipment upgradation.'},
+            {'benefit_name': 'SHG Seed Capital (₹40,000/member)', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '₹40,000 per SHG member', 'cap_amount_lakhs': 0.4, 'conditions': 'For working capital and minor tools.'},
+        ],
+    },
+    {
+        'scheme_code': 'PMMSY_FISHERIES',
+        'name': 'Pradhan Mantri Matsya Sampada Yojana (PMMSY)',
+        'short_name': 'PMMSY Fisheries Modernization',
+        'ministry_department': 'Department of Fisheries, Ministry of Fisheries, Animal Husbandry and Dairying',
+        'implementing_agency': 'National Fisheries Development Board (NFDB) & State Fisheries Departments',
+        'division': 'Agriculture, Food & Fisheries',
+        'pdf_filename': 'PMMSY Guidelines 24 June, 2020.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['fisheries', 'aquaculture', 'cold_chain', 'marine_processing', 'feed_mills'],
+        'target_msme_categories': ['micro', 'small', 'medium'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Tamil Nadu', 'Karnataka', 'Andhra Pradesh'],
+        'max_benefit_amount_lakhs': 25.0,
+        'benefit_percentage': 60.0,
+        'benefit_description': '40% subsidy for General Category and 60% subsidy for Women/SC/ST beneficiaries on aquaculture ponds, Biofloc units, Recirculatory Aquaculture Systems (RAS), insulated ice vans, cold storage, and deep-sea fishing vessels.',
+        'status': 'active',
+        'launch_date': date(2020, 6, 24),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://pmmsy.dof.gov.in',
+        'gazette_notification': 'PMMSY Operational Guidelines 2020-25; Ref. J-11011/1/2020-FY-PMMSY',
+        'description': 'A flagship initiative under the Atmanirbhar Bharat package aimed at ecologically sustainable and economically viable development of fisheries and aquaculture infrastructure across India.',
+        'eligibility_summary': '1. Fishers, fish farmers, fish workers, SHGs, JLGs, and Fisheries Cooperatives.\n2. Clear land title or registered lease for pond/hatchery setup.\n3. Sanctioned project appraisal by District Level Committee.',
+        'application_process': 'Step 1: Submit self-contained project proposal on PMMSY portal (pmmsy.dof.gov.in).\nStep 2: Scrutiny and recommendation by District Level Committee (DLC).\nStep 3: State Level Approval Committee (SLAC) sanction.\nStep 4: Phased subsidy release tied to physical inspection.',
+        'rules': [
+            {'rule_name': 'Fisheries / Aquaculture Sector', 'field_path': 'sector', 'operator': 'eq', 'expected_value': 'fisheries', 'importance': 'mandatory', 'display_label': 'Fisheries or Aquaculture Project', 'source_clause': 'Project must be in fisheries sector.'},
+        ],
+        'benefits': [
+            {'benefit_name': '60% Subsidy for Women/SC/ST Fishers', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '60% Project Subsidy', 'cap_amount_lakhs': 25.0, 'conditions': 'For Biofloc, RAS, boats, cold chain.'},
+            {'benefit_name': '40% Subsidy for General Beneficiaries', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '40% Project Subsidy', 'cap_amount_lakhs': 20.0, 'conditions': 'For establishment of aquaculture units.'},
+        ],
+    },
+    {
+        'scheme_code': 'MDA_ORGANIC_FERTILIZER',
+        'name': 'Market Development Assistance (MDA) for Promotion of Organic Fertilizers (PM-PRANAM)',
+        'short_name': 'MDA Organic Fertilizer Subsidy Scheme',
+        'ministry_department': 'Department of Fertilizers, Ministry of Chemicals & Fertilizers',
+        'implementing_agency': 'Department of Fertilizers / Fertilizer Companies / SATAT Bio-gas Plants',
+        'division': 'Agriculture, Food & Fisheries',
+        'pdf_filename': 'Guidelines on Market Development Assistance (MDA) for Promotion of Organic Fertilizers - Regarding (20-09-2023)_0.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['fertilizers', 'organic_farming', 'biogas', 'cbg_plants', 'agriculture'],
+        'target_msme_categories': ['micro', 'small', 'medium'],
+        'target_states': ['All India', 'Gujarat', 'Maharashtra', 'Uttar Pradesh', 'Punjab', 'Madhya Pradesh'],
+        'max_benefit_amount_lakhs': 150.0,
+        'benefit_percentage': 50.0,
+        'benefit_description': 'Direct grant subsidy of ₹1,500 per Metric Ton (₹1.50 per kg) on Fermented Organic Manure (FOM), Liquid FOM, and Phosphate Rich Organic Manure (PROM) produced by CBG/Biogas plants under the SATAT initiative.',
+        'status': 'active',
+        'launch_date': date(2023, 9, 20),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://fert.gov.in',
+        'gazette_notification': 'OM No. 11017/29/2021-PMI-II (Part-1) (e-34602), Shastri Bhawan, New Delhi',
+        'description': 'Promotes the mass adoption and distribution of organic fertilizers produced as by-products of Compressed Bio-Gas (CBG) plants, revitalizing soil health and substituting chemical fertilizers under PM-PRANAM.',
+        'eligibility_summary': '1. Registered manufacturers of Fermented Organic Manure (FOM/LFOM/PROM).\n2. Plants set up under SATAT initiative or certified commercial biogas plants.\n3. Product conforms to Fertilizer (Inorganic, Organic or Mixed) Control Order (FCO) standards.\n4. Registered on unified fertilizer portal.',
+        'application_process': 'Step 1: Register CBG plant on Department of Fertilizers portal.\nStep 2: Submit monthly production and dispatch reports with FCO lab test certificates.\nStep 3: Verification of sales via fertilizer marketing entities.\nStep 4: Subsidy disbursed directly via PFMS.',
+        'rules': [
+            {'rule_name': 'FCO Quality Compliance', 'field_path': 'is_fco_compliant', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'FCO Certified Organic Manure', 'source_clause': 'Must conform to FCO organic fertilizer standards.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹1,500 / MT Market Development Assistance', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '₹1,500 per MT Direct Subsidy', 'cap_amount_lakhs': 150.0, 'conditions': 'On commercial sale of certified FOM/PROM.'},
+        ],
+    },
+    {
+        'scheme_code': 'ICDP_COFFEE_DEVELOPMENT',
+        'name': 'Integrated Coffee Development Project (ICDP) under Medium Term Framework',
+        'short_name': 'ICDP Coffee Plantation & Quality Grant',
+        'ministry_department': 'Department of Commerce, Ministry of Commerce and Industry / Coffee Board',
+        'implementing_agency': 'Coffee Board of India, Bengaluru',
+        'division': 'Agriculture, Food & Fisheries',
+        'pdf_filename': 'ICDP_388 for coffee development.pdf',
+        'level': 'central',
+        'support_type': 'capital_subsidy',
+        'target_sectors': ['plantation', 'coffee_processing', 'agro_export', 'horticulture'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India', 'Karnataka', 'Kerala', 'Tamil Nadu', 'Andhra Pradesh', 'Odisha', 'North Eastern Region'],
+        'max_benefit_amount_lakhs': 10.0,
+        'benefit_percentage': 75.0,
+        'benefit_description': '40% to 75% capital subsidy for farm mechanization, water harvesting structures, eco-pulpers, solar drying yards, and coffee roasting equipment. Higher 75% subsidy rate provided for tribal and smallholder growers.',
+        'status': 'active',
+        'launch_date': date(2018, 3, 10),
+        'valid_until': date(2026, 3, 31),
+        'official_portal_url': 'https://coffeeboard.gov.in',
+        'gazette_notification': 'Coffee Board Circular No. EXTN/P&C Cell/23/IT-151/398; MoC&I Approval',
+        'description': 'Comprehensive framework for enhancing coffee production, productivity, processing quality, and export value addition across traditional and non-traditional coffee growing tracts in India.',
+        'eligibility_summary': '1. Coffee growers holding Coffee Board registration or ownership land records.\n2. Small growers owning up to 10 hectares eligible for priority subsidy.\n3. Processing units setting up modern eco-friendly washing and pulping lines.',
+        'application_process': 'Step 1: Submit application at local Senior Liaison Officer (SLO) Coffee Board.\nStep 2: Field pre-inspection of estate.\nStep 3: Installation of approved machinery with GST bills.\nStep 4: Post-inspection and subsidy credit via DBT.',
+        'rules': [
+            {'rule_name': 'Registered Coffee Grower', 'field_path': 'is_coffee_grower', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Registered Coffee Grower', 'source_clause': 'Must own or lease recognized coffee plantation.'},
+        ],
+        'benefits': [
+            {'benefit_name': 'Up to 75% Farm Mechanization Subsidy', 'benefit_type': 'capital_subsidy', 'amount_or_percentage': '40% - 75% Capital Subsidy', 'cap_amount_lakhs': 10.0, 'conditions': 'For eco-pulpers, rainwater harvesting, solar dryers.'},
+        ],
+    },
+
+    # ─── DIVISION 5: EDUCATION, YOUTH, DEFENCE & SCIENCE ───────────────────
+    {
+        'scheme_code': 'AGNIPATH_SCHEME',
+        'name': 'Agnipath Scheme for Enrolment in the Indian Armed Forces (Seva Nidhi Package)',
+        'short_name': 'Agnipath Seva Nidhi & Skill Package',
+        'ministry_department': 'Department of Military Affairs, Ministry of Defence, Government of India',
+        'implementing_agency': 'Indian Army, Indian Navy, Indian Air Force',
+        'division': 'Education, Youth, Defence & Science',
+        'pdf_filename': 'Agnipath_Scheme.pdf',
+        'level': 'central',
+        'support_type': 'skill_training',
+        'target_sectors': ['defence', 'youth_employment', 'skill_certification', 'public_service'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['All India'],
+        'max_benefit_amount_lakhs': 11.71,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Four-year armed forces service tenure with ₹11.71 Lakh tax-exempt Seva Nidhi corpus upon completion (monthly customized salary ₹30,000 to ₹40,000 + matching 30% government contribution). Includes ₹48 Lakh non-contributory life cover and Agniveer Skill Certificate for civilian job preference.',
+        'status': 'active',
+        'launch_date': date(2022, 6, 14),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://joinindianarmy.nic.in',
+        'gazette_notification': 'Terms & Conditions Agnipath Scheme for Service in Indian Army; Jun 2022',
+        'description': 'Agnipath allows young citizens to serve in the armed forces as Agniveers for 4 years, gaining premier training, discipline, military skills, and an accumulated financial corpus to embark on entrepreneurial or corporate careers.',
+        'eligibility_summary': '1. Indian citizens aged between 17.5 and 21 years.\n2. Educational qualifications: Class 10th or 12th pass as per trade requirements.\n3. Meet prescribed medical, physical, and fitness standards.\n4. Enrolled under the Army Act, 1950.',
+        'application_process': 'Step 1: Register on recruitment portal (joinindianarmy.nic.in / joinindiannavy.gov.in).\nStep 2: Appear for Common Entrance Examination (CEE).\nStep 3: Physical Fitness Test (PFT) and Medical Examination.\nStep 4: Merit list publication and training dispatch.',
+        'rules': [
+            {'rule_name': 'Age Between 17.5 and 21 Years', 'field_path': 'applicant_age', 'operator': 'lte', 'expected_value': 21, 'importance': 'mandatory', 'display_label': 'Age 17.5 to 21 Years', 'source_clause': 'Must be within age bracket at enrolment.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹11.71 Lakh Tax-Free Seva Nidhi Package', 'benefit_type': 'skill_training', 'amount_or_percentage': '₹11.71 Lakh Financial Corpus', 'cap_amount_lakhs': 11.71, 'conditions': 'Disbursed at completion of 4-year service.'},
+            {'benefit_name': '₹48 Lakh Life Insurance Cover', 'benefit_type': 'skill_training', 'amount_or_percentage': '100% Non-Contributory Cover', 'cap_amount_lakhs': 48.0, 'conditions': 'Valid during active service.'},
+        ],
+    },
+    {
+        'scheme_code': 'UGC_INDIRA_GANDHI_GIRL',
+        'name': 'Post Graduate Indira Gandhi Scholarship for Single Girl Child',
+        'short_name': 'UGC Single Girl Child PG Fellowship',
+        'ministry_department': 'University Grants Commission (UGC), Ministry of Education',
+        'implementing_agency': 'University Grants Commission (UGC) & National Scholarship Portal (NSP)',
+        'division': 'Education, Youth, Defence & Science',
+        'pdf_filename': 'Post Graduate Indira Gandhi Scholarship For Single Girl Child.pdf',
+        'level': 'central',
+        'support_type': 'skill_training',
+        'target_sectors': ['higher_education', 'women_empowerment', 'post_graduate_studies'],
+        'target_msme_categories': ['micro'],
+        'target_states': ['All India'],
+        'max_benefit_amount_lakhs': 0.72,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Direct scholarship of ₹36,200 per annum (₹3,100 per month) for 2 full academic years to single girl children pursuing full-time, regular postgraduate master degree courses in recognized universities.',
+        'status': 'active',
+        'launch_date': date(2018, 7, 1),
+        'valid_until': date(2027, 3, 31),
+        'official_portal_url': 'https://scholarships.gov.in',
+        'gazette_notification': 'UGC Guidelines for Post Graduate Scholarship for Single Girl Child; F.No. 1-1/2018(SA-III)',
+        'description': 'A flagship affirmative initiative by the University Grants Commission to support higher education of single girl children in families, promoting female literacy and autonomy.',
+        'eligibility_summary': '1. Girl student who is the only child of her parents (single girl child, or twin daughters).\n2. Maximum age 30 years at the time of admission in PG first year.\n3. Admitted in regular, full-time Master degree programme in a recognized university or college.',
+        'application_process': 'Step 1: Apply online on National Scholarship Portal (scholarships.gov.in).\nStep 2: Upload Affidavit on ₹50 stamp paper from SDM/First Class Magistrate verifying single girl child status.\nStep 3: Verification by Head of PG Institute.\nStep 4: Direct scholarship transfer via Canara Bank DBT portal.',
+        'rules': [
+            {'rule_name': 'Only Child of Parents', 'field_path': 'is_single_girl_child', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Single Girl Child in Family', 'source_clause': 'Must be only child of parents without brother.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹36,200 Annual Post Graduate Fellowship', 'benefit_type': 'skill_training', 'amount_or_percentage': '₹3,100/month for 2 Years', 'cap_amount_lakhs': 0.72, 'conditions': 'For 2-year duration of Master course.'},
+        ],
+    },
+    {
+        'scheme_code': 'WIDUSHI_WOMEN_SCIENTIST',
+        'name': 'WIDUSHI Programme (Women’s Instinct for Developing and Ushering in Scientific Heights & Innovation)',
+        'short_name': 'WIDUSHI Women Scientist Research Grant',
+        'ministry_department': 'Department of Science and Technology (DST), Ministry of Science & Technology',
+        'implementing_agency': 'WISE-KIRAN Division, Department of Science & Technology, New Delhi',
+        'division': 'Education, Youth, Defence & Science',
+        'pdf_filename': 'Women Scientist Scheme-A.pdf',
+        'level': 'central',
+        'support_type': 'technology_grant',
+        'target_sectors': ['scientific_research', 'technology_innovation', 'biotechnology', 'r_and_d', 'women_in_stem'],
+        'target_msme_categories': ['micro', 'small'],
+        'target_states': ['All India'],
+        'max_benefit_amount_lakhs': 30.0,
+        'benefit_percentage': 100.0,
+        'benefit_description': 'Three-year R&D project grant up to ₹30.00 Lakh for senior women scientists and researchers. Includes monthly fellowship up to ₹85,000/month + ₹5.00 Lakh per annum research contingency grant, equipment funding, and travel support.',
+        'status': 'active',
+        'launch_date': date(2023, 1, 1),
+        'valid_until': date(2026, 12, 31),
+        'official_portal_url': 'https://online-wosa.gov.in',
+        'gazette_notification': 'Guidelines for Implementing Research Projects Under WIDUSHI; WISE-KIRAN Division',
+        'description': 'Supports senior women scientists who have taken career breaks or lack institutional positions to lead high-impact scientific research projects as Principal Investigators in recognized research institutions.',
+        'eligibility_summary': '1. Woman scientist holding Ph.D. in Basic or Applied Sciences or M.D./M.S./M.Tech.\n2. Age 57 to 62 years (or earlier under WOS-A track).\n3. Host institution must be recognized Indian university, national R&D lab, or academic institute.',
+        'application_process': 'Step 1: Submit research proposal online on DST ePMS portal (onlinedst.gov.in).\nStep 2: Peer review and presentation before Expert Committee in subject domain.\nStep 3: Sanction letter and fund release to host institution.\nStep 4: Annual technical progress report and financial audit.',
+        'rules': [
+            {'rule_name': 'Ph.D. or Master in Science/Tech', 'field_path': 'has_stem_doctorate', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Ph.D. / M.Tech in STEM', 'source_clause': 'Must hold doctorate or postgraduate in science/engineering.'},
+            {'rule_name': 'Woman Researcher', 'field_path': 'is_woman_promoter', 'operator': 'bool_true', 'expected_value': True, 'importance': 'mandatory', 'display_label': 'Woman Principal Investigator', 'source_clause': 'Only female scientists eligible.'},
+        ],
+        'benefits': [
+            {'benefit_name': '₹85,000/Month Fellowship + Research Grant', 'benefit_type': 'technology_grant', 'amount_or_percentage': 'Up to ₹30.00 Lakh for 3 Years', 'cap_amount_lakhs': 30.0, 'conditions': 'Covers PI fellowship, consumables, equipment, and travel.'},
         ],
     },
 ]
 
 
 class Command(BaseCommand):
-    help = 'Seeds database strictly with official schemes extracted from uploaded PDFs in backend/apps/data/schemes_pdfs.'
+    help = 'Seeds all official government schemes uploaded as PDFs into the UdyamNiti database.'
 
     def handle(self, *args, **options):
-        self.stdout.write('🌱 Ingesting uploaded PDF schemes into UdyamNiti database...')
+        self.stdout.write(self.style.NOTICE(f'Seeding {len(UPLOADED_PDF_SCHEMES)} official uploaded PDF schemes...'))
+        created_count = 0
+        updated_count = 0
 
-        official_codes = [s['scheme_code'] for s in UPLOADED_PDF_SCHEMES]
-
-        # Purge any non-PDF schemes to guarantee: outside those PDFs there is NO data
-        deleted_count, _ = Scheme.objects.exclude(scheme_code__in=official_codes).delete()
-        if deleted_count > 0:
-            self.stdout.write(self.style.WARNING(
-                f'  ✓ Purged {deleted_count} non-PDF scheme records. Catalog strictly restricted to uploaded PDFs.'
-            ))
-
-        for data in UPLOADED_PDF_SCHEMES:
-            scheme_copy = dict(data)
-            rules_data = scheme_copy.pop('rules', [])
-            benefits_data = scheme_copy.pop('benefits', [])
+        for scheme_data in UPLOADED_PDF_SCHEMES:
+            rules_data = scheme_data.pop('rules', [])
+            benefits_data = scheme_data.pop('benefits', [])
 
             scheme, created = Scheme.objects.update_or_create(
-                scheme_code=scheme_copy['scheme_code'],
-                defaults=scheme_copy
+                scheme_code=scheme_data['scheme_code'],
+                defaults=scheme_data,
             )
-            action_str = 'Created' if created else 'Updated'
-            self.stdout.write(f'  ✓ {action_str} {scheme.scheme_code}: {scheme.name[:50]}...')
 
-            # Seed Rules
-            for i, rdata in enumerate(rules_data):
-                rdata['order'] = i
+            if created:
+                created_count += 1
+            else:
+                updated_count += 1
+
+            # Sync rules
+            for rule_info in rules_data:
                 SchemeRule.objects.update_or_create(
                     scheme=scheme,
-                    rule_name=rdata['rule_name'],
-                    defaults=rdata
+                    rule_name=rule_info['rule_name'],
+                    defaults={
+                        'field_path': rule_info.get('field_path', ''),
+                        'operator': rule_info.get('operator', 'eq'),
+                        'expected_value': rule_info.get('expected_value', True),
+                        'importance': rule_info.get('importance', 'mandatory'),
+                        'display_label': rule_info.get('display_label', rule_info['rule_name']),
+                        'source_clause': rule_info.get('source_clause', ''),
+                        'source_document': rule_info.get('source_document', scheme_data.get('gazette_notification', '')),
+                        'failure_message': rule_info.get('failure_message', ''),
+                        'is_active': True,
+                    }
                 )
 
-            # Seed Benefits
-            for bdata in benefits_data:
+            # Sync benefits
+            for ben_info in benefits_data:
                 SchemeBenefit.objects.update_or_create(
                     scheme=scheme,
-                    benefit_name=bdata['benefit_name'],
-                    defaults=bdata
+                    benefit_name=ben_info['benefit_name'],
+                    defaults={
+                        'benefit_type': ben_info.get('benefit_type', 'capital_subsidy'),
+                        'amount_or_percentage': ben_info.get('amount_or_percentage', ''),
+                        'cap_amount_lakhs': ben_info.get('cap_amount_lakhs'),
+                        'conditions': ben_info.get('conditions', ''),
+                        'source_clause': ben_info.get('source_clause', ''),
+                    }
                 )
 
         self.stdout.write(self.style.SUCCESS(
-            f'Successfully ingested all {len(UPLOADED_PDF_SCHEMES)} official PDF schemes! No non-PDF data remains.'
+            f'Successfully seeded {len(UPLOADED_PDF_SCHEMES)} PDF schemes ({created_count} created, {updated_count} updated).'
         ))

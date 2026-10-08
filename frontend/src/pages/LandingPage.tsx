@@ -25,7 +25,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SearchIcon from '@mui/icons-material/Search'
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
-import TrackChangesOutlinedIcon from '@mui/icons-material/TrackChangesOutlined'
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 import BuildCircleOutlinedIcon from '@mui/icons-material/BuildCircleOutlined'
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
@@ -598,7 +597,7 @@ export const LandingPage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* ─── 2. QUICK ACTIONS (4 CARDS) ─── */}
+      {/* ─── 2. QUICK ACTIONS (3 CARDS) ─── */}
       <Box sx={{ py: 5, bgcolor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={2.5}>
@@ -621,14 +620,8 @@ export const LandingPage: React.FC = () => {
                 desc: 'Review required certificates, project reports, and statutory checklists before filing.',
                 action: () => navigate('/resources'),
               },
-              {
-                icon: <TrackChangesOutlinedIcon sx={{ fontSize: 30, color: '#7C3AED' }} />,
-                title: 'Track Applications',
-                desc: 'Monitor application milestones, bank appraisals, and PFMS margin money sanction status.',
-                action: () => navigate('/login'),
-              },
             ].map((card, i) => (
-              <Grid item xs={12} sm={6} md={3} key={i}>
+              <Grid item xs={12} sm={6} md={4} key={i}>
                 <Paper
                   onClick={card.action}
                   elevation={0}
@@ -1257,7 +1250,7 @@ export const LandingPage: React.FC = () => {
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Grid container spacing={4} sx={{ mb: 6 }}>
             {/* Col 1: Platform */}
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={3.5}>
               <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
                 <Box
                   sx={{
@@ -1285,45 +1278,59 @@ export const LandingPage: React.FC = () => {
             </Grid>
 
             {/* Col 2: Schemes */}
-            <Grid item xs={6} md={2}>
+            <Grid item xs={6} md={2.5}>
               <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
                 SCHEMES
               </Typography>
               <Stack spacing={1}>
-                {['All Schemes', 'Credit & Finance', 'Subsidies & Incentives', 'Export Support', 'Technology Upgrade', 'Marketing Support'].map((item, idx) => (
+                {[
+                  { name: 'All Schemes', path: '/dashboard' },
+                  { name: 'Credit & Finance', path: '/dashboard?search=credit' },
+                  { name: 'Subsidies & Incentives', path: '/dashboard?search=subsidy' },
+                  { name: 'Export Support', path: '/dashboard?search=export' },
+                  { name: 'Technology Upgrade', path: '/dashboard?search=technology' },
+                  { name: 'Marketing Support', path: '/dashboard?search=marketing' },
+                ].map((item, idx) => (
                   <Typography
                     key={idx}
                     variant="body2"
                     sx={{ color: '#94A3B8', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate(item.path)}
                   >
-                    {item}
+                    {item.name}
                   </Typography>
                 ))}
               </Stack>
             </Grid>
 
             {/* Col 3: Resources */}
-            <Grid item xs={6} md={2}>
+            <Grid item xs={6} md={2.5}>
               <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
                 RESOURCES
               </Typography>
               <Stack spacing={1}>
-                {['Acts & Rules', 'Scheme Guidelines', 'Notifications', 'Circulars & Orders', 'Reports', 'FAQs'].map((item, idx) => (
+                {[
+                  { name: 'Acts & Rules', path: '/resources?tab=acts' },
+                  { name: 'Scheme Guidelines', path: '/resources?tab=guidelines' },
+                  { name: 'Notifications', path: '/updates?tab=circulars' },
+                  { name: 'Circulars & Orders', path: '/updates?tab=circulars' },
+                  { name: 'Reports', path: '/resources?tab=dpr' },
+                  { name: 'FAQs', path: '/support?tab=faqs' },
+                ].map((item, idx) => (
                   <Typography
                     key={idx}
                     variant="body2"
                     sx={{ color: '#94A3B8', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate(item.path)}
                   >
-                    {item}
+                    {item.name}
                   </Typography>
                 ))}
               </Stack>
             </Grid>
 
             {/* Col 4: Government Links */}
-            <Grid item xs={6} md={2.5}>
+            <Grid item xs={12} md={3.5}>
               <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
                 GOVERNMENT LINKS
               </Typography>
@@ -1350,46 +1357,9 @@ export const LandingPage: React.FC = () => {
                 ))}
               </Stack>
             </Grid>
-
-            {/* Col 5: Legal */}
-            <Grid item xs={6} md={2.5}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', mb: 2 }}>
-                LEGAL & POLICY
-              </Typography>
-              <Stack spacing={1}>
-                {['Privacy Policy', 'Terms of Service', 'Statutory Disclaimer', 'Accessibility Statement', 'Source Attributions'].map((item, idx) => (
-                  <Typography
-                    key={idx}
-                    variant="body2"
-                    sx={{ color: '#94A3B8', cursor: 'pointer', '&:hover': { color: '#FFFFFF' } }}
-                    onClick={() => navigate('/')}
-                  >
-                    {item}
-                  </Typography>
-                ))}
-              </Stack>
-            </Grid>
           </Grid>
 
           <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.15)', mb: 3 }} />
-
-          {/* Fixed Screenshot 3: Refined Dark Theme Statutory Disclaimer */}
-          <Box
-            sx={{
-              p: 2.2,
-              bgcolor: 'rgba(15, 23, 42, 0.75)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '10px',
-              mb: 3,
-            }}
-          >
-            <Stack direction="row" spacing={1.5} alignItems="flex-start">
-              <WarningAmberIcon sx={{ color: '#FBBF24', fontSize: 20, mt: 0.2, flexShrink: 0 }} />
-              <Typography variant="caption" sx={{ color: '#E2E8F0 !important', lineHeight: 1.6, fontSize: '0.8rem' }}>
-                <strong style={{ color: '#FCD34D' }}>Statutory Disclaimer:</strong> This platform provides information and eligibility assistance based on official government sources. Final eligibility, approval and benefits are determined by the respective government authority.
-              </Typography>
-            </Stack>
-          </Box>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={2}>
             <Typography variant="caption" sx={{ color: '#94A3B8' }}>

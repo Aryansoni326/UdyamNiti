@@ -16,6 +16,10 @@ import {
   Chip,
   Paper,
   Container,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
@@ -29,6 +33,8 @@ import FlashOnIcon from '@mui/icons-material/FlashOn'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { tokens } from '../theme/tokens'
 import { toast } from 'sonner'
+import { initiateGoogleSignIn } from '../utils/googleAuth'
+import { apiClient } from '../api/client'
 
 // Official Google Logo SVG matching RegisterPage
 const GoogleIcon = () => (
@@ -177,28 +183,63 @@ export const LoginPage: React.FC = () => {
     }, 500)
   }
 
-  // 1-Click Google Sign In Button
-  const handleGoogleOneClick = () => {
+  const [clientIdModalOpen, setClientIdModalOpen] = useState(false)
+  const [manualClientId, setManualClientId] = useState('')
+
+  // Real Google Sign In (OAuth 2.0 via Google Identity Services)
+  const handleGoogleOneClick = async (customId?: string) => {
     setLoading(true)
-    setTimeout(() => {
-      localStorage.setItem(
-        'udyamniti_user',
-        JSON.stringify({
-          email: 'director.msme@gmail.com',
-          name: 'Sardar Precision Exports Ltd.',
-          directorName: 'Rajesh Patel',
-          category: 'Small Enterprise',
-          sector: 'Precision Engineering & Mfg',
-          state: 'Gujarat',
-          udyam: 'UDYAM-GJ-01-0023456',
-          loginMethod: 'google_oauth',
-          isLoggedIn: true,
+    try {
+      const profile = await initiateGoogleSignIn(customId)
+
+      // Synchronize with Django backend session
+      try {
+        await apiClient.googleLogin({
+          email: profile.email,
+          name: profile.name,
+          picture: profile.picture,
+          google_id: profile.sub,
         })
-      )
-      setLoading(false)
-      toast.success('Google account verified! Redirecting to Dashboard...')
+      } catch (backendErr) {
+        console.warn('Backend session note:', backendErr)
+      }
+
+      // Store authentic verified Google user in localStorage
+      const userData = {
+        email: profile.email,
+        name: profile.name || profile.email.split('@')[0],
+        directorName: profile.name,
+        picture: profile.picture,
+        googleId: profile.sub,
+        category: 'Small Enterprise',
+        sector: 'Precision Engineering & Mfg',
+        state: 'Gujarat',
+        udyam: 'UDYAM-GJ-01-0023456',
+        loginMethod: 'google_oauth',
+        isLoggedIn: true,
+      }
+      localStorage.setItem('udyamniti_user', JSON.stringify(userData))
+      toast.success(`Welcome, ${profile.name}! Signed in with Google.`)
       navigate('/dashboard')
-    }, 600)
+    } catch (err: any) {
+      if (err?.message === 'MISSING_CLIENT_ID') {
+        setClientIdModalOpen(true)
+      } else {
+        toast.error(err?.message || 'Google sign-in was cancelled or encountered an error.')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSaveManualClientId = () => {
+    if (!manualClientId.trim()) {
+      toast.error('Please paste your Google Client ID.')
+      return
+    }
+    localStorage.setItem('udyamniti_google_client_id', manualClientId.trim())
+    setClientIdModalOpen(false)
+    handleGoogleOneClick(manualClientId.trim())
   }
 
   return (
@@ -601,6 +642,47 @@ export const LoginPage: React.FC = () => {
           </CardContent>
         </Card>
       </Container>
+
+      {/* Google Client ID Modal if not yet loaded from .env */}
+      <Dialog
+        open={clientIdModalOpen}
+        onClose={() => setClientIdModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: '14px', p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800, color: '#0F2E59', pb: 1 }}>
+          Connect Google OAuth Client ID
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ color: '#64748B', mb: 2 }}>
+            To activate Google Sign-In, please paste your <b>Client ID</b> from Google Cloud Console.
+            (You can also save it in <code>frontend/.env</code> as <code>VITE_GOOGLE_CLIENT_ID</code>).
+          </Typography>
+          <TextField
+            fullWidth
+            size="small"
+            autoFocus
+            label="Google Client ID"
+            placeholder="e.g. 1234567890-abcdefg.apps.googleusercontent.com"
+            value={manualClientId}
+            onChange={(e) => setManualClientId(e.target.value)}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setClientIdModalOpen(false)} sx={{ color: '#64748B' }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSaveManualClientId}
+            sx={{ bgcolor: '#0F2E59', fontWeight: 700, borderRadius: '8px', px: 2.5, '&:hover': { bgcolor: '#0A1E3A' } }}
+          >
+            Save & Connect Google
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

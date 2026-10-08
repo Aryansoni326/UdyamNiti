@@ -81,7 +81,49 @@ SCHEME_DOCUMENTS_MAP = {
     'NSSH_SPECIAL_CLCSS': [
         {'id': 'scst_caste_cert', 'name': 'SC/ST Caste Certificate & 51%+ Shareholding Proof', 'desc': 'Government-issued community certificate and CA shareholding audit (Clause 4.1)', 'category': 'Identity', 'mandatory': True},
         {'id': 'udyam_scst', 'name': 'Udyam Certificate Authenticated under SC/ST Category', 'desc': 'Active Udyam registration mapped to SC/ST Hub database (Clause 4.2)', 'category': 'Statutory', 'mandatory': True},
-        {'id': 'bank_machinery_loan', 'name': 'Term Loan Sanction Letter for New Machinery', 'desc': 'Sanction letter from scheduled bank for purchase of BIS/modern machinery (Clause 5)', 'category': 'Financial', 'mandatory': True},
+    ],
+    'GUJ_IND_POLICY_2023': [
+        {'id': 'ifp_app', 'name': 'IFP Gujarat Online Application & Acknowledgment', 'desc': 'Filed within 1 year of commercial production (Condition 2)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'ca_plant_machinery', 'name': 'CA Certificate for Plant & Machinery Investment', 'desc': 'Audited expenditure on new plant, machinery and testing equipment (Annexure B)', 'category': 'Financial', 'mandatory': True},
+        {'id': 'term_loan_sanction', 'name': 'Bank Term Loan Sanction & Disbursement Advice', 'desc': 'Bank appraisal letter detailing interest rate for 7% interest subvention claim', 'category': 'Banking', 'mandatory': True},
+        {'id': 'udyam_gj', 'name': 'Udyam Registration Certificate (Gujarat Unit Location)', 'desc': 'Factory address registered in Gujarat on Udyam portal', 'category': 'Statutory', 'mandatory': True},
+    ],
+    'PMFME_FOOD_PROCESSING': [
+        {'id': 'pmfme_dpr', 'name': 'Detailed Project Report (DPR) under ODOP Framework', 'desc': 'Prepared with assistance of District Resource Person (DRP) (Clause 4)', 'category': 'Technical', 'mandatory': True},
+        {'id': 'fssai_cert', 'name': 'FSSAI Food Safety License / Registration', 'desc': 'Food safety standard license for processed food items (Clause 4.3)', 'category': 'Regulatory', 'mandatory': True},
+        {'id': 'udyam_fme', 'name': 'Active MSME Udyam Registration Certificate', 'desc': 'Micro enterprise category verified on Udyam portal (Clause 4.1)', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'bank_loan_sanction', 'name': 'Bank Credit Sanction Letter (Min 90% Project Cost)', 'desc': 'Term loan sanction from commercial bank or RRB (Clause 13)', 'category': 'Banking', 'mandatory': True},
+    ],
+    'PMMSY_FISHERIES': [
+        {'id': 'pmmsy_proposal', 'name': 'Detailed Fisheries Project Proposal & Estimates', 'desc': 'Technical layout for Biofloc/RAS/Pond or vehicle cold chain (Clause 8)', 'category': 'Technical', 'mandatory': True},
+        {'id': 'land_lease_pond', 'name': 'Pond Waterbody Land Title / Registered 10-Yr Lease', 'desc': 'Encumbrance-free title or registered minimum 10-year lease deed (Clause 8.2)', 'category': 'Legal', 'mandatory': True},
+        {'id': 'fisher_id', 'name': 'Fisher / Fish Farmer Identity Certificate', 'desc': 'Issued by District Fisheries Officer / NFDB registration (Clause 8.1)', 'category': 'Identity', 'mandatory': True},
+    ],
+    'GUJ_FOREIGN_STUDY_LOAN': [
+        {'id': 'sebc_cert', 'name': 'SEBC / OBC Caste Certificate (Gujarat Domicile)', 'desc': 'Issued by competent revenue authority of Gujarat', 'category': 'Identity', 'mandatory': True},
+        {'id': 'income_cert', 'name': 'Annual Family Income Certificate (Below ₹6.00 Lakh)', 'desc': 'Income certificate issued by Mamlatdar/TDO', 'category': 'Financial', 'mandatory': True},
+        {'id': 'offer_letter', 'name': 'Foreign University Unconditional Offer Letter & I-20', 'desc': 'Proof of admission in recognized foreign postgraduate / MBBS programme', 'category': 'Educational', 'mandatory': True},
+        {'id': 'marksheets', 'name': 'Standard 12th & Graduation Marksheets (Min 60% Marks)', 'desc': 'Certified copies proving 60% or above academic score', 'category': 'Educational', 'mandatory': True},
+    ],
+    'GUJ_GBCDC_SWAYAM_SAKSHAM': [
+        {'id': 'degree_cert', 'name': 'Professional Degree / Registration Certificate', 'desc': 'Doctor/Engineer/Advocate Bar Council/Architect Council registration', 'category': 'Professional', 'mandatory': True},
+        {'id': 'sebc_cast', 'name': 'SEBC Caste Certificate & Domicile of Gujarat', 'desc': 'Competent authority certificate validating backward class status', 'category': 'Identity', 'mandatory': True},
+        {'id': 'project_quotation', 'name': 'Quotation / Bill of Quantities for Clinic/Office Setup', 'desc': 'Equipment estimates from certified commercial vendors', 'category': 'Technical', 'mandatory': True},
+    ],
+    'MDA_ORGANIC_FERTILIZER': [
+        {'id': 'satat_cert', 'name': 'CBG Plant Registration under SATAT Initiative', 'desc': 'Commercial production proof and Bio-CBG allocation letter', 'category': 'Statutory', 'mandatory': True},
+        {'id': 'fco_test_report', 'name': 'Fertilizer Control Order (FCO) Lab Compliance Test Report', 'desc': 'Certified test report confirming moisture, C:N ratio and organic matter', 'category': 'Quality', 'mandatory': True},
+        {'id': 'sale_invoices', 'name': 'Certified Commercial Dispatch & Sales Invoices', 'desc': 'Verified invoices for Claim of ₹1,500/MT MDA subsidy', 'category': 'Commercial', 'mandatory': True},
+    ],
+    'AGNIPATH_SCHEME': [
+        {'id': 'matric_cert', 'name': 'Class 10th / 12th Educational Board Certificate', 'desc': 'Proof of age and qualification meeting enrolment criteria', 'category': 'Educational', 'mandatory': True},
+        {'id': 'medical_fitness', 'name': 'Armed Forces Medical & Physical Fitness Certificate', 'desc': 'Verified by military recruiting medical officers', 'category': 'Medical', 'mandatory': True},
+        {'id': 'aadhaar_domicile', 'name': 'Aadhaar Card & Permanent Residence Certificate', 'desc': 'Proof of Indian citizenship and domicile', 'category': 'Identity', 'mandatory': True},
+    ],
+    'WIDUSHI_WOMEN_SCIENTIST': [
+        {'id': 'phd_degree', 'name': 'Ph.D. / M.Tech STEM Degree Certificate', 'desc': 'Doctorate certificate in Basic or Applied Sciences', 'category': 'Educational', 'mandatory': True},
+        {'id': 'research_proposal', 'name': '3-Year Scientific Research Project Proposal (DPR)', 'desc': 'Comprehensive technical research aims, methodology, and budget', 'category': 'Technical', 'mandatory': True},
+        {'id': 'host_endorsement', 'name': 'Host Institute Endorsement Letter', 'desc': 'From Vice-Chancellor or Director of host R&D institution', 'category': 'Institutional', 'mandatory': True},
     ],
 }
 
@@ -107,11 +149,25 @@ BEST_DEALS = {
         'score': 96,
         'deadline_text': 'Open Year-Round on KVIC Portal',
     },
+    'GUJ_IND_POLICY_2023': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: Up to ₹3.50 Cr Capital Subsidy & 7% Interest Relief',
+        'highlight': '25% capital investment subsidy + 7% interest subvention for 7 years under Gujarat Industrial Policy.',
+        'score': 95,
+        'deadline_text': 'Within 1 Year of Commercial Production',
+    },
+    'PMFME_FOOD_PROCESSING': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 35% Capital Subsidy up to ₹10 Lakh for Micro Food Units',
+        'highlight': 'Credit-linked capital subsidy on plant and machinery + ₹40,000 seed capital per SHG member under ODOP.',
+        'score': 94,
+        'deadline_text': 'Open Rolling Window on MoFPI Portal',
+    },
     'COIR_VIKAS_YOJANA_CVY': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: 25% Capital Subsidy on Machinery up to ₹2.50 Cr',
         'highlight': 'Direct Benefit Transfer (DBT) via PFMS. Covers modernization and new plant setup with BIS machinery.',
-        'score': 95,
+        'score': 94,
         'deadline_text': 'Apply within 12 months of machinery commissioning',
     },
     'GUJ_SER_TEXTILE_2025': {
@@ -121,11 +177,18 @@ BEST_DEALS = {
         'score': 93,
         'deadline_text': 'Valid till 31 March 2027 (2-Year Utilization Cap)',
     },
+    'PMMSY_FISHERIES': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 40% to 60% Fisheries Infrastructure Subsidy up to ₹25 Lakh',
+        'highlight': '60% subsidy for Women/SC/ST fishers on Biofloc, RAS, cold storage vans, and modern fishing gear.',
+        'score': 93,
+        'deadline_text': 'Annual Project Call by State Fisheries Dept',
+    },
     'MSE_CDP_CLUSTER_DEV': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: Up to ₹21.00 Cr GoI Grant for Common Facility Centers',
         'highlight': '70% Central grant on ₹30 Crore CFC projects and 60-70% for establishing new industrial estates.',
-        'score': 93,
+        'score': 92,
         'deadline_text': 'Quarterly Steering Committee Review',
     },
     'TREDS_CGTMSE_CIRCULAR_262': {
@@ -134,6 +197,13 @@ BEST_DEALS = {
         'highlight': 'Instant working capital within 24 hours without collateral. Eliminates 45-day delayed payment risks.',
         'score': 92,
         'deadline_text': 'Daily Real-Time Invoice Factoring',
+    },
+    'GUJ_FOREIGN_STUDY_LOAN': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹15.00 Lakh Higher Study Loan at only 4% Simple Interest',
+        'highlight': 'State-sponsored concessional education loan for foreign MBBS/Masters studies for backward classes.',
+        'score': 91,
+        'deadline_text': 'Apply on e-Samaj Kalyan Portal',
     },
     'MSME_IC_SCHEME_2021': {
         'is_best_deal': True,
@@ -156,19 +226,110 @@ BEST_DEALS = {
         'score': 89,
         'deadline_text': 'Continuous Digital Enrollment on ZED Portal',
     },
+    'WIDUSHI_WOMEN_SCIENTIST': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹30.00 Lakh Research Fellowship & Equipment Grant',
+        'highlight': '₹85,000/month fellowship + ₹5 Lakh annual research contingency for senior women scientists in STEM.',
+        'score': 89,
+        'deadline_text': 'Annual Proposal Call on DST ePMS',
+    },
+    'GUJ_GBCDC_SWAYAM_SAKSHAM': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹5.00 Lakh Professional Setup Loan at 4% Interest',
+        'highlight': 'Concessional credit for doctors, engineers, advocates, architects & CAs to launch independent clinics/offices.',
+        'score': 88,
+        'deadline_text': 'Open All Year on GBCDC Portal',
+    },
+    'MDA_ORGANIC_FERTILIZER': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹1,500 / MT Market Development Assistance on FOM/PROM',
+        'highlight': 'Direct fiscal incentive for CBG biogas producers and organic fertilizer manufacturing units under PM-PRANAM.',
+        'score': 88,
+        'deadline_text': 'Monthly Billing via Fertilizer Portal',
+    },
+    'AGNIPATH_SCHEME': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹11.71 Lakh Tax-Exempt Seva Nidhi Package + ₹48L Insurance',
+        'highlight': '4-year disciplined armed forces service with customized salary, accumulated corpus, and skill certification.',
+        'score': 87,
+        'deadline_text': 'Notified Recruitment Rallies',
+    },
     'NSSH_SPECIAL_CLCSS': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: 25% Capital Subsidy up to ₹25 Lakh for SC/ST MSEs',
         'highlight': 'Upfront subsidy on plant and machinery term loans plus 100% fee waiver on testing and tenders.',
-        'score': 88,
+        'score': 87,
         'deadline_text': 'Rolling Annual Window (Valid till 31 March 2027)',
     },
     'PMS_MARKETING_SUPPORT': {
         'is_best_deal': True,
         'tag': '⭐ BEST DEAL: 100% Domestic Expo Stall Reimbursement up to ₹1.5L',
         'highlight': 'Free stalls at national exhibitions, ₹50,000 barcode support, and e-commerce packaging grants.',
-        'score': 87,
+        'score': 86,
         'deadline_text': 'Apply min 30 days prior to exhibition',
+    },
+    'GUJ_DAADC_SMALL_BUSINESS': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹1.25 Lakh Small Business Loan at 4% Interest',
+        'highlight': '100% state government share with 5-year repayment tenure for micro retail and self-employment.',
+        'score': 85,
+        'deadline_text': 'Open on e-Samaj Kalyan Portal',
+    },
+    'GUJ_GBCDC_PASHUPALAN': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹1.00L - ₹2.00L Livestock & Micro Transport Loan at 4%',
+        'highlight': 'Low-interest credit for milch livestock, dairy parlours, grocery stores, and loading vehicles.',
+        'score': 85,
+        'deadline_text': 'Open on GBCDC Portal',
+    },
+    'MAHILA_SAMRUDDHI_YOJANA': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹1.40 Lakh Women Entrepreneur Micro Loan at 4%',
+        'highlight': 'Direct micro-finance credit for female entrepreneurs and SHG groups in rural & semi-urban areas.',
+        'score': 84,
+        'deadline_text': 'Open via NBCFDC Channel Partners',
+    },
+    'UGC_INDIRA_GANDHI_GIRL': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹36,200 / Year Master Fellowship for Single Girl Child',
+        'highlight': 'Direct scholarship for 2 full years to support postgraduate higher education of single girl children.',
+        'score': 84,
+        'deadline_text': 'National Scholarship Portal (NSP) Annual Window',
+    },
+    'ICDP_COFFEE_DEVELOPMENT': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 40% - 75% Coffee Mechanization & Quality Grant',
+        'highlight': 'Subsidies on eco-pulpers, solar dryers, and water harvesting for coffee smallholders and tribal growers.',
+        'score': 83,
+        'deadline_text': 'Medium Term Framework Annual Tranche',
+    },
+    'ASSAM_MERIT_SCHOLARSHIP': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: Up to ₹25,000 Cash Reward for Meritorious Students',
+        'highlight': 'Financial incentive awarded directly to ST/OBC students securing 1st division in Board exams.',
+        'score': 82,
+        'deadline_text': 'Annual Academic Cycle',
+    },
+    'LEPROSY_CURED_REHAB': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: ₹1.00 Lakh Micro-Livelihood Grant & Housing Assistance',
+        'highlight': 'Comprehensive rehabilitation grant, monthly sustenance, and housing for cured leprosy beneficiaries.',
+        'score': 82,
+        'deadline_text': 'District Social Security Office Registration',
+    },
+    'GUJ_GBOCWWB_HOSTEL': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: 100% Free Residential Schooling & Hostel Facilities',
+        'highlight': 'Full boarding, schooling, textbooks, uniforms for children of registered construction workers in Gujarat.',
+        'score': 81,
+        'deadline_text': 'District Development Officer Rolling Window',
+    },
+    'GUJ_SALT_LABOUR_REWARDS': {
+        'is_best_deal': True,
+        'tag': '⭐ BEST DEAL: Educational Cash Rewards for Children of Salt Workers',
+        'highlight': 'Annual merit scholarships for 3,500 children of salt laborers to support admission and stationery.',
+        'score': 80,
+        'deadline_text': 'Academic Year Admission Window',
     },
 }
 
@@ -178,13 +339,8 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Scheme.objects.filter(status='active')
 
     def _ensure_pdf_schemes_seeded(self):
-        """Auto-seed uploaded PDF schemes on first lookup if not all 11 schemes are in DB."""
-        if Scheme.objects.count() < 11 or not Scheme.objects.filter(scheme_code='CGTMSE_EPM_EXPORT_2026').exists():
-            try:
-                from django.core.management import call_command
-                call_command('seed_uploaded_pdf_schemes')
-            except Exception:
-                pass
+        """Auto-seed uploaded PDF schemes if newly added schemes are missing."""
+        if Scheme.objects.filter(division__isnull=False).exclude(division='').count() < 24:
             try:
                 from django.core.management import call_command
                 call_command('seed_uploaded_pdf_schemes')
@@ -199,7 +355,33 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
         level = request.query_params.get('level')
         support_type = request.query_params.get('support_type')
         category = request.query_params.get('category')
-        
+        state = request.query_params.get('state')
+        division = request.query_params.get('division')
+        ministry = request.query_params.get('ministry')
+
+        if division and division != 'all':
+            qs = qs.filter(division__icontains=division)
+
+        if ministry and ministry != 'all':
+            qs = qs.filter(ministry_department__icontains=ministry)
+
+        if state and state != 'all':
+            if state.lower() == 'gujarat':
+                qs = qs.filter(Q(level='state_gujarat') | Q(target_states__icontains='Gujarat') | Q(target_states__icontains='All India'))
+            elif state.lower() in ['all india', 'central']:
+                qs = qs.filter(Q(level='central') | Q(target_states__icontains='All India'))
+            else:
+                qs = qs.filter(Q(target_states__icontains=state) | Q(target_states__icontains='All India'))
+
+        if level and level != 'all':
+            qs = qs.filter(level=level)
+
+        if support_type and support_type != 'all':
+            qs = qs.filter(support_type=support_type)
+
+        if category and category != 'all':
+            qs = qs.filter(Q(target_msme_categories__contains=[category]) | Q(target_msme_categories=[]) | Q(target_msme_categories__contains=['all']))
+
         if search:
             search_terms = search.strip().split()
             q_obj = Q()
@@ -211,36 +393,24 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
                     Q(description__icontains=term) |
                     Q(benefit_description__icontains=term) |
                     Q(ministry_department__icontains=term) |
+                    Q(implementing_agency__icontains=term) |
+                    Q(division__icontains=term) |
+                    Q(pdf_filename__icontains=term) |
+                    Q(target_states__icontains=term) |
                     Q(target_sectors__icontains=term)
                 )
             qs = qs.filter(q_obj)
 
-        if level and level != 'all':
-            qs = qs.filter(level=level)
-
-        if support_type and support_type != 'all':
-            qs = qs.filter(support_type=support_type)
-
-        if category and category != 'all':
-            qs = qs.filter(target_msme_categories__contains=[category])
-
-        # Prioritize the official uploaded PDF schemes
-        priority_codes = [
-            'CGTMSE_EPM_EXPORT_2026',
-            'PMEGP_MSME_SCHEME',
-            'GUJ_SER_TEXTILE_2025',
-            'COIR_VIKAS_YOJANA_CVY',
-            'MSE_CDP_CLUSTER_DEV',
-            'TREDS_CGTMSE_CIRCULAR_262',
-            'MSME_IC_SCHEME_2021',
-            'SFURTI_CLUSTER_SCHEME',
-            'MSME_ZED_CERTIFICATION',
-            'NSSH_SPECIAL_CLCSS',
-            'PMS_MARKETING_SUPPORT',
-        ]
-        
         schemes_list = list(qs)
-        schemes_list.sort(key=lambda s: (0 if s.scheme_code in priority_codes else 1, s.name))
+        if search:
+            # Sort by relevance to search term in name/short_name
+            s_lower = search.strip().lower()
+            schemes_list.sort(key=lambda s: (
+                0 if s_lower in s.name.lower() or (s.short_name and s_lower in s.short_name.lower()) else 1,
+                s.name
+            ))
+        else:
+            schemes_list.sort(key=lambda s: s.name)
 
         data = []
         for s in schemes_list:
@@ -257,6 +427,9 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
                 'short_name': s.short_name or s.name,
                 'ministry': s.ministry_department,
                 'implementing_agency': s.implementing_agency,
+                'division': s.division or 'MSME & Enterprise Development',
+                'pdf_filename': s.pdf_filename or '',
+                'target_states': s.target_states or ['All India'],
                 'level': s.level,
                 'support_type': s.support_type,
                 'max_benefit_lakhs': float(s.max_benefit_amount_lakhs) if s.max_benefit_amount_lakhs else None,
@@ -333,6 +506,8 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
             'short_name': s.short_name or s.name,
             'ministry': s.ministry_department,
             'implementing_agency': s.implementing_agency,
+            'division': s.division or 'MSME & Enterprise Development',
+            'pdf_filename': s.pdf_filename or '',
             'level': s.level,
             'support_type': s.support_type,
             'target_msme_categories': s.target_msme_categories,

@@ -34,6 +34,8 @@ export const ResourcesPage: React.FC = () => {
   const initialTab = searchParams.get('tab') || 'guidelines'
   const [currentTab, setCurrentTab] = useState<string>(initialTab)
   const [pdfSearch, setPdfSearch] = useState<string>('')
+  const [selectedDivision, setSelectedDivision] = useState<string>('all')
+  const [selectedState, setSelectedState] = useState<string>('all')
 
   useEffect(() => {
     const tabParam = searchParams.get('tab')
@@ -45,12 +47,27 @@ export const ResourcesPage: React.FC = () => {
     setSearchParams({ tab: newValue })
   }
 
-  const filteredPdfs = ALL_OFFICIAL_SCHEMES.filter(
-    (s) =>
-      s.name.toLowerCase().includes(pdfSearch.toLowerCase()) ||
-      s.pdfFile.toLowerCase().includes(pdfSearch.toLowerCase()) ||
-      s.ministry.toLowerCase().includes(pdfSearch.toLowerCase())
-  )
+  const filteredPdfs = ALL_OFFICIAL_SCHEMES.filter((s) => {
+    const query = pdfSearch.toLowerCase()
+    const matchesSearch =
+      !pdfSearch ||
+      s.name.toLowerCase().includes(query) ||
+      s.pdfFile.toLowerCase().includes(query) ||
+      s.ministry.toLowerCase().includes(query) ||
+      s.division.toLowerCase().includes(query) ||
+      s.targetStates.some((st) => st.toLowerCase().includes(query))
+
+    const matchesDivision =
+      selectedDivision === 'all' || s.division.toLowerCase().includes(selectedDivision.toLowerCase())
+
+    const matchesState =
+      selectedState === 'all' ||
+      (selectedState === 'Gujarat' && (s.level === 'state_gujarat' || s.targetStates.includes('Gujarat') || s.targetStates.includes('All India'))) ||
+      s.targetStates.includes(selectedState) ||
+      s.targetStates.includes('All India')
+
+    return matchesSearch && matchesDivision && matchesState
+  })
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#F8FAFC', pb: 10 }}>
@@ -66,7 +83,7 @@ export const ResourcesPage: React.FC = () => {
       >
         <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4 } }}>
           <Stack spacing={1.5} sx={{ maxWidth: 900 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               <Chip
                 icon={<MenuBookIcon sx={{ color: '#A7F3D0 !important', fontSize: '15px !important' }} />}
                 label="Official Document Repository"
@@ -79,11 +96,21 @@ export const ResourcesPage: React.FC = () => {
                 }}
               />
               <Chip
-                label="11 Verified Gazette Guidelines"
+                label={`${ALL_OFFICIAL_SCHEMES.length} Verified Gazette Guidelines`}
                 size="small"
                 sx={{
                   bgcolor: 'rgba(5, 150, 105, 0.25)',
                   color: '#A7F3D0',
+                  fontWeight: 700,
+                  fontSize: '0.78rem',
+                }}
+              />
+              <Chip
+                label="5 Departmental Divisions"
+                size="small"
+                sx={{
+                  bgcolor: 'rgba(59, 130, 246, 0.25)',
+                  color: '#93C5FD',
                   fontWeight: 700,
                   fontSize: '0.78rem',
                 }}
@@ -148,30 +175,77 @@ export const ResourcesPage: React.FC = () => {
         {/* TAB 1: GUIDELINES & PDFS */}
         {currentTab === 'guidelines' && (
           <Box>
-            <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} sx={{ mb: 3, gap: 2 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} sx={{ mb: 2.5, gap: 2 }}>
               <Box>
                 <Typography variant="h5" sx={{ fontWeight: 800, color: '#0F2E59' }}>
-                  Archived Operational Scheme Guidelines
+                  Archived Operational Scheme Guidelines ({filteredPdfs.length} of {ALL_OFFICIAL_SCHEMES.length})
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#64748B' }}>
-                  All 11 official scheme documents extracted and verified from Central Ministries and the Gujarat Industries Department.
+                  Official scheme gazettes and policy documents extracted from Central Ministries and State Departments.
                 </Typography>
               </Box>
 
-              <TextField
-                size="small"
-                placeholder="Search PDF or Scheme Name..."
-                value={pdfSearch}
-                onChange={(e) => setPdfSearch(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: '#64748B' }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ width: { xs: '100%', md: 320 }, bgcolor: '#FFFFFF', borderRadius: '8px' }}
-              />
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="center" sx={{ width: { xs: '100%', md: 'auto' } }}>
+                <TextField
+                  select
+                  size="small"
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  sx={{ width: { xs: '100%', sm: 160 }, bgcolor: '#FFFFFF', borderRadius: '8px' }}
+                >
+                  <MenuItem value="all">All States & UTs</MenuItem>
+                  <MenuItem value="Gujarat">Gujarat</MenuItem>
+                  <MenuItem value="All India">All India</MenuItem>
+                  <MenuItem value="Assam">Assam</MenuItem>
+                  <MenuItem value="Maharashtra">Maharashtra</MenuItem>
+                  <MenuItem value="Tamil Nadu">Tamil Nadu</MenuItem>
+                  <MenuItem value="Karnataka">Karnataka</MenuItem>
+                </TextField>
+
+                <TextField
+                  size="small"
+                  placeholder="Search PDF, Scheme, Ministry..."
+                  value={pdfSearch}
+                  onChange={(e) => setPdfSearch(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: '#64748B' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ width: { xs: '100%', sm: 260 }, bgcolor: '#FFFFFF', borderRadius: '8px' }}
+                />
+              </Stack>
+            </Stack>
+
+            {/* Division Filter Pills */}
+            <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: 'wrap', gap: 1 }}>
+              {[
+                { id: 'all', label: 'All Divisions' },
+                { id: 'MSME & Enterprise Development', label: 'MSME & Enterprise' },
+                { id: 'Gujarat State & Infrastructure', label: 'Gujarat State' },
+                { id: 'Social Welfare & Inclusive Development', label: 'Social Welfare & Inclusion' },
+                { id: 'Agriculture, Food & Fisheries', label: 'Agriculture & Food' },
+                { id: 'Education, Youth, Defence & Science', label: 'Education & Science' },
+              ].map((div) => (
+                <Chip
+                  key={div.id}
+                  label={div.label}
+                  onClick={() => setSelectedDivision(div.id)}
+                  clickable
+                  size="small"
+                  sx={{
+                    bgcolor: selectedDivision === div.id ? '#0F2E59' : '#FFFFFF',
+                    color: selectedDivision === div.id ? '#FFFFFF' : '#475569',
+                    border: '1px solid #CBD5E1',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    py: 1.8,
+                    '&:hover': { bgcolor: selectedDivision === div.id ? '#0F2E59' : '#F1F5F9' },
+                  }}
+                />
+              ))}
             </Stack>
 
             <Grid container spacing={3}>
@@ -192,18 +266,30 @@ export const ResourcesPage: React.FC = () => {
                     }}
                   >
                     <CardContent sx={{ p: 2.5 }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                        <Chip
-                          icon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#DC2626 !important' }} />}
-                          label={scheme.level === 'state_gujarat' ? 'Gujarat State GR' : 'Central Ministry'}
-                          size="small"
-                          sx={{
-                            bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#FEF2F2',
-                            color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#991B1B',
-                            fontWeight: 800,
-                            fontSize: '0.72rem',
-                          }}
-                        />
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                          <Chip
+                            icon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#DC2626 !important' }} />}
+                            label={scheme.level === 'state_gujarat' ? 'Gujarat State' : scheme.level === 'state' ? 'State Scheme' : 'Central'}
+                            size="small"
+                            sx={{
+                              bgcolor: scheme.level === 'state_gujarat' ? '#EFF6FF' : '#FEF2F2',
+                              color: scheme.level === 'state_gujarat' ? '#1D4ED8' : '#991B1B',
+                              fontWeight: 800,
+                              fontSize: '0.7rem',
+                            }}
+                          />
+                          <Chip
+                            label={scheme.division}
+                            size="small"
+                            sx={{
+                              bgcolor: '#F1F5F9',
+                              color: '#334155',
+                              fontWeight: 700,
+                              fontSize: '0.68rem',
+                            }}
+                          />
+                        </Stack>
                         <Typography variant="caption" sx={{ fontWeight: 800, color: scheme.categoryColor }}>
                           {scheme.maxBenefit}
                         </Typography>
@@ -278,6 +364,15 @@ export const ResourcesPage: React.FC = () => {
                       • Section 7: Statutory Classification Power & Composite Criteria
                     </Typography>
                   </Stack>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onClick={() => window.open('https://msme.gov.in/acts-rules-notifications', '_blank')}
+                    sx={{ mt: 2.5, borderColor: '#0F2E59', color: '#0F2E59', fontWeight: 700, textTransform: 'none' }}
+                  >
+                    Open Official Act (MSME Portal) ↗
+                  </Button>
                 </Paper>
               </Grid>
 
@@ -300,6 +395,15 @@ export const ResourcesPage: React.FC = () => {
                       ✓ Medium: Investment &le; ₹50 Cr &amp; Turnover &le; ₹250 Cr
                     </Typography>
                   </Stack>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onClick={() => window.open('https://msme.gov.in/gazette-notifications', '_blank')}
+                    sx={{ mt: 2.5, borderColor: '#059669', color: '#059669', fontWeight: 700, textTransform: 'none' }}
+                  >
+                    Open Official Gazette Notice (e-Gazette) ↗
+                  </Button>
                 </Paper>
               </Grid>
             </Grid>

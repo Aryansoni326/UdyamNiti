@@ -52,6 +52,8 @@ class Scheme(models.Model):
     
     # Classification
     level = models.CharField(max_length=30, choices=SCHEME_LEVEL_CHOICES)
+    division = models.CharField(max_length=150, blank=True, default='', help_text='Departmental division, e.g. MSME, Gujarat State, Agriculture, Social Welfare')
+    pdf_filename = models.CharField(max_length=255, blank=True, default='', help_text='Source PDF document filename')
     support_type = models.CharField(max_length=30, choices=SUPPORT_TYPE_CHOICES)
     target_sectors = models.JSONField(default=list, help_text='NIC codes or sector names')
     target_msme_categories = models.JSONField(default=list, help_text='["micro","small","medium"]')

@@ -145,8 +145,11 @@ export const AppShell: React.FC = () => {
         sx={{
           bgcolor: '#FFFFFF',
           borderBottom: '1px solid #E2E8F0',
-          py: 1.5,
+          py: { xs: 2, md: 2.6 },
           px: { xs: 2, md: 4 },
+          minHeight: { xs: 72, md: 84 },
+          display: 'flex',
+          alignItems: 'center',
           zIndex: 1300,
         }}
       >
@@ -160,23 +163,24 @@ export const AppShell: React.FC = () => {
             <Stack
               direction="row"
               alignItems="center"
-              spacing={1.5}
+              spacing={1.8}
               sx={{ cursor: 'pointer', userSelect: 'none' }}
               onClick={() => navigate('/')}
             >
               <Box
                 sx={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: '10px',
+                  width: { xs: 46, md: 52 },
+                  height: { xs: 46, md: 52 },
+                  borderRadius: '12px',
                   bgcolor: '#0F2E59',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                  boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
+                  flexShrink: 0,
                 }}
               >
-                <PolicyIcon sx={{ color: '#FFFFFF', fontSize: 26 }} />
+                <PolicyIcon sx={{ color: '#FFFFFF', fontSize: { xs: 28, md: 32 } }} />
               </Box>
               <Box>
                 <Typography
@@ -185,8 +189,8 @@ export const AppShell: React.FC = () => {
                     fontFamily: tokens.font.heading,
                     fontWeight: 800,
                     color: '#0F2E59',
-                    fontSize: { xs: '1.25rem', sm: '1.4rem' },
-                    lineHeight: 1.1,
+                    fontSize: { xs: '1.35rem', sm: '1.55rem', md: '1.7rem' },
+                    lineHeight: 1.15,
                     letterSpacing: '-0.02em',
                   }}
                 >
@@ -196,10 +200,11 @@ export const AppShell: React.FC = () => {
                   variant="caption"
                   sx={{
                     color: '#64748B',
-                    fontSize: '0.72rem',
+                    fontSize: { xs: '0.74rem', sm: '0.82rem' },
                     fontWeight: 600,
                     letterSpacing: '0.02em',
                     display: 'block',
+                    mt: 0.2,
                   }}
                 >
                   {t('tagline')}
@@ -208,28 +213,27 @@ export const AppShell: React.FC = () => {
             </Stack>
 
             {/* Top Right: Language Selector & Auth Buttons */}
-            <Stack direction="row" spacing={1.5} alignItems="center">
+            <Stack direction="row" spacing={1.8} alignItems="center">
               {/* Language Selector (EN / HI / GU) with Big, Prominent Bilingual Mark (अ / A) */}
               <Tooltip title="Language Preference / भाषा का चयन / ભાષા પસંદ કરો">
                 <Button
                   id="language-selector-button"
                   onClick={(e) => setLangMenuAnchor(e.currentTarget)}
                   variant="outlined"
-                  size="small"
+                  size="medium"
                   aria-label="Change Language Preference"
                   sx={{
                     minWidth: 'auto',
-                    px: 1.8,
-                    py: 0.6,
-                    height: 40,
+                    px: { xs: 1.8, md: 2.2 },
+                    height: { xs: 42, md: 48 },
                     borderColor: '#CBD5E1',
                     bgcolor: '#FFFFFF',
-                    borderRadius: '8px',
+                    borderRadius: '10px',
                     boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
                     transition: 'all 0.15s ease',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 0.8,
+                    gap: 1,
                     '&:hover': {
                       borderColor: '#8B0000',
                       bgcolor: '#FEF2F2',
@@ -247,7 +251,7 @@ export const AppShell: React.FC = () => {
                     <Typography
                       component="span"
                       sx={{
-                        fontSize: '1.45rem',
+                        fontSize: { xs: '1.5rem', md: '1.75rem' },
                         fontWeight: 900,
                         color: '#8B0000',
                         fontFamily: "'Noto Sans Devanagari', 'Mukta', 'Segoe UI', sans-serif",
@@ -260,18 +264,18 @@ export const AppShell: React.FC = () => {
                     <Typography
                       component="span"
                       sx={{
-                        fontSize: '1.05rem',
+                        fontSize: { xs: '1.1rem', md: '1.25rem' },
                         fontWeight: 900,
                         color: '#8B0000',
                         lineHeight: 1,
-                        ml: 0.2,
+                        ml: 0.3,
                         transform: 'translateY(1px)',
                       }}
                     >
                       A
                     </Typography>
                   </Box>
-                  <KeyboardArrowDownIcon sx={{ fontSize: 18, color: '#64748B' }} />
+                  <KeyboardArrowDownIcon sx={{ fontSize: 20, color: '#64748B' }} />
                 </Button>
               </Tooltip>
               <Menu
@@ -323,12 +327,12 @@ export const AppShell: React.FC = () => {
                     onClick={() => navigate('/login')}
                     sx={{
                       color: '#0F2E59',
-                      fontSize: '0.88rem',
+                      fontSize: { xs: '0.88rem', md: '0.94rem' },
                       fontWeight: 700,
                       textTransform: 'none',
-                      px: 2.2,
-                      py: 0.7,
-                      borderRadius: '8px',
+                      px: { xs: 2.2, md: 2.8 },
+                      height: { xs: 42, md: 48 },
+                      borderRadius: '10px',
                       border: '1.5px solid #CBD5E1',
                       bgcolor: '#FFFFFF',
                       '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
@@ -343,12 +347,12 @@ export const AppShell: React.FC = () => {
                     sx={{
                       bgcolor: '#0F2E59',
                       color: '#FFFFFF',
-                      fontSize: '0.88rem',
+                      fontSize: { xs: '0.88rem', md: '0.94rem' },
                       fontWeight: 700,
                       textTransform: 'none',
-                      px: 2.4,
-                      py: 0.7,
-                      borderRadius: '8px',
+                      px: { xs: 2.4, md: 3 },
+                      height: { xs: 42, md: 48 },
+                      borderRadius: '10px',
                       boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
                       '&:hover': { bgcolor: '#0A1E3A' },
                     }}
@@ -365,12 +369,12 @@ export const AppShell: React.FC = () => {
                     startIcon={<GridViewIcon sx={{ fontSize: 16 }} />}
                     sx={{
                       bgcolor: '#0F2E59',
-                      fontSize: '0.84rem',
+                      fontSize: { xs: '0.84rem', md: '0.9rem' },
                       fontWeight: 700,
-                      borderRadius: '8px',
+                      borderRadius: '10px',
                       textTransform: 'none',
-                      px: 2,
-                      py: 0.8,
+                      px: { xs: 2, md: 2.5 },
+                      height: { xs: 42, md: 48 },
                       '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
@@ -381,15 +385,17 @@ export const AppShell: React.FC = () => {
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 1,
+                      gap: 1.2,
                       cursor: 'pointer',
-                      p: '3px 10px 3px 4px',
+                      height: { xs: 42, md: 48 },
+                      px: { xs: 1.2, md: 1.8 },
                       borderRadius: '9999px',
-                      border: '1px solid #CBD5E1',
+                      border: '1.5px solid #CBD5E1',
                       bgcolor: '#F8FAFC',
+                      '&:hover': { bgcolor: '#F1F5F9', borderColor: '#0F2E59' },
                     }}
                   >
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#0F2E59', fontSize: '0.8rem', fontWeight: 700 }}>
+                    <Avatar sx={{ width: 34, height: 34, bgcolor: '#0F2E59', fontSize: '0.85rem', fontWeight: 700 }}>
                       {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                     </Avatar>
                     <Typography variant="body2" sx={{ color: '#0F172A', fontWeight: 700, maxWidth: 120 }} noWrap>
@@ -431,12 +437,12 @@ export const AppShell: React.FC = () => {
                     onClick={() => navigate('/login')}
                     sx={{
                       color: '#0F2E59',
-                      fontSize: '0.88rem',
+                      fontSize: { xs: '0.88rem', md: '0.94rem' },
                       fontWeight: 700,
                       textTransform: 'none',
-                      px: 2.2,
-                      py: 0.7,
-                      borderRadius: '8px',
+                      px: { xs: 2.2, md: 2.8 },
+                      height: { xs: 42, md: 48 },
+                      borderRadius: '10px',
                       border: '1.5px solid #CBD5E1',
                       bgcolor: '#FFFFFF',
                       '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
@@ -447,17 +453,17 @@ export const AppShell: React.FC = () => {
                   <Button
                     variant="contained"
                     onClick={() => navigate('/register')}
-                    endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important' }} />}
+                    endIcon={<ArrowForwardIcon sx={{ fontSize: '16px !important' }} />}
                     sx={{
                       bgcolor: '#0F2E59',
                       color: '#FFFFFF',
-                      fontSize: '0.88rem',
+                      fontSize: { xs: '0.88rem', md: '0.94rem' },
                       fontWeight: 700,
                       textTransform: 'none',
-                      px: 2.4,
-                      py: 0.7,
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(15, 46, 89, 0.25)',
+                      px: { xs: 2.4, md: 3 },
+                      height: { xs: 42, md: 48 },
+                      borderRadius: '10px',
+                      boxShadow: '0 4px 14px rgba(15, 46, 89, 0.25)',
                       '&:hover': { bgcolor: '#0A1E3A' },
                     }}
                   >
@@ -763,12 +769,12 @@ export const AppShell: React.FC = () => {
                 {[
                   { tab: 'acts', label: t('actsAndRules') },
                   { tab: 'guidelines', label: t('policies') },
-                  { tab: 'acts', label: t('notifications') },
+                  { route: '/updates?tab=circulars', label: t('notifications') },
                   { route: '/updates?tab=circulars', label: t('circularsAndOrders') },
-                  { route: '/ministry?tab=stats', label: t('reports') },
+                  { route: '/ministry?tab=overview', label: t('reports') },
                   { tab: 'guidelines', label: t('publications') },
                   { tab: 'dpr', label: t('formsAndTemplates') },
-                  { tab: 'udyam', label: t('faqs') },
+                  { route: '/support?tab=faqs', label: t('faqs') },
                 ].map((item, idx) => (
                   <MenuItem
                     key={idx}
