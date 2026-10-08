@@ -215,7 +215,7 @@ export const apiClient = {
   getStrategyForGoal: (goalId: string) => api.get<Strategy>(`/strategies/for_goal/?goal_id=${goalId}`),
 
   // Schemes
-  getSchemes: (params?: { search?: string; q?: string; level?: string; support_type?: string; category?: string; state?: string; division?: string; ministry?: string }) =>
+  getSchemes: (params?: { search?: string; q?: string; level?: string; support_type?: string; category?: string; state?: string; division?: string; ministry?: string; need?: string }) =>
     api.get<{ count: number; results: SchemeResult[] }>('/schemes/', { params }),
   getScheme: (id: string) => api.get<SchemeResult>(`/schemes/${id}/`),
   ragRecommend: (data: { query: string; sector?: string; msme_type?: string }) =>

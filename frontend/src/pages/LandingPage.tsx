@@ -131,6 +131,25 @@ export const LandingPage: React.FC = () => {
   // Slideshow State (3-second continuous automatic rotation)
   const [currentSlide, setCurrentSlide] = useState<number>(0)
 
+  // User Authentication State
+  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('udyamniti_user')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (parsed && (parsed.isLoggedIn || parsed.email || parsed.directorName)) {
+          setCurrentUser(parsed)
+        }
+      }
+    } catch {
+      setCurrentUser(null)
+    }
+  }, [])
+
+  const isLoggedIn = Boolean(currentUser)
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % SCHEME_SLIDES.length)
@@ -714,45 +733,70 @@ export const LandingPage: React.FC = () => {
             </Grid>
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" alignItems="center">
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => navigate('/login')}
-                endIcon={<ArrowForwardIcon />}
-                sx={{
-                  bgcolor: '#0F2E59',
-                  color: '#FFFFFF',
-                  fontWeight: 800,
-                  fontSize: '0.96rem',
-                  px: 4,
-                  py: 1.3,
-                  borderRadius: '10px',
-                  boxShadow: '0 6px 20px rgba(15, 46, 89, 0.25)',
-                  textTransform: 'none',
-                  '&:hover': { bgcolor: '#0A1E3A' },
-                }}
-              >
-                Sign In to Search & View Schemes
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => navigate('/register')}
-                sx={{
-                  borderColor: '#CBD5E1',
-                  color: '#0F2E59',
-                  fontWeight: 700,
-                  fontSize: '0.96rem',
-                  px: 3.5,
-                  py: 1.3,
-                  borderRadius: '10px',
-                  bgcolor: '#FFFFFF',
-                  textTransform: 'none',
-                  '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
-                }}
-              >
-                Register Enterprise Account
-              </Button>
+              {isLoggedIn ? (
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate('/dashboard')}
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    bgcolor: '#0F2E59',
+                    color: '#FFFFFF',
+                    fontWeight: 800,
+                    fontSize: '0.96rem',
+                    px: 4,
+                    py: 1.3,
+                    borderRadius: '10px',
+                    boxShadow: '0 6px 20px rgba(15, 46, 89, 0.25)',
+                    textTransform: 'none',
+                    '&:hover': { bgcolor: '#0A1E3A' },
+                  }}
+                >
+                  Go to Schemes Dashboard
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={() => navigate('/login')}
+                    endIcon={<ArrowForwardIcon />}
+                    sx={{
+                      bgcolor: '#0F2E59',
+                      color: '#FFFFFF',
+                      fontWeight: 800,
+                      fontSize: '0.96rem',
+                      px: 4,
+                      py: 1.3,
+                      borderRadius: '10px',
+                      boxShadow: '0 6px 20px rgba(15, 46, 89, 0.25)',
+                      textTransform: 'none',
+                      '&:hover': { bgcolor: '#0A1E3A' },
+                    }}
+                  >
+                    Sign In to Search & View Schemes
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={() => navigate('/register')}
+                    sx={{
+                      borderColor: '#CBD5E1',
+                      color: '#0F2E59',
+                      fontWeight: 700,
+                      fontSize: '0.96rem',
+                      px: 3.5,
+                      py: 1.3,
+                      borderRadius: '10px',
+                      bgcolor: '#FFFFFF',
+                      textTransform: 'none',
+                      '&:hover': { bgcolor: '#F8FAFC', borderColor: '#0F2E59' },
+                    }}
+                  >
+                    Register Enterprise Account
+                  </Button>
+                </>
+              )}
             </Stack>
           </Paper>
         </Container>
@@ -771,18 +815,18 @@ export const LandingPage: React.FC = () => {
 
           <Grid container spacing={2.5}>
             {[
-              { title: 'Finance & Credit', desc: 'Collateral-free credit & invoice discounting', icon: <MonetizationOnOutlinedIcon sx={{ fontSize: 30, color: '#059669' }} />, cat: 'credit_guarantee' },
-              { title: 'Technology Upgrade', desc: 'Zero defect quality & machinery modernisation', icon: <BuildCircleOutlinedIcon sx={{ fontSize: 30, color: '#2563EB' }} />, cat: 'quality_certification' },
-              { title: 'Export Support', desc: 'Global trade fairs, airfare & collateral cover', icon: <FlightTakeoffOutlinedIcon sx={{ fontSize: 30, color: '#EA580C' }} />, cat: 'export_support' },
-              { title: 'Marketing', desc: 'Exhibition stalls, barcoding & GeM procurement', icon: <StorefrontOutlinedIcon sx={{ fontSize: 30, color: '#CA8A04' }} />, cat: 'market_development' },
-              { title: 'Skill Development', desc: 'Entrepreneurship training & workforce skills', icon: <SchoolOutlinedIcon sx={{ fontSize: 30, color: '#7C3AED' }} />, cat: 'skill_development' },
-              { title: 'Start a Business', desc: 'Margin money capital subsidy up to ₹50 Lakh', icon: <RocketLaunchOutlinedIcon sx={{ fontSize: 30, color: '#DB2777' }} />, cat: 'capital_subsidy' },
-              { title: 'Innovation', desc: 'Patents, design facilities & testing laboratories', icon: <LightbulbOutlinedIcon sx={{ fontSize: 30, color: '#0891B2' }} />, cat: 'quality_certification' },
-              { title: 'Infrastructure', desc: 'Industrial park grants & common facility centres', icon: <ApartmentOutlinedIcon sx={{ fontSize: 30, color: '#4F46E5' }} />, cat: 'infrastructure' },
+              { id: 'finance_credit', title: 'Finance & Credit', desc: 'Collateral-free credit & invoice discounting', icon: <MonetizationOnOutlinedIcon sx={{ fontSize: 30, color: '#059669' }} /> },
+              { id: 'tech_upgrade', title: 'Technology Upgrade', desc: 'Zero defect quality & machinery modernisation', icon: <BuildCircleOutlinedIcon sx={{ fontSize: 30, color: '#2563EB' }} /> },
+              { id: 'export_support', title: 'Export Support', desc: 'Global trade fairs, airfare & collateral cover', icon: <FlightTakeoffOutlinedIcon sx={{ fontSize: 30, color: '#EA580C' }} /> },
+              { id: 'marketing', title: 'Marketing', desc: 'Exhibition stalls, barcoding & GeM procurement', icon: <StorefrontOutlinedIcon sx={{ fontSize: 30, color: '#CA8A04' }} /> },
+              { id: 'skill_development', title: 'Skill Development', desc: 'Entrepreneurship training & workforce skills', icon: <SchoolOutlinedIcon sx={{ fontSize: 30, color: '#7C3AED' }} /> },
+              { id: 'start_business', title: 'Start a Business', desc: 'Margin money capital subsidy up to ₹50 Lakh', icon: <RocketLaunchOutlinedIcon sx={{ fontSize: 30, color: '#DB2777' }} /> },
+              { id: 'innovation', title: 'Innovation', desc: 'Patents, design facilities & testing laboratories', icon: <LightbulbOutlinedIcon sx={{ fontSize: 30, color: '#0891B2' }} /> },
+              { id: 'infrastructure', title: 'Infrastructure', desc: 'Industrial park grants & common facility centres', icon: <ApartmentOutlinedIcon sx={{ fontSize: 30, color: '#4F46E5' }} /> },
             ].map((need, i) => (
               <Grid item xs={12} sm={6} md={3} key={i}>
                 <Paper
-                  onClick={() => navigate(`/dashboard?category=${need.cat}`)}
+                  onClick={() => navigate(`/dashboard?need=${need.id}`)}
                   elevation={0}
                   sx={{
                     p: 2.5,
@@ -1198,7 +1242,7 @@ export const LandingPage: React.FC = () => {
                 variant="contained"
                 size="large"
                 startIcon={<AutoAwesomeIcon sx={{ color: '#FEF08A' }} />}
-                onClick={() => navigate('/register')}
+                onClick={() => navigate(isLoggedIn ? '/dashboard' : '/register')}
                 sx={{
                   background: 'linear-gradient(135deg, #E65100 0%, #EA580C 100%)',
                   color: '#FFFFFF',
@@ -1211,27 +1255,29 @@ export const LandingPage: React.FC = () => {
                   '&:hover': { background: 'linear-gradient(135deg, #C2410C 0%, #9A3412 100%)' },
                 }}
               >
-                Find My Benefits
+                {isLoggedIn ? 'Go to Enterprise Dashboard' : 'Find My Benefits'}
               </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => navigate('/login')}
-                sx={{
-                  borderColor: '#CBD5E1',
-                  color: '#0F2E59',
-                  bgcolor: '#FFFFFF',
-                  fontWeight: 700,
-                  fontSize: '0.98rem',
-                  px: 3.5,
-                  py: 1.4,
-                  borderRadius: '8px',
-                  textTransform: 'none',
-                  '&:hover': { bgcolor: '#F8FAFC' },
-                }}
-              >
-                Sign In to Existing Account
-              </Button>
+              {!isLoggedIn && (
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => navigate('/login')}
+                  sx={{
+                    borderColor: '#CBD5E1',
+                    color: '#0F2E59',
+                    bgcolor: '#FFFFFF',
+                    fontWeight: 700,
+                    fontSize: '0.98rem',
+                    px: 3.5,
+                    py: 1.4,
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    '&:hover': { bgcolor: '#F8FAFC' },
+                  }}
+                >
+                  Sign In to Existing Account
+                </Button>
+              )}
             </Stack>
           </Paper>
         </Container>

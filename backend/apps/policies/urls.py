@@ -334,6 +334,81 @@ BEST_DEALS = {
 }
 
 
+# ─── Business Need Mapping for "What Does Your Business Need?" Categories ───
+NEED_SCHEME_CODES = {
+    'finance_credit': [
+        'CGTMSE', 'CGTMSE_EPM_EXPORT_2026', 'TREDS_CGTMSE_CIRCULAR_262',
+        'MUDRA_TARUN', 'SIDBI_SMILE', 'GUJ_DAADC_SMALL_BUSINESS',
+        'GUJARAT_INTEREST_SUBSIDY', 'GUJ_GBCDC_SWAYAM_SAKSHAM',
+        'GUJ_GBCDC_PASHUPALAN', 'MAHILA_SAMRUDDHI_YOJANA',
+        'GUJ_FOREIGN_STUDY_LOAN'
+    ],
+    'tech_upgrade': [
+        'MSME_ZED_CERTIFICATION', 'ZED', 'CLCSS', 'TEQUP',
+        'GUJARAT_DIGITAL', 'MSME_COMPETITIVE', 'RAMP',
+        'COIR_VIKAS_YOJANA_CVY', 'ICDP_COFFEE_DEVELOPMENT'
+    ],
+    'export_support': [
+        'CGTMSE_EPM_EXPORT_2026', 'MSME_IC_SCHEME_2021', 'GUJARAT_EP'
+    ],
+    'marketing': [
+        'PMS_MARKETING_SUPPORT', 'GEM_REG', 'MDA_ORGANIC_FERTILIZER',
+        'MSME_SAMADHAAN'
+    ],
+    'skill_development': [
+        'NIMSME_TRAINING', 'MSME_SAMPARK', 'UGC_INDIRA_GANDHI_GIRL',
+        'ASSAM_MERIT_SCHOLARSHIP', 'GUJ_SALT_LABOUR_REWARDS',
+        'GUJ_GBOCWWB_HOSTEL', 'AGNIPATH_SCHEME', 'WIDUSHI_WOMEN_SCIENTIST'
+    ],
+    'start_business': [
+        'PMEGP_MSME_SCHEME', 'PMEGP', 'PMFME_FOOD_PROCESSING', 'PMFME',
+        'PMMSY_FISHERIES', 'GUJ_IND_POLICY_2023', 'GUJCOST',
+        'GUJARAT_WOMEN', 'GUJARAT_SCST', 'NSSH_SPECIAL_CLCSS',
+        'GUJ_DAADC_SMALL_BUSINESS', 'GUJ_GBCDC_PASHUPALAN'
+    ],
+    'innovation': [
+        'MSME_INNOVATIVE', 'ASPIRE', 'WIDUSHI_WOMEN_SCIENTIST',
+        'MSME_ZED_CERTIFICATION'
+    ],
+    'infrastructure': [
+        'MSE_CDP_CLUSTER_DEV', 'SFURTI_CLUSTER_SCHEME', 'SFURTI',
+        'GUJ_SER_TEXTILE_2025', 'GUJARAT_EP'
+    ],
+}
+
+NEED_SUPPORT_TYPES = {
+    'finance_credit': ['credit_guarantee', 'collateral_free_loan', 'interest_subvention'],
+    'tech_upgrade': ['technology_grant', 'quality_certification', 'digitalization'],
+    'export_support': ['export_incentive', 'export_support'],
+    'marketing': ['marketing_support', 'market_development'],
+    'skill_development': ['skill_training', 'skill_development'],
+    'start_business': ['capital_subsidy'],
+    'innovation': ['technology_grant', 'quality_certification'],
+    'infrastructure': ['infrastructure'],
+}
+
+NEED_ALIASES = {
+    'credit_guarantee': 'finance_credit',
+    'collateral_free_loan': 'finance_credit',
+    'interest_subvention': 'finance_credit',
+    'finance': 'finance_credit',
+    'credit': 'finance_credit',
+    'quality_certification': 'tech_upgrade',
+    'technology_upgrade': 'tech_upgrade',
+    'tech': 'tech_upgrade',
+    'technology': 'tech_upgrade',
+    'export': 'export_support',
+    'market_development': 'marketing',
+    'marketing_support': 'marketing',
+    'skill_training': 'skill_development',
+    'skills': 'skill_development',
+    'capital_subsidy': 'start_business',
+    'startup': 'start_business',
+    'inno': 'innovation',
+    'infra': 'infrastructure',
+}
+
+
 class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [ReadOnlyOrAdmin]
     queryset = Scheme.objects.filter(status='active')
@@ -355,9 +430,22 @@ class SchemeViewSet(viewsets.ReadOnlyModelViewSet):
         level = request.query_params.get('level')
         support_type = request.query_params.get('support_type')
         category = request.query_params.get('category')
+        need = request.query_params.get('need') or request.query_params.get('business_need')
         state = request.query_params.get('state')
         division = request.query_params.get('division')
         ministry = request.query_params.get('ministry')
+
+        # Resolve category if user provided a need key in category param
+        if category and category != 'all' and category in NEED_ALIASES:
+            need = NEED_ALIASES[category]
+            category = None
+
+        if need and need != 'all':
+            need_norm = NEED_ALIASES.get(need.lower().strip(), need.lower().strip())
+            codes = NEED_SCHEME_CODES.get(need_norm, [])
+            stypes = NEED_SUPPORT_TYPES.get(need_norm, [])
+            if codes or stypes:
+                qs = qs.filter(Q(scheme_code__in=codes) | Q(support_type__in=stypes))
 
         if division and division != 'all':
             qs = qs.filter(division__icontains=division)

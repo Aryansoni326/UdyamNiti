@@ -37,10 +37,54 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import GavelIcon from '@mui/icons-material/Gavel'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
+import BuildCircleOutlinedIcon from '@mui/icons-material/BuildCircleOutlined'
+import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined'
+import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { tokens } from '../theme/tokens'
 import { apiClient } from '../api/client'
 import type { SchemeResult } from '../types'
 import { toast } from 'sonner'
+
+const BUSINESS_NEEDS_LIST = [
+  { id: 'all', label: 'All Business Needs', shortDesc: 'Complete 52+ Scheme Catalog', color: '#0F2E59' },
+  { id: 'finance_credit', label: 'Finance & Credit', shortDesc: 'Collateral-Free Credit & Invoice Discounting', color: '#059669' },
+  { id: 'tech_upgrade', label: 'Technology Upgrade', shortDesc: 'Zero Defect Quality & Machinery Modernisation', color: '#2563EB' },
+  { id: 'export_support', label: 'Export Support', shortDesc: 'Global Trade Fairs, Airfare & Collateral Cover', color: '#EA580C' },
+  { id: 'marketing', label: 'Marketing', shortDesc: 'Exhibition Stalls, Barcoding & GeM Procurement', color: '#CA8A04' },
+  { id: 'skill_development', label: 'Skill Development', shortDesc: 'Workforce Skills & Entrepreneurship Training', color: '#7C3AED' },
+  { id: 'start_business', label: 'Start a Business', shortDesc: 'Margin Money Capital Subsidies up to ₹50 Lakh', color: '#DB2777' },
+  { id: 'innovation', label: 'Innovation', shortDesc: 'Patents, Design Facilities & Testing Laboratories', color: '#0891B2' },
+  { id: 'infrastructure', label: 'Infrastructure', shortDesc: 'Common Facility Centres (CFC) & Industrial Parks', color: '#4F46E5' },
+]
+
+const renderNeedIcon = (id: string, active = false) => {
+  const iconProps = { sx: { fontSize: 17, color: active ? '#FFFFFF' : 'inherit' } }
+  switch (id) {
+    case 'finance_credit':
+      return <MonetizationOnIcon {...iconProps} />
+    case 'tech_upgrade':
+      return <BuildCircleOutlinedIcon {...iconProps} />
+    case 'export_support':
+      return <FlightTakeoffOutlinedIcon {...iconProps} />
+    case 'marketing':
+      return <StorefrontOutlinedIcon {...iconProps} />
+    case 'skill_development':
+      return <SchoolOutlinedIcon {...iconProps} />
+    case 'start_business':
+      return <RocketLaunchOutlinedIcon {...iconProps} />
+    case 'innovation':
+      return <LightbulbOutlinedIcon {...iconProps} />
+    case 'infrastructure':
+      return <ApartmentOutlinedIcon {...iconProps} />
+    default:
+      return <AutoAwesomeIcon {...iconProps} />
+  }
+}
 
 const DIVISIONS = [
   { id: 'all', label: 'All Divisions' },
@@ -527,8 +571,10 @@ export const SchemesDashboard: React.FC = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialQuery = searchParams.get('q') || searchParams.get('search') || ''
+  const initialNeed = searchParams.get('need') || searchParams.get('category') || 'all'
 
   const [activeSearch, setActiveSearch] = useState(initialQuery)
+  const [needFilter, setNeedFilter] = useState(initialNeed)
   const [divisionFilter, setDivisionFilter] = useState('all')
   const [stateFilter, setStateFilter] = useState('all')
   const [ministryFilter, setMinistryFilter] = useState('all')
@@ -539,6 +585,14 @@ export const SchemesDashboard: React.FC = () => {
   const [schemes, setSchemes] = useState<SchemeResult[]>([])
   const [totalCount, setTotalCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
+
+  // Sync state if URL query params change (e.g. navigation from Home page categories)
+  useEffect(() => {
+    const q = searchParams.get('q') || searchParams.get('search') || ''
+    const nd = searchParams.get('need') || searchParams.get('category') || 'all'
+    if (q !== activeSearch) setActiveSearch(q)
+    if (nd !== needFilter) setNeedFilter(nd)
+  }, [searchParams])
 
   // Authentic User profile from localStorage — if none exists, remains null (no dummy profile!)
   const currentUser = useMemo(() => {
@@ -560,6 +614,7 @@ export const SchemesDashboard: React.FC = () => {
   const hasActiveFilterOrSearch = useMemo(() => {
     return Boolean(
       activeSearch.trim() ||
+        needFilter !== 'all' ||
         divisionFilter !== 'all' ||
         stateFilter !== 'all' ||
         ministryFilter !== 'all' ||
@@ -567,14 +622,15 @@ export const SchemesDashboard: React.FC = () => {
         supportFilter !== 'all' ||
         categoryFilter !== 'all'
     )
-  }, [activeSearch, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
+  }, [activeSearch, needFilter, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
 
-  // Load schemes from backend API with complete division, state, and ministry filtering
+  // Load schemes from backend API with complete business need, division, state, and ministry filtering
   const fetchSchemes = useCallback(async (query = activeSearch) => {
     setLoading(true)
     try {
       const res = await apiClient.getSchemes({
         search: query || undefined,
+        need: needFilter !== 'all' ? needFilter : undefined,
         division: divisionFilter !== 'all' ? divisionFilter : undefined,
         state: stateFilter !== 'all' ? stateFilter : undefined,
         ministry: ministryFilter !== 'all' ? ministryFilter : undefined,
@@ -591,28 +647,47 @@ export const SchemesDashboard: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }, [activeSearch, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
+  }, [activeSearch, needFilter, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
 
   useEffect(() => {
     fetchSchemes(activeSearch)
-  }, [fetchSchemes, activeSearch])
+  }, [fetchSchemes, activeSearch, needFilter])
 
   const handleSearch = useCallback((newQuery: string) => {
     setActiveSearch(newQuery)
+    const newParams = new URLSearchParams(searchParams)
     if (newQuery) {
-      setSearchParams({ search: newQuery })
+      newParams.set('search', newQuery)
     } else {
-      setSearchParams({})
+      newParams.delete('search')
+      newParams.delete('q')
     }
-  }, [setSearchParams])
+    setSearchParams(newParams)
+  }, [searchParams, setSearchParams])
+
+  const handleSelectNeed = (needId: string) => {
+    setNeedFilter(needId)
+    const newParams = new URLSearchParams(searchParams)
+    if (needId === 'all') {
+      newParams.delete('need')
+      newParams.delete('category')
+    } else {
+      newParams.set('need', needId)
+      newParams.delete('category')
+    }
+    setSearchParams(newParams)
+  }
 
   const handleQuickChipClick = (term: string) => {
     setActiveSearch(term)
-    setSearchParams({ search: term })
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('search', term)
+    setSearchParams(newParams)
   }
 
   const handleClearAllFilters = () => {
     setActiveSearch('')
+    setNeedFilter('all')
     setDivisionFilter('all')
     setStateFilter('all')
     setMinistryFilter('all')
@@ -703,6 +778,12 @@ export const SchemesDashboard: React.FC = () => {
         if (s.support_type === supportFilter) rawScore += 30
       }
 
+      // 0. Priority Business Need match
+      if (needFilter !== 'all') {
+        maxPossible += 60
+        rawScore += 60
+      }
+
       // 7. Category match
       if (categoryFilter !== 'all') {
         maxPossible += 30
@@ -728,7 +809,7 @@ export const SchemesDashboard: React.FC = () => {
 
     // Sort by highest matchScore first when requirements are active
     return calculated.sort((a, b) => b.matchScore - a.matchScore)
-  }, [schemes, hasActiveFilterOrSearch, activeSearch, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
+  }, [schemes, hasActiveFilterOrSearch, activeSearch, needFilter, divisionFilter, stateFilter, ministryFilter, levelFilter, supportFilter, categoryFilter])
 
   return (
     <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 2, sm: 3, md: 4 }, py: 3.5 }}>
@@ -874,6 +955,156 @@ export const SchemesDashboard: React.FC = () => {
           ))}
         </Stack>
       </Box>
+
+      {/* ─── 2.5 BUSINESS NEED REQUIREMENT FILTER TABS (FROM HOME PAGE TILES) ─── */}
+      <Box sx={{ mb: 3 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.2 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0F2E59', fontSize: '0.88rem' }}>
+              Filter by Business Need:
+            </Typography>
+            {needFilter !== 'all' && (
+              <Chip
+                label="Filtered"
+                size="small"
+                sx={{ height: 20, fontSize: '0.68rem', fontWeight: 800, bgcolor: '#EA580C', color: '#FFFFFF' }}
+              />
+            )}
+          </Stack>
+          {needFilter !== 'all' && (
+            <Button
+              size="small"
+              onClick={() => handleSelectNeed('all')}
+              sx={{ color: '#E65100', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', p: 0 }}
+            >
+              Reset to All Needs
+            </Button>
+          )}
+        </Stack>
+
+        <Paper
+          elevation={0}
+          sx={{
+            p: 0.8,
+            bgcolor: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+          }}
+        >
+          <Tabs
+            value={needFilter}
+            onChange={(_, val) => handleSelectNeed(val)}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              minHeight: 46,
+              '& .MuiTab-root': {
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                textTransform: 'none',
+                minHeight: 42,
+                color: '#475569',
+                borderRadius: '8px',
+                px: 1.8,
+                mr: 0.6,
+                transition: 'all 0.15s ease',
+                '&:hover': {
+                  bgcolor: '#F8FAFC',
+                  color: '#0F2E59',
+                },
+                '&.Mui-selected': {
+                  color: '#FFFFFF !important',
+                  bgcolor: '#E65100 !important',
+                  boxShadow: '0 3px 10px rgba(230, 81, 0, 0.25)',
+                  fontWeight: 800,
+                  '& .MuiSvgIcon-root': {
+                    color: '#FFFFFF !important',
+                  },
+                },
+              },
+              '& .MuiTabs-indicator': {
+                display: 'none',
+              },
+            }}
+          >
+            {BUSINESS_NEEDS_LIST.map((need) => (
+              <Tab
+                key={need.id}
+                value={need.id}
+                label={
+                  <Stack direction="row" spacing={0.8} alignItems="center">
+                    {renderNeedIcon(need.id, needFilter === need.id)}
+                    <span>{need.label}</span>
+                  </Stack>
+                }
+              />
+            ))}
+          </Tabs>
+        </Paper>
+      </Box>
+
+      {/* Active Business Need Banner (If Filtered) */}
+      {needFilter !== 'all' && (
+        <Paper
+          elevation={0}
+          sx={{
+            mb: 3,
+            p: 1.8,
+            px: 2.5,
+            bgcolor: '#FFF7ED',
+            border: '1px solid #FED7AA',
+            borderRadius: '12px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 1.5,
+          }}
+        >
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: '8px',
+                bgcolor: '#FFEDD5',
+                color: '#C2410C',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {renderNeedIcon(needFilter, false)}
+            </Box>
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 800, color: '#9A3412', fontSize: '0.92rem' }}>
+                Active Need Filter: {BUSINESS_NEEDS_LIST.find((n) => n.id === needFilter)?.label}
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#C2410C', fontWeight: 600 }}>
+                Showing {schemes.length} schemes tailored to: {BUSINESS_NEEDS_LIST.find((n) => n.id === needFilter)?.shortDesc}
+              </Typography>
+            </Box>
+          </Stack>
+          <Button
+            size="small"
+            onClick={() => handleSelectNeed('all')}
+            startIcon={<ClearIcon sx={{ fontSize: 14 }} />}
+            sx={{
+              color: '#9A3412',
+              bgcolor: '#FFEDD5',
+              fontWeight: 700,
+              fontSize: '0.78rem',
+              borderRadius: '6px',
+              textTransform: 'none',
+              px: 1.8,
+              '&:hover': { bgcolor: '#FED7AA' },
+            }}
+          >
+            Clear Need Filter
+          </Button>
+        </Paper>
+      )}
 
       {/* ─── 3. HIGH-CONTRAST DIVISION CATEGORY TABS ───────────────────────── */}
       <Paper
